@@ -1,0 +1,99 @@
+<resources>
+
+
+    <string name="app_name">Bin ydik</string>
+    <string name="action_sign_in_short">Register</string>
+    <string name="email">Email</string>
+    <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
+    <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
+    <string name="title_activity_profile" translatable="false">Firebase</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_link_to_register">Not a member? Get registered now!</string>
+    <string name="btn_link_to_login">Already registered? Log In!</string>
+    <string name="title_activity_reset_password" translatable="false">ResetPasswordActivity</string>
+    <string name="btn_forgot_password">Forgot your password?</string>
+    <string name="btn_reset_password">Reset Password</string>
+    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="lbl_forgot_password">Forgot password?</string>
+    <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
+    <string name="user_name">Name</string>
+    <string name="user_mobile">Mobile</string>
+    <string name="user_alt_mobile">Alternate Mobile No.(optional)</string>
+
+    <string name="title_item_detail">Item Detail</string>
+    <string name="my_orders">My orders</string>
+    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
+    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
+    <string name="nav_header_desc" translatable="false">Navigation header</string>
+
+
+    <string name="price_range">Estimated Price Range</string>
+    <string name="btn_user_location">Set Your Location</string>
+    <string name="category">Category</string>
+    <string name="expiry">Set Expiry of order</string>
+    <string name="btn_category">None</string>
+    <string name="min_int">Min</string>
+    <string name="max_int">Max</string>
+    <string name="main_dialog_date_picker">Date</string>
+    <string name="main_dialog_time_picker">Time</string>
+    <string name="dialog_save">Please fill all the details!</string>
+    <string name="dialog_ok">OK</string>
+    <string name="save_details">Save Details</string>
+    <string name="description">Description</string>
+    <string name="orderId">order ID</string>
+    <string name="status">Status</string>
+    <string name="deliveryCharge">Delivery Charge (incl. service charge):</string>
+    <string name="min_range">Min:</string>
+    <string name="max_range">Max:</string>
+    <string name="userDetails">User Details</string>
+    <string name="userName">Name:</string>
+    <string name="userPhoneNumber">Phone No.:</string>
+    <string name="userLocationName">Place:</string>
+    <string name="userLocationLocation">Location:</string>
+    <string name="expiryTime">Order Expiry</string>
+    <string name="expiryTimeDate">Date:</string>
+    <string name="expiryTimeTime">Time:</string>
+    <string name="final_item_price">Final Item Price:</string>
+    <string name="final_total">Total (to pay):</string>
+    <string name="final_order_charge">Final Order Charge</string>
+    <string name="archived_label">Archived</string>
+    <string name="undo_label">Undo</string>
+    <string name="deliverer_all">All Orders</string>
+    <string name="btn_accepted_by">Accepted By</string>
+    <string name="btn_accept">Accept</string>
+    <string name="btn_show_path">Show Path</string>
+    <string name="btn_mark_delivered">"Mark   Delivered"</string>
+    <string name="btn_send_otp">"Send   OTP"</string>
+    <string name="otp" translatable="false">"OTP :"</string>
+    <string name="enter_otp1">Enter OTP</string>
+    <string name="enter_otp2">(as received from Orderer) :</string>
+    <string name="ask_otp1">"Note:  Ask orderer to open order details for OTP"</string>
+    <string name="ask_otp2">"in case of no notification."</string>
+    <string name="btn_complete_order">"Complete  Order"</string>
+    <string name="enter_actual_price">Enter actual price of item bought</string>
+    <string name="tnd">TND</string>
+    <string name="email_verify">Email Verification Required</string>
+    <string name="email_sent">An email has been sent to:</string>
+    <string name="follow_instructions">Please follow the instructions in the verification email         to finish creating your theDeliveryApp account.</string>
+    <string name="resend_email">Didn\'t receive an email?</string>
+    <string name="btn_resend_email">Resend Verification Email</string>
+    <string name="done_verify">Done Verification?</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="btn_logout">Log out</string>
+    <string name="btn_proceed">Proceed</string>
+    <string name="confirmation">Pay</string>
+    <string name="deliveryChargeDialog">Price estimated over this order is :</string>
+    <string name="btn_save">Save</string>
+    <string name="insufficientBalance">You have insufficient balance!</string>
+    <string name="locationValidation">choose a valid location</string>
+    <string name="start" translatable="false">Start</string>
+    <string name="word_GPS_not_enabled" translatable="false">gps not enabled</string>
+    <string name="word_GPS_enable" translatable="false">gps enabled</string>
+    <string name="word_GPS" translatable="false">GPS</string>
+    <string name="Confirmpass">Confirm password</string>
+
+
+</resources>

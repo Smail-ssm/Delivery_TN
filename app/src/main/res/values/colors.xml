@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+
+    <color name="login_btn">#4b4a4a</color>
+    <color name="login_btn_text">#ffffff</color>
+
+    <color name="gray">#edeaea</color>
+
+    <color name="primary">#b71c1c</color>
+    <color name="primaryLightColor">#f05545</color>
+    <color name="primary_dark">#7f0000</color>
+    <color name="secondaryColor">#009688</color>
+    <color name="accent">#52c7b8</color>
+    <color name="secondaryDarkColor">#00675b</color>
+    <color name="white">#ffffff</color>
+    <color name="black">#000000</color>
+    <color name="red">#ff0000</color>
+    <color name="green">#00ff00</color>
+
+
+    <!--colors for profile-->
+    <color name="profilePrimaryDark">#FF3B30</color>
+    <color name="profileAccentColor">#F7F7F7</color>
+    <color name="whiteTextColor">#fff</color>
+    <color name="profileBackground">#fff</color>
+    <color name="blackTextColor">#000</color>
+    <color name="profileEditTextColor">#707070</color>
+
+</resources>

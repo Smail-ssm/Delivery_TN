@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "564243738060",
+    "firebase_url": "https://deliverytn-423ca.firebaseio.com",
+    "project_id": "deliverytn-423ca",
+    "storage_bucket": "deliverytn-423ca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:564243738060:android:935668cc6b8f09de1c4169",
+        "android_client_info": {
+          "package_name": "com.xdev.deliverytn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "564243738060-k1mtfvhc9332n89o7et8n8enke6bfaja.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBczu-cJpQuHPpaMJhV7P0b1DZ6WJKZ3us"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "564243738060-k1mtfvhc9332n89o7et8n8enke6bfaja.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
