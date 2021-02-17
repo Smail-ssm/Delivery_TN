@@ -42,6 +42,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -105,7 +106,12 @@ public class Profile extends AppCompatActivity {
     private FirebaseAuth auth;
     private Address address;
     private UserDetails userDetails = new UserDetails();
-
+    private TextInputEditText cin;
+    private TextInputEditText birth;
+    private TextInputEditText mobile;
+    private TextInputEditText rate;
+    private TextInputEditText ratenumber;
+    private TextInputEditText addresss;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,8 +122,24 @@ public class Profile extends AppCompatActivity {
         String userId = user.getUid();
         profilei = findViewById(R.id.imageViewUserImage);
 
-        profilei.setImageBitmap(loadImageFromStorage("profile"));
 
+        cin = (TextInputEditText) findViewById(R.id.cin);
+        birth = (TextInputEditText) findViewById(R.id.birth);
+        mobile = (TextInputEditText) findViewById(R.id.mobile);
+        rate = (TextInputEditText) findViewById(R.id.rate);
+        ratenumber = (TextInputEditText) findViewById(R.id.ratenumber);
+        addresss = (TextInputEditText) findViewById(R.id.address);
+
+//        storageReference = storage.getReference();
+//        StorageReference sRef = storageReference.child("uploads/" + user.getUid() + "/" + "profilePic" + ".jpg");//adding the file to reference
+//        profilei.setImageBitmap(loadImageFromStorage("profile"));
+//        if (sRef==null){
+//            Toast.makeText(this, "please add image ", Toast.LENGTH_SHORT).show();
+//        }else {
+//            Glide.with(this)
+//                    .load(sRef)
+//                    .into(profilei);
+//
 
         DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
         forUserData.keepSynced(true);
@@ -126,8 +148,13 @@ public class Profile extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userDetails = dataSnapshot.getValue(UserDetails.class);
 //                mHeaderView = navigationView.getHeaderView(0);
-//                Toast.makeText(Profile.this, root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg", Toast.LENGTH_SHORT).show();
-//                profilei.setImageURI(Uri.parse(root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg"));
+                Toast.makeText(Profile.this, root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg", Toast.LENGTH_SHORT).show();
+                try {
+                    saveToStorage(Uri.parse(userDetails.getcinPhoto()),"cin");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                profilei.setImageBitmap( loadImageFromStorage("cin"));
                 textViewUserName = findViewById(R.id.headerUserName);
                 textViewEmail = findViewById(R.id.headerUserEmail);
                 Integer wallet = Integer.valueOf(userDetails.getWallet());
@@ -136,6 +163,14 @@ public class Profile extends AppCompatActivity {
                 walletBalance.setImageDrawable(drawable);
                 textViewUserName.setText(userDetails.getLast() + "" + userDetails.getFirst());
                 textViewEmail.setText(userDetails.getEmail());
+                cin.setText(userDetails.getCin());
+                birth.setText(userDetails.getBirth());
+                mobile.setText(userDetails.getMobile());
+                rate.setText(String.valueOf( userDetails.getRate()));
+                ratenumber.setText(String.valueOf(userDetails.getRate_number()));
+                addresss.setText(userDetails.getAddress());
+
+
             }
 
             @Override
@@ -143,26 +178,21 @@ public class Profile extends AppCompatActivity {
 
             }
         });
-        if (profileexsists == false) {
-            Toast.makeText(this, "please add profile picture", Toast.LENGTH_SHORT).show();
-            profilei.setImageResource(R.drawable.smiley);
 
-
-        }
-        profilei.setOnLongClickListener(new View.OnLongClickListener() {
+        profilei.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onLongClick(View v) {
+            public void onClick(View v) {
                 profilei.setOnClickListener(v1 -> {
                     capturimage();
                 });
 
-                return false;
+
             }
 
 
         });
         if (havelocation) {
-//            mHeaderView = navigationView.getHeaderView(0);
+            View mHeaderView = navigationView.getHeaderView(0);
             ImageView currentLocation = findViewById(R.id.currentLocation);
             TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(address.getLocality(), Color.WHITE, 100);
             currentLocation.setImageDrawable(drawable);
@@ -208,7 +238,8 @@ public class Profile extends AppCompatActivity {
             b = BitmapFactory.decodeStream(new FileInputStream(f));
         } catch (FileNotFoundException e) {
             Toast.makeText(cw, "no file found ", Toast.LENGTH_SHORT).show();
-            capturimage();
+            profilei.setImageResource(R.drawable.smiley);
+
         }
         profileexsists = true;
         return b;

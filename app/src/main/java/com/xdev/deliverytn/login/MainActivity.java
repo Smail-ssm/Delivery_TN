@@ -166,6 +166,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         }
                     });
                 }
+                if (dataSnapshot.child("photoURL") == null) {
+                    profileexsists=false;
+                    Toast.makeText(MainActivity.this, "Add profile picture", Toast.LENGTH_SHORT).show();
+                    profilepic.setImageResource(R.drawable.back_to_home_button); }
 
                 return;
             }
@@ -174,27 +178,27 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-        if (profileexsists == false) {
-            showSnacks("please add profile picture");
-            profilepic.setImageResource(R.drawable.smiley);
-        }
-        if (profileexsists) {
+
+//        if (profileexsists == false) {
+//            showSnacks("please add profile picture");
+//
+//        }
+
 //            profilepic.setImageURI(Uri.parse(root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg"));
-            profilepic.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent i = new Intent(MainActivity.this, Profile.class);
-                    startActivity(i);
-                }
-            });
+        profilepic.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(MainActivity.this, Profile.class);
+                startActivity(i);
 
-
-        } else {
-
-            profilepic.setOnClickListener(v -> {
+            }
+        });
+        profilepic.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
                 builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setMessage("camera ?")
-                        .setCancelable(false)
+                        .setCancelable(true)
                         .setPositiveButton("camera", (dialog, id) -> {
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                                 if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
@@ -219,8 +223,9 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 //Setting the title manually
                 alert.setTitle("add profile pic");
                 alert.show();
-            });
-        }
+                return false;
+            }
+        });
 
 
         logOutButton.setOnClickListener(new View.OnClickListener() {

@@ -26,20 +26,10 @@
                 android:layout_height="match_parent">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/name"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="name" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
-
-                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/cin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="cin" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -51,6 +41,7 @@
                     android:id="@+id/birth"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="Birthday" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -62,6 +53,7 @@
                     android:id="@+id/mobile"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="mobile" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -73,6 +65,7 @@
                     android:id="@+id/rate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="rate" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -84,6 +77,7 @@
                     android:id="@+id/ratenumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="Rated by :" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -95,6 +89,7 @@
                     android:id="@+id/address"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:editable="false"
                     android:hint="address" />
             </com.google.android.material.textfield.TextInputLayout>
 
