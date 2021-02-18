@@ -53,6 +53,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.login.user_details.UserDetails;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
 import com.xdev.deliverytn.user.order.OrderData;
@@ -148,12 +149,25 @@ public class Profile extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userDetails = dataSnapshot.getValue(UserDetails.class);
 //                mHeaderView = navigationView.getHeaderView(0);
-                Toast.makeText(Profile.this, root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg", Toast.LENGTH_SHORT).show();
-                try {
-                    saveToStorage(Uri.parse(userDetails.getcinPhoto()),"cin");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                forUserData.child("cinPhoto").addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String photoUrl = dataSnapshot.getValue(String.class);
+                        try {
+                            Picasso.get()
+                                    .load(photoUrl)
+                                    .into(profilei);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 profilei.setImageBitmap( loadImageFromStorage("cin"));
                 textViewUserName = findViewById(R.id.headerUserName);
                 textViewEmail = findViewById(R.id.headerUserEmail);
@@ -392,6 +406,7 @@ public class Profile extends AppCompatActivity {
                         Uri downloadUri = task.getResult();
                         update_user_profile(downloadUri);
                         profilei.setImageURI(downloadUri);
+                        Picasso.get().load(downloadUri).into(profilei);
 
                     } else {
                     }

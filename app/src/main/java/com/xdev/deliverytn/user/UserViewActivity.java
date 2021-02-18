@@ -37,6 +37,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatacti.ChatMain;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.Profile;
@@ -129,6 +130,8 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
     void setUpNavigationView() {
         navigationView = findViewById(R.id.nav_view_user);
+         ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
+
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -234,6 +237,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                         // Respond when the drawer's position changes
 
                         userId = user.getUid();
+ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
 
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
@@ -250,6 +254,15 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                                 walletBalance.setImageDrawable(drawable);
                                 textViewUserName.setText(userDetails.getLast()+""+userDetails.getFirst());
                                 textViewEmail.setText(userDetails.getEmail());
+                                String photoUrl = userDetails.getCinPhoto();
+                                try {
+                                    Picasso.get()
+                                            .load(photoUrl)
+                                            .into(imageViewUserImage);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+
                             }
 
                             @Override

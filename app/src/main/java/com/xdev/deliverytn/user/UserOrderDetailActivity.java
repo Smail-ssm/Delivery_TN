@@ -230,8 +230,25 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
                 rankDialog.setContentView(R.layout.rank_dialog);
                 rankDialog.setCancelable(true);
                 RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.ratingbar);
-                DatabaseReference ratingRef = root.child("deliveryApp").child("Users").child(myOrder.acceptedBy.delivererID).child("rate");
-                ratingRef.addValueEventListener(new ValueEventListener() {
+                DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
+//                ratingRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+//                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
+//                            ratingBar.setRating(rating);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                });
+                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+
+                DatabaseReference rate = ratingRef.child("rate");
+
+                rate.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         if (dataSnapshot != null && dataSnapshot.getValue() != null) {
@@ -244,37 +261,32 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
                     public void onCancelled(DatabaseError databaseError) {
                     }
                 });
-                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
-                updateButton.setOnClickListener(new View.OnClickListener() {
+                DatabaseReference rate_number = ratingRef.child("rate_number");
+
+                ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
                     @Override
-                    public void onClick(View v) {
-                        ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+                    public void onRatingChanged(
+                            RatingBar ratingBar,
+                            float rating,
+                            boolean fromUser) {
+                        rate_number.addValueEventListener(new ValueEventListener() {
                             @Override
-                            public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-                                if (fromUser) {
-                                    ratingRef.child("rate").setValue(rating);
-                                    ratingRef.child("rate_number").addValueEventListener(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                            if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                                                float ratenumber = Float.parseFloat(dataSnapshot.getValue().toString());
-                                                ratingRef.child("rate_number").setValue(ratenumber + 1);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(DatabaseError databaseError) {
-                                        }
-                                    });
-
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot != null && snapshot.getValue() != null) {
+                                    float ratenumber = Float.parseFloat(snapshot.getValue().toString());
+                                    if (fromUser)
+                                        rate_number.setValue(String.valueOf(ratenumber + 1));
                                 }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
                             }
                         });
-                        rankDialog.dismiss();
+
                     }
                 });
-                //now that the dialog is set up, it's time to show it
                 rankDialog.show();
             }
         });

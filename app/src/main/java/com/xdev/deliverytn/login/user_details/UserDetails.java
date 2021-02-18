@@ -9,6 +9,7 @@ public class UserDetails {
     private String address;
     private String birth;
     private String cinPhoto;
+    private String profilepic;
     private String city;
     private String first;
     private String gender;
@@ -16,50 +17,8 @@ public class UserDetails {
     private String role;
     private String zip;
     private float rate;
-    private int rate_number;
-
-    public UserDetails(String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String city, String first, String gender, String last, String role, String zip, float rate, int rate_number) {
-        Mobile = mobile;
-        this.cin = cin;
-        this.email = email;
-        this.wallet = wallet;
-        this.playerId = playerId;
-        this.address = address;
-        this.birth = birth;
-        this.cinPhoto = cinPhoto;
-        this.city = city;
-        this.first = first;
-        this.gender = gender;
-        this.last = last;
-        this.role = role;
-        this.zip = zip;
-        this.rate = rate;
-        this.rate_number = rate_number;
-    }
 
     public UserDetails() {
-
-    }
-
-    public UserDetails(String s, String s1, String s2) {
-    }
-
-
-
-    public int getRate_number() {
-        return rate_number;
-    }
-
-    public void setRate_number(int rate_number) {
-        this.rate_number = rate_number;
-    }
-
-    public float getRate() {
-        return rate;
-    }
-
-    public void setRate(float rate) {
-        this.rate = rate;
     }
 
     public String getMobile() {
@@ -118,12 +77,20 @@ public class UserDetails {
         this.birth = birth;
     }
 
-    public String getcinPhoto() {
+    public String getCinPhoto() {
         return cinPhoto;
     }
 
-    public void setcinPhoto(String cinPhoto) {
+    public void setCinPhoto(String cinPhoto) {
         this.cinPhoto = cinPhoto;
+    }
+
+    public String getProfilepic() {
+        return profilepic;
+    }
+
+    public void setProfilepic(String profilepic) {
+        this.profilepic = profilepic;
     }
 
     public String getCity() {
@@ -172,5 +139,43 @@ public class UserDetails {
 
     public void setZip(String zip) {
         this.zip = zip;
+    }
+
+    public float getRate() {
+        return rate;
+    }
+
+    public void setRate(float rate) {
+        this.rate = rate;
+    }
+
+    public int getRate_number() {
+        return rate_number;
+    }
+
+    public void setRate_number(int rate_number) {
+        this.rate_number = rate_number;
+    }
+
+    private int rate_number;
+
+    public UserDetails(String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profilepic, String city, String first, String gender, String last, String role, String zip, float rate, int rate_number) {
+        Mobile = mobile;
+        this.cin = cin;
+        this.email = email;
+        this.wallet = wallet;
+        this.playerId = playerId;
+        this.address = address;
+        this.birth = birth;
+        this.cinPhoto = cinPhoto;
+        this.profilepic = profilepic;
+        this.city = city;
+        this.first = first;
+        this.gender = gender;
+        this.last = last;
+        this.role = role;
+        this.zip = zip;
+        this.rate = rate;
+        this.rate_number = rate_number;
     }
 }

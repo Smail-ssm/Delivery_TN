@@ -57,6 +57,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.Profile;
 import com.xdev.deliverytn.R;
@@ -386,6 +387,7 @@ address.toString();
                     public void onDrawerSlide(View drawerView, float slideOffset) {
                         // Respond when the drawer's position changes
                         userId = user.getUid();
+                        ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
 
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
@@ -403,6 +405,14 @@ address.toString();
                                 walletBalance.setImageDrawable(drawable);
                                 textViewUserName.setText(userDetails.getLast()+""+userDetails.getFirst());
                                 textViewEmail.setText(userDetails.getEmail());
+                                String photoUrl = userDetails.getCinPhoto();
+                                try {
+                                    Picasso.get()
+                                            .load(photoUrl)
+                                            .into(imageViewUserImage);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
                             }
 
                             @Override

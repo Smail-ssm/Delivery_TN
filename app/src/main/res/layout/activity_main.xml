@@ -78,14 +78,12 @@
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_height="match_parent">
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/profile_image"
-                        android:layout_width="64dp"
-                        android:layout_height="64dp"
-                        android:layout_marginStart="8dp"
+                        android:layout_width="96dp"
+                        android:layout_height="96dp"
                         android:src="@drawable/smiley"
                         app:civ_border_color="#FF000000"
                         app:civ_border_width="2dp"
@@ -104,25 +102,10 @@
                         android:textColor="@color/black"
                         android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/btnlogout"
+                        app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
                         app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toStartOf="@+id/textView4"
                         app:layout_constraintTop_toBottomOf="@+id/textView4"
-                        app:layout_constraintVertical_bias="0.0" />
-
-                    <Button
-                        android:id="@+id/recto"
-                        android:layout_width="wrap_content"
-                        android:layout_height="0dp"
-                        android:layout_marginEnd="8dp"
-                        android:layout_weight="1"
-                        android:background="#00FFFFFF"
-                        android:text="verify"
-                        app:layout_constraintBottom_toBottomOf="@+id/textView4"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.957"
-                        app:layout_constraintStart_toEndOf="@+id/textView4"
-                        app:layout_constraintTop_toTopOf="@+id/textView4"
                         app:layout_constraintVertical_bias="0.0" />
 
                     <TextView
@@ -138,23 +121,50 @@
                         app:layout_constraintStart_toEndOf="@+id/profile_image"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <ImageButton
-                        android:id="@+id/btnlogout"
-                        android:layout_width="0dp"
-                        android:layout_height="0dp"
-                        android:background="#00303F9F"
-                        android:src="@drawable/ic_menu_signout"
+                    <LinearLayout
+                        android:id="@+id/linearLayout4"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="5dp"
+                        android:orientation="vertical"
                         app:layout_constraintBottom_toBottomOf="@+id/username"
-                        app:layout_constraintEnd_toEndOf="@+id/recto"
-                        app:layout_constraintHorizontal_bias="1.0"
-                        app:layout_constraintStart_toStartOf="@+id/recto"
-                        app:layout_constraintTop_toTopOf="@+id/username"
-                        app:layout_constraintVertical_bias="1.0" />
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toEndOf="@+id/textView4"
+                        app:layout_constraintTop_toTopOf="@+id/textView4"
+                        app:layout_constraintVertical_bias="0.19999999">
+
+                        <Button
+                            android:id="@+id/recto"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_margin="5dp"
+                            android:layout_marginEnd="8dp"
+                            android:layout_weight="1"
+                            android:background="#00FFFFFF"
+                            android:drawableLeft="@drawable/ic_baseline_done_24"
+                            android:text="verify" />
+
+                        <Button
+                            android:id="@+id/btnlogout"
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:layout_margin="5dp"
+
+                            android:layout_marginTop="16dp"
+                            android:background="#00303F9F"
+                            android:drawableLeft="@drawable/ic_menu_signout"
+                            android:text="Logout" />
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="16dp" />
 
         <GridLayout
             android:id="@+id/mainGrid"

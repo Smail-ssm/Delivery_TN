@@ -2,6 +2,7 @@ package com.xdev.deliverytn.deliverer;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -10,6 +11,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -417,15 +419,15 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 ////                i.putExtra("current_location", address);
 ////                DelivererOrderDetailActivity.this.startService(i);
 //                startActivity(i);
-//                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&daddr=" + myOrder.userLocation.Location));
-//                intent.setComponent(new ComponentName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity"));
-//                if (intent.resolveActivity(getPackageManager()) != null) {
-//                    startActivity(intent);
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&daddr=" + myOrder.userLocation.Location));
+                intent.setComponent(new ComponentName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity"));
+                if (intent.resolveActivity(getPackageManager()) != null) {
+                    startActivity(intent);
 ////TODO
 ////                    continue distance measuring
 //
 //
-//                }
+                }
 
             }
         });

@@ -314,7 +314,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setWallet(1000);
                                         u.setAddress(address.getText().toString());
                                         u.setBirth(datn.getText().toString());
-                                        u.setcinPhoto(URIrecto);
+                                        u.setCinPhoto("noPhoto");
                                         u.setCity(gov.getSelectedItem().toString());
                                         u.setFirst(first.getText().toString());
                                         u.setGender(gender);
@@ -322,7 +322,8 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setZip(cp.getText().toString());
                                         u.setRole("null");
                                         u.setRate(0);
-u.setRate_number(0);
+                                        u.setProfilepic("nophoto");
+                                        u.setRate_number(0);
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {

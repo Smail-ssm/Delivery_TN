@@ -39,7 +39,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.core.graphics.drawable.RoundedBitmapDrawable;
+import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -63,6 +70,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Profile;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
@@ -116,6 +124,15 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
     private ImageView ivImage;
+    private static Context mContext;
+
+    public static Context getContext() {
+        return mContext;
+    }
+
+    public static void setContext(Context mContext) {
+        MainActivity.mContext = mContext;
+    }
 
     //todo add icon to call deliverer
     //todo in app messeging in get informed
@@ -134,8 +151,9 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         requestLocationPermissions();
         requestcamera();
         profilepic = findViewById(R.id.profile_image);
-        profilepic.setImageBitmap(loadImageFromStorage("profile"));
-        ImageButton logOutButton = findViewById(R.id.btnlogout);
+
+
+        Button logOutButton = findViewById(R.id.btnlogout);
         auth = FirebaseAuth.getInstance();
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
@@ -150,13 +168,32 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 showSnacks("Welcome " + name);
                 username.setText("Welcome " + name);
 
-                if (dataSnapshot.child("cinPhoto").getValue(String.class).equals("noPhoto")) {
+                if (dataSnapshot.child("cinPhoto").getValue(String.class).equalsIgnoreCase("nophoto")) {
                     rectoExists = false;
-                    recto.setText("verify");
+                    recto.setText("verify");profilepic.setImageResource(R.drawable.smiley);
                     recto.setBackgroundColor(Color.RED);
                     showSnacks("account waiting verification");
                 } else {
                     rectoExists = true;
+                    userinfo.child("cinPhoto").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            String photoUrl = dataSnapshot.getValue(String.class);
+                            try {
+                                Picasso.get()
+                                        .load(photoUrl)
+                                        .into(profilepic);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
                     recto.setText("verified");
                     recto.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -166,12 +203,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         }
                     });
                 }
-                if (dataSnapshot.child("photoURL") == null) {
-                    profileexsists=false;
-                    Toast.makeText(MainActivity.this, "Add profile picture", Toast.LENGTH_SHORT).show();
-                    profilepic.setImageResource(R.drawable.back_to_home_button); }
 
-                return;
             }
 
             @Override
@@ -231,12 +263,23 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FirebaseAuth auth = FirebaseAuth.getInstance();
-                Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                auth.signOut();
-                Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                startActivity(loginIntent);
-                finish();
+                builder = new AlertDialog.Builder(MainActivity.this);
+                builder                        .setCancelable(false)
+                        .setPositiveButton("yes", (dialog, id) -> {
+                            FirebaseAuth auth = FirebaseAuth.getInstance();
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                            auth.signOut();
+                            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                            startActivity(loginIntent);
+                            finish();
+                        })
+                        .setNegativeButton("NO", (dialog, id) -> dialog.dismiss());
+                //Creating dialog box
+                AlertDialog alert = builder.create();
+                //Setting the title manually
+                alert.setTitle("Logout ?");
+                alert.show();
+
             }
         });
 //

@@ -22,6 +22,7 @@ public class VerifyEmailScreen extends AppCompatActivity {
 
     TextView email_to_verify;
     Button btn_resend_email, btngmail, btn_refresh, btn_logout;
+    private FirebaseAuth auth;
     AnimationDrawable animationDrawable;
 
     @Override
@@ -34,12 +35,17 @@ public class VerifyEmailScreen extends AppCompatActivity {
         btn_refresh = findViewById(R.id.btn_refresh);
         btngmail = findViewById(R.id.btngmail);
         btn_logout = findViewById(R.id.btn_logout);
+
+
+
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         email_to_verify.setText(user.getEmail());
+
 btngmail.setOnClickListener(new View.OnClickListener() {
     @Override
     public void onClick(View v) {
-        Toast.makeText(VerifyEmailScreen.this, "open gmail app", Toast.LENGTH_SHORT).show();
+        Intent intent = getPackageManager().getLaunchIntentForPackage("com.google.android.gm");
+        startActivity(intent);
     }
 });
         btn_resend_email.setOnClickListener(new View.OnClickListener() {
