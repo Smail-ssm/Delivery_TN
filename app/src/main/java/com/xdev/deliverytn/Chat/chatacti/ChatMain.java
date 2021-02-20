@@ -91,8 +91,10 @@ public class ChatMain extends AppCompatActivity {
                     try {
 
                         Chat model = dataSnapshot.getValue(Chat.class);
+if (!model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
+    showTextView(model.getMessage(), 0);
 
-                        showTextView(model.getMessage(), 0);
+}
                     } catch (Exception ex) {
                         Log.e(TAG, ex.getMessage());
                     }
