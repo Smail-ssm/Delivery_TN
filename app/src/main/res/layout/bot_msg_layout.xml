@@ -9,6 +9,7 @@
         android:layout_height="wrap_content" >
 
         <LinearLayout
+
             android:id="@+id/botMsgLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,6 +40,8 @@
             </FrameLayout>
 
         </LinearLayout>
+
+
     </androidx.cardview.widget.CardView>
 
 </FrameLayout>

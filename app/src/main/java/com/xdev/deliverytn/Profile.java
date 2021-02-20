@@ -180,8 +180,8 @@ public class Profile extends AppCompatActivity {
                 cin.setText(userDetails.getCin());
                 birth.setText(userDetails.getBirth());
                 mobile.setText(userDetails.getMobile());
-                rate.setText(String.valueOf( userDetails.getRate()));
-                ratenumber.setText(String.valueOf(userDetails.getRate_number()));
+                rate.setText(String.valueOf(userDetails.getRate()));
+                ratenumber.setText(String.valueOf(userDetails.getRatenumber()));
                 addresss.setText(userDetails.getAddress());
 
 

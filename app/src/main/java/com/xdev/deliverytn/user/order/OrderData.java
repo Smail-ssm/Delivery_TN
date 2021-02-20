@@ -48,10 +48,12 @@ public class OrderData implements Parcelable {
 
         expiryTime.hour = in.readInt();
         expiryTime.minute = in.readInt();
+        expiryTime.t = in.readLong();
 
         expiryDate.year = in.readInt();
         expiryDate.month = in.readInt();
         expiryDate.day = in.readInt();
+        expiryDate.timeStamp = in.readLong();
 
         acceptedBy.name = in.readString();
         acceptedBy.mobile = in.readString();
@@ -113,10 +115,12 @@ public class OrderData implements Parcelable {
 
         dest.writeInt(expiryTime.hour);
         dest.writeInt(expiryTime.minute);
+        dest.writeLong(expiryTime.t);
 
         dest.writeInt(expiryDate.year);
         dest.writeInt(expiryDate.month);
         dest.writeInt(expiryDate.day);
+        dest.writeLong(expiryDate.timeStamp);
 
         dest.writeString(acceptedBy.name);
         dest.writeString(acceptedBy.mobile);

@@ -212,7 +212,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 DatePickerDialog datePickerDialog = new DatePickerDialog(OrderForm.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth);
+                        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth, System.currentTimeMillis());
                         calendar.set(Calendar.YEAR, year);
                         calendar.set(Calendar.MONTH, monthOfYear);
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -230,7 +230,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 TimePickerDialog timePickerDialog = new TimePickerDialog(OrderForm.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        expiryTime = new ExpiryTime(i, i1);
+                        expiryTime = new ExpiryTime(i, i1, System.currentTimeMillis());
                         calendar.set(Calendar.HOUR_OF_DAY, i);
                         calendar.set(Calendar.MINUTE, i1);
                         String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());

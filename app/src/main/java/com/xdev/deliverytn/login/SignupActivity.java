@@ -267,14 +267,17 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setWallet(1000);
                                         u.setAddress(address.getText().toString());
                                         u.setBirth(datn.getText().toString());
-                                        u.setCinPhoto("noPhoto");u.setProfilepic("nophoto");                                        u.setCity(gov.getSelectedItem().toString());
+                                        u.setCinPhoto("noPhoto");
+                                        u.setProfilepic("nophoto");
+                                        u.setCity(gov.getSelectedItem().toString());
                                         u.setFirst(first.getText().toString());
                                         u.setGender(gender);
                                         u.setLast(last.getText().toString());
                                         u.setZip(cp.getText().toString());
                                         u.setRole("null");
                                         u.setRate(0);
-                                        u.setRate_number(0);
+                                        u.setUsertype("");
+                                        u.setRatenumber(0);
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {

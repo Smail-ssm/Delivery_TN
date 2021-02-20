@@ -323,7 +323,8 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setRole("null");
                                         u.setRate(0);
                                         u.setProfilepic("nophoto");
-                                        u.setRate_number(0);
+                                        u.setRate(0);
+                                        u.setUsertype("");
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {

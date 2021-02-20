@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -149,7 +148,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         int monthOfYear = myOrder.expiryDate.month;
         int dayOfMonth = myOrder.expiryDate.day;
 
-        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth);
+        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth, System.currentTimeMillis());
         calendar.set(Calendar.YEAR, year);
         calendar.set(Calendar.MONTH, monthOfYear);
         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -159,7 +158,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         int i = myOrder.expiryTime.hour;
         int i1 = myOrder.expiryTime.minute;
 
-        expiryTime = new ExpiryTime(i, i1);
+        expiryTime = new ExpiryTime(i, i1, System.currentTimeMillis());
         calendar.set(Calendar.HOUR_OF_DAY, i);
         calendar.set(Calendar.MINUTE, i1);
         String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());
@@ -210,7 +209,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                 DatePickerDialog datePickerDialog = new DatePickerDialog(EditOrderForm.this, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth);
+                        expiryDate = new ExpiryDate(year, monthOfYear, dayOfMonth, System.currentTimeMillis());
                         calendar.set(Calendar.YEAR, year);
                         calendar.set(Calendar.MONTH, monthOfYear);
                         calendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
@@ -228,7 +227,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                 TimePickerDialog timePickerDialog = new TimePickerDialog(EditOrderForm.this, new TimePickerDialog.OnTimeSetListener() {
                     @Override
                     public void onTimeSet(TimePicker timePicker, int i, int i1) {
-                        expiryTime = new ExpiryTime(i, i1);
+                        expiryTime = new ExpiryTime(i, i1, System.currentTimeMillis());
                         calendar.set(Calendar.HOUR_OF_DAY, i);
                         calendar.set(Calendar.MINUTE, i1);
                         String time = DateFormat.getTimeInstance(DateFormat.SHORT).format(calendar.getTime());

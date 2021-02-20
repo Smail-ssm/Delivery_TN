@@ -38,7 +38,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-import com.xdev.deliverytn.Chat.chatacti.ChatMain;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.Profile;
 import com.xdev.deliverytn.R;
@@ -130,7 +129,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
     void setUpNavigationView() {
         navigationView = findViewById(R.id.nav_view_user);
-         ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
+        ImageView imageViewUserImage = findViewById(R.id.imageViewUserImage);
 
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -150,7 +149,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     signOut();
                 } else if (id == R.id.use_as_deliverer) {
                     startActivity(new Intent(UserViewActivity.this, DelivererViewActivity.class));
-                    usertype(root,"deliverer");
+                    usertype(root, "deliverer");
 
                     finish();
                 } else if (id == R.id.all_orders_user) {
@@ -165,9 +164,9 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     finished = false;
                     toolbar.setTitle("Active");
                     refreshOrders();
-                }else if (id == R.id.info) {
-                   Intent i=new Intent(UserViewActivity.this, inbox.class);
-                   startActivity(i);
+                } else if (id == R.id.info) {
+                    Intent i = new Intent(UserViewActivity.this, inbox.class);
+                    startActivity(i);
                 } else if (id == R.id.pending_user) {
                     active = false;
                     pending = true;
@@ -202,14 +201,14 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     refreshOrders();
                 } else if (id == R.id.profile) {
                     Intent i = new Intent(UserViewActivity.this, Profile.class);
-                    FirebaseAuth    authx = FirebaseAuth.getInstance();
+                    FirebaseAuth authx = FirebaseAuth.getInstance();
                     String user = authx.getCurrentUser().toString();
 
                     i.putExtra("UserDetail", user);
-                    i.putExtra("type","user");
+                    i.putExtra("type", "user");
                     startActivity(i);
 
-                }else if (id == R.id.chat) {
+                } else if (id == R.id.chat) {
                     Intent i = new Intent(UserViewActivity.this, chatRooms.class);
 
                     startActivity(i);
@@ -237,7 +236,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                         // Respond when the drawer's position changes
 
                         userId = user.getUid();
-ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
+                        ImageView imageViewUserImage = findViewById(R.id.imageViewUserImage);
 
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
@@ -252,7 +251,7 @@ ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
-                                textViewUserName.setText(userDetails.getLast()+""+userDetails.getFirst());
+                                textViewUserName.setText(userDetails.getLast() + "" + userDetails.getFirst());
                                 textViewEmail.setText(userDetails.getEmail());
                                 String photoUrl = userDetails.getCinPhoto();
                                 try {

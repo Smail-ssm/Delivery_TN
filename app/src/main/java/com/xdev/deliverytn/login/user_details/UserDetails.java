@@ -1,6 +1,7 @@
 package com.xdev.deliverytn.login.user_details;
 
 public class UserDetails {
+    public String usertype;
     private String Mobile;
     private String cin;
     private String email;
@@ -17,8 +18,35 @@ public class UserDetails {
     private String role;
     private String zip;
     private float rate;
+    private float ratenumber;
 
     public UserDetails() {
+
+    }
+
+    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profilepic, String city, String first, String gender, String last, String role, String zip, float rate, float ratenumber) {
+        this.usertype = usertype;
+        Mobile = mobile;
+        this.cin = cin;
+        this.email = email;
+        this.wallet = wallet;
+        this.playerId = playerId;
+        this.address = address;
+        this.birth = birth;
+        this.cinPhoto = cinPhoto;
+        this.profilepic = profilepic;
+        this.city = city;
+        this.first = first;
+        this.gender = gender;
+        this.last = last;
+        this.role = role;
+        this.zip = zip;
+        this.rate = rate;
+        this.ratenumber = ratenumber;
+    }
+
+    public String getUsertype() {
+        return usertype;
     }
 
     public String getMobile() {
@@ -149,33 +177,15 @@ public class UserDetails {
         this.rate = rate;
     }
 
-    public int getRate_number() {
-        return rate_number;
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
     }
 
-    public void setRate_number(int rate_number) {
-        this.rate_number = rate_number;
+    public float getRatenumber() {
+        return ratenumber;
     }
 
-    private int rate_number;
-
-    public UserDetails(String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profilepic, String city, String first, String gender, String last, String role, String zip, float rate, int rate_number) {
-        Mobile = mobile;
-        this.cin = cin;
-        this.email = email;
-        this.wallet = wallet;
-        this.playerId = playerId;
-        this.address = address;
-        this.birth = birth;
-        this.cinPhoto = cinPhoto;
-        this.profilepic = profilepic;
-        this.city = city;
-        this.first = first;
-        this.gender = gender;
-        this.last = last;
-        this.role = role;
-        this.zip = zip;
-        this.rate = rate;
-        this.rate_number = rate_number;
+    public void setRatenumber(float ratenumber) {
+        this.ratenumber = ratenumber;
     }
 }

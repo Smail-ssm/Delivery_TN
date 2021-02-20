@@ -56,9 +56,7 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.login.user_details.UserDetails;
-import com.xdev.deliverytn.order_form.DeliveryChargeCalculater;
 import com.xdev.deliverytn.user.order.OrderData;
-import com.xdev.deliverytn.user.order.UserLocation;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -71,9 +69,10 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
-import static com.xdev.deliverytn.order_form.DeliveryChargeCalculater.distancecalc;
+
 
 public class DelivererOrderDetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -685,7 +684,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     InputStream in = new BufferedInputStream(conn.getInputStream());
-                    response[0] = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                    response[0] = org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
 
                     JSONObject jsonObject = new JSONObject(response[0]);
                     JSONArray array = jsonObject.getJSONArray("routes");

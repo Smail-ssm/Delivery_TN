@@ -1,20 +1,22 @@
 package com.xdev.deliverytn.Chat.chatacti;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -24,21 +26,20 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.Chat.chatroom.chatrrom;
 import com.xdev.deliverytn.R;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class ChatMain extends AppCompatActivity {
     private static final String TAG = ChatMain.class.getName();
     private static final int Orderer = 1;
-    DatabaseReference msgs;
-    DatabaseReference database;
+
+    String userid;
     private EditText metText;
     private Button mbtSent;
     private DatabaseReference mFirebaseRef;
@@ -48,6 +49,8 @@ public class ChatMain extends AppCompatActivity {
     private String mId;
     private DatabaseReference msgss;
     private LinearLayout chatLayout;
+    ImageView delevimg, userimg;
+    private DatabaseReference root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,123 +63,97 @@ public class ChatMain extends AppCompatActivity {
         c.setRoomId(i.getStringExtra("RoomId"));
         metText = findViewById(R.id.queryEditText);
         mbtSent = findViewById(R.id.sendBtn);
+//        delevimg=findViewById(R.id.deleveririmg);
+//        userimg=findViewById(R.id.userimg);
         mChats = new ArrayList<String>();
         chatLayout = findViewById(R.id.chatLayout);
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(() -> scrollview.fullScroll(ScrollView.FOCUS_DOWN));
-        database = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId());
-        msgs = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId()).child("message");
-        mFirebaseRef = database.child("message");
+        userid = FirebaseAuth.getInstance().getUid();
+        msgss = FirebaseDatabase.getInstance().getReference("deliveryApp")
+                .child("chatRooms").child("roomId").child(c.roomId)
+                .child("messages");
+        msgss.keepSynced(true);
+        root = FirebaseDatabase.getInstance().getReference("deliveryApp").child("users");
+        keepitup();
+        getallmessages();
+        mbtSent.setOnClickListener(v -> {
+            String message = metText.getText().toString();
 
-        mbtSent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                String message = metText.getText().toString();
-
-                if (!message.isEmpty()) {
-
-//                    mFirebaseRef.setValue(new Chat(message, FirebaseAuth.getInstance().getUid()));
-////                    mFirebaseRef.child("msgnumber").setValue(Integer.parseInt(mFirebaseRef.child("msgnumber").getKey()))++);
-//                    incrementCounter();
-                    sendmsg(message);
-                } else {
-                    Toast.makeText(ChatMain.this, "message can not be empty", Toast.LENGTH_SHORT).show();
-                }
-
-                showTextView(message, 1);
-                metText.setText(null);
-                metText.requestFocus();
+            if (!message.isEmpty()) {
+                sendmsg(message);
+            } else {
+                Toast.makeText(ChatMain.this, "message can not be empty", Toast.LENGTH_SHORT).show();
             }
+
+            metText.setText("");
+            metText.requestFocus();
         });
+    }
 
-        getallmessages(c);
-        msgs.keepSynced(true);
-        database.keepSynced(true);
-        msgs.addValueEventListener(new ValueEventListener() {
+    void keepitup() {
+        ChildEventListener childEventListener = new ChildEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                    try {
+            public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
 
-                        Chat model = dataSnapshot.getValue(Chat.class);
-                        if (!model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
-                            showTextView(model.getMessage(), 0);
-
-                        }
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.getMessage());
-                    }
-                }
+                // A new comment has been added, add it to the displayed list
+                Chat c = dataSnapshot.getValue(Chat.class);
+                setupMsgNotif(c);
+                getallmessages();
             }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        msgs.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                    try {
-
-                        Chat model = dataSnapshot.getValue(Chat.class);
-                        if (model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
-                            showTextView(model.getMessage(), 0);
-                        }
-
-                    } catch (Exception ex) {
-                        Log.e(TAG, ex.getMessage());
-                    }
-                }
-            }
 
             @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+            public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
+
+
+                Chat c = dataSnapshot.getValue(Chat.class);
+                Toast.makeText(ChatMain.this, "changed" + c.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
+                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
 
             }
 
             @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+            public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
+                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
 
+                Chat c = dataSnapshot.getValue(Chat.class);
+                Toast.makeText(ChatMain.this, "moved" + c.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.d(TAG, databaseError.getMessage());
+                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
+                Toast.makeText(ChatMain.this, "Failed to load messages.",
+                        Toast.LENGTH_SHORT).show();
             }
-        });
+        };
+        msgss.addChildEventListener(childEventListener);
     }
 
-    private void sendMessage(View view) {
+    void getallmessages() {
 
-    }
-
-    void getallmessages(chatrrom c) {
-        msgss = FirebaseDatabase.getInstance().getReference("deliveryApp")
-                .child("chatRooms").child("roomId")
-                .child(c.getRoomId());
         msgss.addListenerForSingleValueEvent(
                 new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-                        //Get map of users in datasnapshot
-                        Map<Chat, Object> map
-                                = (Map<Chat, Object>) dataSnapshot.getValue();
-//                        if (map.get(0)getId()
-//                                .equals(FirebaseAuth.getInstance()
-//                                        .getUid())) {
-//                            showTextView(c.getMessage(), 1);
-//                        } else {
-//                            showTextView(c.getMessage(), 0);
-//
-//                        }
-                        Toast.makeText(ChatMain.this, map.toString(), Toast.LENGTH_SHORT).show();
+                        for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                            Chat message = postSnapshot.getValue(Chat.class);
+                            if (message.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
+                                showTextView(message.getMessage(), 1);
+                            } else {
+                                showTextView(message.getMessage(), 0);
+                            }
+                            setupMsgNotif(message);
+
+                        }
                     }
 
                     @Override
@@ -188,68 +165,49 @@ public class ChatMain extends AppCompatActivity {
 
     }
 
-    public void incrementCounter() {
-        mFirebaseRef.child("msgnumber").runTransaction(new Transaction.Handler() {
-            @Override
-            public Transaction.Result doTransaction(final MutableData currentData) {
-                if (currentData.getValue() == null) {
-                    currentData.setValue(1);
-                } else {
-                    currentData.setValue((Long) currentData.getValue() + 1);
-                }
 
-                return Transaction.success(currentData);
-            }
-
-            @Override
-            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
-                if (error != null) {
-                    Log.d("err", "Firebase counter increment failed.");
-                } else {
-                    Log.d("err", "Firebase counter increment succeeded.");
-                }
-            }
-
-
-        });
-    }
 
     public Boolean sendmsg(String msg) {
 
+        DatabaseReference childRoot = msgss.push();
 
-        database.keepSynced(true);
-//        database = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId());
+        Map<String, Object> map = new HashMap<String, Object>();
 
-        database.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild("msgN")) {
-                    Chat c = new Chat();
-                    c.setId(FirebaseAuth.getInstance().getUid());
-                    c.setMessage(msg);
-                    c.setMsgN();
-                    database.child(String.valueOf(c.getMsgN())).setValue(c);
-                } else {
-                    int msgn = dataSnapshot.child("msgnumber").getValue(Integer.class);
-                    msgn++;
-                    Chat c = new Chat();
-                    c.setId(FirebaseAuth.getInstance().getUid());
-                    c.setMessage(msg);
-                    c.setMsgN(msgn);
-                    database.child(String.valueOf(c.getMsgN())).setValue(c);
-                }
-                showTextView(msg, 1);
-            }
+        map.put("id", userid);
+        map.put("message", msg);
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-        Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
+        childRoot.updateChildren(map);
         return true;
-//    Log.d("RESPONSE",inResponse.toString());
+    }
 
+    private void setupMsgNotif(Chat c) {
+
+        // prepare intent which is triggered if the
+// notification is selected
+
+        Intent intent = new Intent(this, chatrrom.class);
+// use System.currentTimeMillis() to have a unique ID for the pending intent
+        PendingIntent pIntent = PendingIntent.getActivity(this, (int) System.currentTimeMillis(), intent, 0);
+
+// build notification
+// the addAction re-use the same intent to keep the example short
+        DatabaseReference sender = root.child(c.getId());
+        Notification n = new Notification.Builder(this)
+                .setContentTitle("New Message ")
+                .setContentText(c.getMessage())
+                .setSmallIcon(R.drawable.bg_button_send_message)
+                .setContentIntent(pIntent)
+                .setAutoCancel(true)
+//                .addAction(R.drawable.icon, "Call", pIntent)
+//                .addAction(R.drawable.icon, "More", pIntent)
+//                .addAction(R.drawable.icon, "And more", pIntent)
+                .build();
+
+
+        NotificationManager notificationManager =
+                (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        notificationManager.notify(0, n);
     }
 
     private void showTextView(String message, int type) {
@@ -258,14 +216,14 @@ public class ChatMain extends AppCompatActivity {
             layout = getUserLayout();
         } else {
             layout = getBotLayout();
-            final MediaPlayer mp = MediaPlayer.create(this, R.raw.notif);
-            mp.start();
         }
         layout.setFocusableInTouchMode(true);
         chatLayout.addView(layout);
         TextView tv = layout.findViewById(R.id.chatMsg);
         tv.setText(message);
         layout.requestFocus();
+//        playnotifsound();
+
     }
 
     FrameLayout getUserLayout() {
@@ -276,5 +234,10 @@ public class ChatMain extends AppCompatActivity {
     FrameLayout getBotLayout() {
         LayoutInflater inflater = LayoutInflater.from(ChatMain.this);
         return (FrameLayout) inflater.inflate(R.layout.bot_msg_layout, null);
+    }
+
+    public void playnotifsound() {
+        final MediaPlayer mp = MediaPlayer.create(this, R.raw.notif);
+        mp.start();
     }
 }
