@@ -1,44 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".Chat.chatacti.ChatMain">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvChat"
-        android:scrollbars="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/relativeLayout"
-        android:background="@drawable/chat_background"/>
 
     <RelativeLayout
+        android:id="@+id/inputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
         android:background="@android:color/white"
-        android:padding="5dp"
-        android:id="@+id/relativeLayout">
+        android:gravity="bottom"
+        android:paddingStart="8dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="8dp"
+        android:paddingBottom="9dp">
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/etText"
-            android:layout_centerVertical="true"
-            android:layout_alignParentStart="true"
-            android:layout_toStartOf="@+id/btSent" />
 
         <Button
-            style="?android:attr/buttonStyleSmall"
+            android:id="@+id/sendBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="send"
-            android:id="@+id/btSent"
-            android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:textColor="@android:color/black"/>
+            android:drawableLeft="@drawable/ic_baseline_send_24"
+            android:paddingTop="4dp"
+            android:text="Send" />
+
+        <EditText
+            android:id="@+id/queryEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@+id/sendBtn"
+            android:imeOptions="actionSend"
+            android:inputType="text"
+            android:paddingTop="4dp"
+            android:textSize="18sp" />
+
     </RelativeLayout>
+
+    <ScrollView
+        android:id="@+id/chatScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/inputLayout">
+
+        <LinearLayout
+            android:id="@+id/chatLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"></LinearLayout>
+
+
+    </ScrollView>
+
 </RelativeLayout>

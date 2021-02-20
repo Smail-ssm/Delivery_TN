@@ -13,6 +13,9 @@ public class Chat {
         this.id = id;
     }
 
+    public Chat() {
+    }
+
     public String getMessage() {
         return message;
     }

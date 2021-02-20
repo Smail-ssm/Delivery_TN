@@ -16,7 +16,7 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
     private static final int CHAT_END = 1;
     private static final int CHAT_START = 2;
 
-    private List<Chat> mDataSet;
+    private List<String> mDataSet;
     private String mId;
 
     /**
@@ -25,10 +25,12 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
      * @param dataSet Message list
      * @param id      Device id
      */
-    chatadapter(List<Chat> dataSet, String id) {
+    chatadapter(List<String> dataSet, String id) {
         mDataSet = dataSet;
         mId = id;
     }
+
+
 
     @Override
     public chatadapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -43,19 +45,19 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
         return new ViewHolder(v);
     }
 
-    @Override
-    public int getItemViewType(int position) {
-        if (mDataSet.get(position).getId().equals(mId)) {
-            return CHAT_END;
-        }
-
-        return CHAT_START;
-    }
+//    @Override
+//    public int getItemViewType(int position) {
+//        if (mDataSet.get(position).equals(mId)) {
+//            return CHAT_END;
+//        }
+//
+//        return CHAT_START;
+//    }
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        Chat chat = mDataSet.get(position);
-        holder.mTextView.setText(chat.getMessage());
+        String chat = mDataSet.get(position);
+        holder.mTextView.setText(chat);
     }
 
     @Override
