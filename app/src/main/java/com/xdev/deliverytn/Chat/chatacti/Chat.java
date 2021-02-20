@@ -6,18 +6,20 @@ package com.xdev.deliverytn.Chat.chatacti;
 public class Chat {
     public String message;
     public String id;
-
-
-    public Chat(String message, String id) {
-        this.message = message;
-        this.id = id;
-    }
+    public int msgN;
 
     public Chat() {
+
     }
 
     public String getMessage() {
         return message;
+    }
+
+    public Chat(String message, String id, int msgN) {
+        this.message = message;
+        this.id = id;
+        this.msgN = msgN;
     }
 
     public void setMessage(String message) {
@@ -30,5 +32,13 @@ public class Chat {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getMsgN() {
+        return msgN;
+    }
+
+    public void setMsgN(int msgN) {
+        this.msgN = msgN;
     }
 }

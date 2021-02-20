@@ -14,6 +14,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -23,6 +24,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.Chat.chatroom.chatrrom;
 import com.xdev.deliverytn.R;
@@ -35,6 +38,7 @@ public class ChatMain extends AppCompatActivity {
     private static final String TAG = ChatMain.class.getName();
     private static final int Orderer = 1;
     DatabaseReference msgs;
+    DatabaseReference database;
     private EditText metText;
     private Button mbtSent;
     private DatabaseReference mFirebaseRef;
@@ -55,11 +59,12 @@ public class ChatMain extends AppCompatActivity {
         c.setDeliverId(i.getStringExtra("DeliverId"));
         c.setRoomId(i.getStringExtra("RoomId"));
         metText = findViewById(R.id.queryEditText);
-        mbtSent = findViewById(R.id.sendBtn); mChats = new ArrayList<String>();
+        mbtSent = findViewById(R.id.sendBtn);
+        mChats = new ArrayList<String>();
         chatLayout = findViewById(R.id.chatLayout);
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(() -> scrollview.fullScroll(ScrollView.FOCUS_DOWN));
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId());
+        database = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId());
         msgs = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId()).child("message");
         mFirebaseRef = database.child("message");
 
@@ -70,7 +75,10 @@ public class ChatMain extends AppCompatActivity {
 
                 if (!message.isEmpty()) {
 
-                    mFirebaseRef.setValue(new Chat(message, FirebaseAuth.getInstance().getUid()));
+//                    mFirebaseRef.setValue(new Chat(message, FirebaseAuth.getInstance().getUid()));
+////                    mFirebaseRef.child("msgnumber").setValue(Integer.parseInt(mFirebaseRef.child("msgnumber").getKey()))++);
+//                    incrementCounter();
+                    sendmsg(message);
                 } else {
                     Toast.makeText(ChatMain.this, "message can not be empty", Toast.LENGTH_SHORT).show();
                 }
@@ -81,7 +89,7 @@ public class ChatMain extends AppCompatActivity {
             }
         });
 
-          getallmessages(c);
+        getallmessages(c);
         msgs.keepSynced(true);
         database.keepSynced(true);
         msgs.addValueEventListener(new ValueEventListener() {
@@ -91,10 +99,10 @@ public class ChatMain extends AppCompatActivity {
                     try {
 
                         Chat model = dataSnapshot.getValue(Chat.class);
-if (!model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
-    showTextView(model.getMessage(), 0);
+                        if (!model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
+                            showTextView(model.getMessage(), 0);
 
-}
+                        }
                     } catch (Exception ex) {
                         Log.e(TAG, ex.getMessage());
                     }
@@ -180,6 +188,69 @@ if (!model.getId().equalsIgnoreCase(FirebaseAuth.getInstance().getUid())) {
 
     }
 
+    public void incrementCounter() {
+        mFirebaseRef.child("msgnumber").runTransaction(new Transaction.Handler() {
+            @Override
+            public Transaction.Result doTransaction(final MutableData currentData) {
+                if (currentData.getValue() == null) {
+                    currentData.setValue(1);
+                } else {
+                    currentData.setValue((Long) currentData.getValue() + 1);
+                }
+
+                return Transaction.success(currentData);
+            }
+
+            @Override
+            public void onComplete(@Nullable DatabaseError error, boolean committed, @Nullable DataSnapshot currentData) {
+                if (error != null) {
+                    Log.d("err", "Firebase counter increment failed.");
+                } else {
+                    Log.d("err", "Firebase counter increment succeeded.");
+                }
+            }
+
+
+        });
+    }
+
+    public Boolean sendmsg(String msg) {
+
+
+        database.keepSynced(true);
+//        database = FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").child(c.getRoomId());
+
+        database.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if (!dataSnapshot.hasChild("msgN")) {
+                    Chat c = new Chat();
+                    c.setId(FirebaseAuth.getInstance().getUid());
+                    c.setMessage(msg);
+                    c.setMsgN();
+                    database.child(String.valueOf(c.getMsgN())).setValue(c);
+                } else {
+                    int msgn = dataSnapshot.child("msgnumber").getValue(Integer.class);
+                    msgn++;
+                    Chat c = new Chat();
+                    c.setId(FirebaseAuth.getInstance().getUid());
+                    c.setMessage(msg);
+                    c.setMsgN(msgn);
+                    database.child(String.valueOf(c.getMsgN())).setValue(c);
+                }
+                showTextView(msg, 1);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+        Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
+        return true;
+//    Log.d("RESPONSE",inResponse.toString());
+
+    }
 
     private void showTextView(String message, int type) {
         FrameLayout layout;
