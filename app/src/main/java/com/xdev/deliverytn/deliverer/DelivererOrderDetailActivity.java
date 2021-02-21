@@ -576,6 +576,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     JSONObject order = new JSONObject();
                     order.put("userId", myOrder.userId);
                     order.put("orderId", myOrder.orderId);
+                    order.put("price", myOrder.final_price);
                     notificationContent.putOpt("data", order);
                     OneSignal.postNotification(notificationContent, null);
                 } catch (JSONException e) {

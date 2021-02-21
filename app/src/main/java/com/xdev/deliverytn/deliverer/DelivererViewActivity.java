@@ -534,7 +534,10 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     return;
                 OrderData clickedOrder = orderList.get(position);
                 Intent intent = new Intent(DelivererViewActivity.this, DelivererOrderDetailActivity.class);
-                intent.putExtra("MyOrder", clickedOrder);
+                intent.putExtra(
+                        "MyOrder",
+                        clickedOrder
+                );
                 startActivity(intent);
                 resumed = false;
 
