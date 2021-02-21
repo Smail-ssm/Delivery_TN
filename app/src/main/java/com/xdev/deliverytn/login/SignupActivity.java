@@ -268,7 +268,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setAddress(address.getText().toString());
                                         u.setBirth(datn.getText().toString());
                                         u.setCinPhoto("noPhoto");
-                                        u.setProfilepic("nophoto");
+                                        u.setProfile("nophoto");
                                         u.setCity(gov.getSelectedItem().toString());
                                         u.setFirst(first.getText().toString());
                                         u.setGender(gender);

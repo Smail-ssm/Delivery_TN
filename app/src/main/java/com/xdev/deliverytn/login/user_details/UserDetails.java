@@ -10,7 +10,7 @@ public class UserDetails {
     private String address;
     private String birth;
     private String cinPhoto;
-    private String profilepic;
+    private String profile;
     private String city;
     private String first;
     private String gender;
@@ -24,7 +24,7 @@ public class UserDetails {
 
     }
 
-    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profilepic, String city, String first, String gender, String last, String role, String zip, float rate, float ratenumber) {
+    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String gender, String last, String role, String zip, float rate, float ratenumber) {
         this.usertype = usertype;
         Mobile = mobile;
         this.cin = cin;
@@ -34,7 +34,7 @@ public class UserDetails {
         this.address = address;
         this.birth = birth;
         this.cinPhoto = cinPhoto;
-        this.profilepic = profilepic;
+        this.profile = profile;
         this.city = city;
         this.first = first;
         this.gender = gender;
@@ -113,12 +113,12 @@ public class UserDetails {
         this.cinPhoto = cinPhoto;
     }
 
-    public String getProfilepic() {
-        return profilepic;
+    public String getProfile() {
+        return profile;
     }
 
-    public void setProfilepic(String profilepic) {
-        this.profilepic = profilepic;
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public String getCity() {

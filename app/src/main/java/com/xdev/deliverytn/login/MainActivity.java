@@ -4,16 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -21,15 +16,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,14 +30,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
-import androidx.core.graphics.drawable.RoundedBitmapDrawable;
-import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
-import com.firebase.ui.storage.images.FirebaseImageLoader;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -79,9 +63,6 @@ import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -98,12 +79,14 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private static final int CAMERA_REQUEST_profile_change = 1886;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int PICK_IMAGE_REQUEST = 234;
+    private static Context mContext;
     private final int SELECT_FILE = 1;
     private final Handler handler = new Handler();
+    private final int PICK_IMAGE_REQUEST_profile = 233;
     public Uri photoURI;
-    boolean rectoExists = false;
     GridLayout mainGrid;
     File imageFilePath;
+    Boolean isCin = false, isProfile = false;
     String cinphoto;
     AnimationDrawable animationDrawable;
     Button recto;
@@ -116,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     boolean profileexsists = false;
     String name;
     String url;
+    Snackbar snackbar;
     ProgressBar p;
     ImageView profilepic;
     String usertype;
@@ -124,7 +108,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
     private ImageView ivImage;
-    private static Context mContext;
 
     public static Context getContext() {
         return mContext;
@@ -169,37 +152,59 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 username.setText("Welcome " + name);
 
                 if (dataSnapshot.child("cinPhoto").getValue(String.class).equalsIgnoreCase("nophoto")) {
-                    rectoExists = false;
-                    recto.setText("verify");profilepic.setImageResource(R.drawable.smiley);
+                    recto.setText("verify");
                     recto.setBackgroundColor(Color.RED);
                     showSnacks("account waiting verification");
                 } else {
-                    rectoExists = true;
-                    userinfo.child("cinPhoto").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            String photoUrl = dataSnapshot.getValue(String.class);
-                            try {
-                                Picasso.get()
-                                        .load(photoUrl)
-                                        .into(profilepic);
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-
-                        }
-                    });
+//
                     recto.setText("verified");
+                    recto.setBackgroundColor(Color.TRANSPARENT);
+
                     recto.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
                             showSnacks("no need for verification you r ready to go ");
+                            showSnacks("long click to view picture");
                             return;
+                        }
+                    });
+                    recto.setOnLongClickListener(new View.OnLongClickListener() {
+                        @Override
+                        public boolean onLongClick(View v) {
+                            Dialog builder1 = new Dialog(MainActivity.this);
+                            builder1.create();
+                            builder1.setContentView(R.layout.imgdialo);
+                            Button btn1 = builder1.findViewById(R.id.btn1);
+                            Button btn2 = builder1.findViewById(R.id.btn2);
+                            TextView t = builder1.findViewById(R.id.text_dialog);
+                            ImageView a = builder1.findViewById(R.id.a);
+                            builder1.setOnShowListener(dialogInterface -> {
+                                Picasso
+                                        .get()
+                                        .load(dataSnapshot.child("cinPhoto").getValue(String.class))
+                                        .into(a);
+
+
+                                btn1.setVisibility(View.GONE);
+                                t.setVisibility(View.GONE);
+
+                                btn2.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        builder1.dismiss();
+                                    }
+                                });
+                                btn1.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        builder1.dismiss();
+                                    }
+                                });
+
+
+                            });
+                            builder1.show();
+                            return false;
                         }
                     });
                 }
@@ -211,85 +216,83 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             }
         });
 
-//        if (profileexsists == false) {
-//            showSnacks("please add profile picture");
-//
-//        }
+        profilepic.setOnClickListener(v -> {
+            Intent i = new Intent(MainActivity.this, Profile.class);
+            startActivity(i);
 
-//            profilepic.setImageURI(Uri.parse(root.child("deliveryApp").child("users").child(userId).child("profile").toString() + "profilePic.jpg"));
-        profilepic.setOnClickListener(new View.OnClickListener() {
+        });
+        userinfo.child("profile").addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, Profile.class);
-                startActivity(i);
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String photoUrl = dataSnapshot.getValue(String.class);
+                try {
+                    Picasso.get()
+                            .load(photoUrl)
+                            .into(profilepic);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        profilepic.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setMessage("camera ?")
-                        .setCancelable(true)
-                        .setPositiveButton("camera", (dialog, id) -> {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                                } else {
+        profilepic.setOnLongClickListener(v -> {
+            isProfile = true;
+            builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setMessage("Choose image source")
+                    .setCancelable(true)
+                    .setPositiveButton("camera", (dialog, id) -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                            } else {
 
-                                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                    try {
-                                        imageFilePath = createImageFile();
-                                    } catch (IOException e) {
-                                        e.printStackTrace();
-                                    }
-                                    photoURI = FileProvider.getUriForFile(MainActivity.this, "com.xdev.pfe.utils.fileprovider", imageFilePath);
-                                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                    startActivityForResult(cameraIntent, CAMERA_REQUEST_profile);
+                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                try {
+                                    imageFilePath = createImageFile();
+                                } catch (IOException e) {
+                                    e.printStackTrace();
                                 }
+                                photoURI = FileProvider.getUriForFile(MainActivity.this, "com.xdev.pfe.utils.fileprovider", imageFilePath);
+                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                startActivityForResult(cameraIntent, CAMERA_REQUEST);
                             }
-                        })
-                        .setNegativeButton("Gallery", (dialog, id) -> chooseImage());
-                //Creating dialog box
-                AlertDialog alert = builder.create();
-                //Setting the title manually
-                alert.setTitle("add profile pic");
-                alert.show();
-                return false;
-            }
+                        }
+                    })
+                    .setNegativeButton("Gallery", (dialog, id) -> chooseImage());
+            //Creating dialog box
+            AlertDialog alert = builder.create();
+            //Setting the title manually
+            alert.setTitle("add profile pic");
+            alert.show();
+            return false;
         });
 
 
-        logOutButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builder = new AlertDialog.Builder(MainActivity.this);
-                builder                        .setCancelable(false)
-                        .setPositiveButton("yes", (dialog, id) -> {
-                            FirebaseAuth auth = FirebaseAuth.getInstance();
-                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-                            auth.signOut();
-                            Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
-                            startActivity(loginIntent);
-                            finish();
-                        })
-                        .setNegativeButton("NO", (dialog, id) -> dialog.dismiss());
-                //Creating dialog box
-                AlertDialog alert = builder.create();
-                //Setting the title manually
-                alert.setTitle("Logout ?");
-                alert.show();
+        logOutButton.setOnClickListener(v -> {
+            builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setCancelable(false)
+                    .setPositiveButton("yes", (dialog, id) -> {
+                        FirebaseAuth auth = FirebaseAuth.getInstance();
+                        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        auth.signOut();
+                        Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
+                        startActivity(loginIntent);
+                        finish();
+                    })
+                    .setNegativeButton("NO", (dialog, id) -> dialog.dismiss());
+            //Creating dialog box
+            AlertDialog alert = builder.create();
+            //Setting the title manually
+            alert.setTitle("Logout ?");
+            alert.show();
 
-            }
         });
-//
-//username.setOnClickListener(new View.OnClickListener() {
-//    @Override
-//    public void onClick(View v) {
-//        Intent i=new Intent(MainActivity.this, Profile.class);
-//        startActivity(i);
-//    }
-//});
         authListener = firebaseAuth -> {
             FirebaseUser user1 = firebaseAuth.getCurrentUser();
             if (user1 == null) {
@@ -298,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             }
         };
         recto.setOnClickListener(v -> {
+            isCin = true;
             builder = new AlertDialog.Builder(MainActivity.this);
             builder.setMessage("camera ?")
                     .setCancelable(false)
@@ -431,7 +435,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                System.out.println("task ke OnSuccess mai hoon");
 
             }
         });
@@ -457,140 +460,104 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK || requestCode == CAMERA_REQUEST
-                && data != null
-                && data.getData() != null) {
-            Dialog builder = new Dialog(this);
-            builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            builder.getWindow().setBackgroundDrawable(
-                    new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                    builder.setMessage("Save picture ?")
-                            .setCancelable(false)
-                            .setPositiveButton("upload", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (
-                                            requestCode
-                                                    ==
-                                                    CAMERA_REQUEST
-                                    ) {
-                                        if ((data
-                                                ==
-                                                null
-                                                ||
-                                                data.getData()
-                                                        == null)) {
-                                            uploadimg(photoURI);
-                                            try {
-                                                saveToStorage(photoURI, "CIN");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        } else {
-                                            uploadimg(data.getData());
-                                            try {
-                                                saveToStorage(data.getData(), "CIN");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-                                    } else if (
-                                            requestCode
-                                                    ==
-                                                    CAMERA_REQUEST_profile) {
-                                        if (data
-                                                == null ||
-                                                data.getData()
-                                                        == null) {
-                                            uploadProfile(photoURI);
-                                            try {
-                                                saveToStorage(photoURI, "profile");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+        if (resultCode == RESULT_OK || requestCode == CAMERA_REQUEST && data != null && data.getData() != null) {
 
 
-                                        } else {
-                                            uploadProfile(data.getData());
-                                            try {
-                                                saveToStorage(data.getData(), "profile");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+            Dialog builder1 = new Dialog(this);
+            builder1.create();
+            builder1.setContentView(R.layout.imgdialo);
+            Button btn1 = builder1.findViewById(R.id.btn1);
+            Button btn2 = builder1.findViewById(R.id.btn2);
+            ImageView a = builder1.findViewById(R.id.a);
+            builder1.setOnShowListener(dialogInterface -> {
+                if (data == null || data.getData() == null) {
+                    a.setImageURI(photoURI);
 
-                                        }
-                                    }
-                                }
-                            })
-                            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-
-
+                } else {
+                    a.setImageURI(data.getData());
                 }
+
+                btn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        //cin
+                        if ((requestCode == CAMERA_REQUEST)) {
+                            if (isCin) {
+                                // if (!(data == null || data.getData() == null)) {
+                                uploadCin(photoURI);
+//                                a.setImageURI(data.getData());
+                                isCin = false;
+                                builder1.dismiss();
+
+                                // }
+                            }
+                            if (isProfile) {
+                                //   if (!(data == null || data.getData() == null)) {
+                                uploadProfile(photoURI);
+//                                a.setImageURI(photoURI);
+                                isProfile = false;
+                                builder1.dismiss();
+                                // }
+                            }
+
+                        }
+                        if (requestCode == PICK_IMAGE_REQUEST) {
+                            if (isCin) {
+                                uploadCin(data.getData());
+//                                a.setImageURI(photoURI);
+                                isCin = false;
+
+                                builder1.dismiss();
+
+                            }
+                            if (isProfile) {
+                                uploadProfile(data.getData());
+//                                a.setImageURI(data.getData());
+                                builder1.dismiss();
+                                isProfile = false;
+
+                            }
+                        }
+
+
+                    }
+                });
+                btn2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        builder1.dismiss();
+                    }
+                });
+
+
             });
-
-            ImageView imageView = new ImageView(this);
-            imageView.setImageURI(photoURI);
-            builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            builder.show();
-
-
+            builder1.show();
         }
-
     }
 
-    private String saveToStorage(Uri data, String pictype) throws IOException {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
-        Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data);
 
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        // Create imageDir
-        File mypath = new File(directory, pictype + ".jpg");
-
-        FileOutputStream fos = null;
-        try {
-            fos = new FileOutputStream(mypath);
-            // Use the compress method on the BitMap object to write image to the OutputStream
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        return directory.getAbsolutePath();
-    }
-
-    private void uploadimg(Uri filePath) {
+    private void uploadCin(Uri filePath) {
         if (filePath != null) {
 
-            StorageReference sRef = storageReference.child("uploads/" + auth.getUid() + "/" + auth.getCurrentUser().getEmail() + ".jpg");       //adding the file to reference
+            StorageReference sRef = storageReference.child("uploads/" + auth.getUid() + "/" + "cin/" + auth.getCurrentUser().getEmail() + ".jpg");       //adding the file to reference
+            storageReference.child("uploads/" + auth.getUid() + "/" + "cin/").delete();
             UploadTask uploadTask = sRef.putFile(filePath);
+            int color;
+            color = Color.WHITE;
+            snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), "uploading...", Snackbar.LENGTH_INDEFINITE);
 
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            View sbView = snackbar.getView();
+            TextView textView = sbView.findViewById(R.id.snackbar_text);
+            textView.setTextColor(color);
+            snackbar.show();
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
+
                     return sRef.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -598,8 +565,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        update_user(downloadUri);
-                        showSnacks("Done ☺ ");
+                        update_user_cin(downloadUri);
+                        showSnacks("Done ☺ CIN ");
 
                     } else {
                         showSnacks("error while uploading");
@@ -616,15 +583,41 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private void uploadProfile(Uri filePath) {
         if (filePath != null) {
 
-            StorageReference sRef = storageReference.child("uploads/" + auth.getUid() + "/" + "profilePic" + ".jpg");       //adding the file to reference
-            UploadTask uploadTask = sRef.putFile(filePath);
+            StorageReference sRef = storageReference.child("uploads/" + auth.getUid() + "/" + "profile/" + "profilePic_" + System.currentTimeMillis() + ".jpg");       //adding the file to reference
 
-            Task<Uri> urlTask = uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
+            StorageReference desertRef = storageReference.child("uploads/" + auth.getUid() + "/profile/");
+
+
+            desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+                @Override
+                public void onSuccess(Void aVoid) {
+                    Toast.makeText(MainActivity.this, "deleted old pic", Toast.LENGTH_SHORT).show();
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(MainActivity.this, "exception" + exception.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+
+            UploadTask uploadTask = sRef.putFile(filePath);
+            int color;
+            color = Color.WHITE;
+            snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), "uploading...", Snackbar.LENGTH_INDEFINITE);
+
+            View sbView = snackbar.getView();
+            TextView textView = sbView.findViewById(R.id.snackbar_text);
+            textView.setTextColor(color);
+            snackbar.show();
+
+            uploadTask.continueWithTask(new Continuation<UploadTask.TaskSnapshot, Task<Uri>>() {
                 @Override
                 public Task<Uri> then(@NonNull Task<UploadTask.TaskSnapshot> task) throws Exception {
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
+
                     return sRef.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -633,8 +626,14 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         update_user_profile(downloadUri);
-                        showSnacks("Done ☺ ");
-                        profilepic.setImageURI(downloadUri);
+                        snackbar.dismiss();
+                        showSnacks("Done ☺ profile ");
+
+
+                        Picasso.get()
+                                .load(downloadUri)
+                                .into(profilepic);
+
 
                     } else {
                         showSnacks("error while uploading");
@@ -648,30 +647,13 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
     }
 
-    Bitmap loadImageFromStorage(String type) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-
-        Bitmap b = null;
-        try {
-            File f = new File(directory, type + ".jpg");
-            b = BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        }
-        profileexsists = true;
-        return b;
-    }
-
-    void update_user(Uri test) {
+    void update_user_cin(Uri test) {
         root.child("deliveryApp").child("users").child(userId).child("cinPhoto").setValue(test.toString());
-        rectoExists = true;
     }
 
     void update_user_profile(Uri test) {
         root.child("deliveryApp").child("users").child(userId).child("profile").setValue(test.toString());
-        profilepicexsists = true;
+
     }
 
     @Override
@@ -726,13 +708,25 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         snackbar.show();
     }
 
+    private void showSnackUploading(String msg) {
+        int color;
+        color = Color.WHITE;
+        Snackbar snackbar = Snackbar
+                .make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG);
+
+        View sbView = snackbar.getView();
+        TextView textView = sbView.findViewById(R.id.snackbar_text);
+        textView.setTextColor(color);
+        snackbar.show();
+    }
+
     void animation() {
         /*LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.activity_login,null);*/
         LinearLayout linearLayout = findViewById(R.id.mainLinearLayout);
         animationDrawable = (AnimationDrawable) linearLayout.getBackground();
-        animationDrawable.setEnterFadeDuration(1000);
-        animationDrawable.setExitFadeDuration(1000);
+        animationDrawable.setEnterFadeDuration(500);
+        animationDrawable.setExitFadeDuration(500);
     }
 
     @Override

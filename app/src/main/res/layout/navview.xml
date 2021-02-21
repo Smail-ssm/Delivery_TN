@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+
+        <item
+            android:id="@+id/use_as_deliverer"
+            android:icon="@drawable/ic_deliverer_foreground"
+            android:title="View as Orderer"
+            tools:ignore="HardcodedText" />
+
+        <item
+            android:id="@+id/use_as_user"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:icon="@drawable/ic_orderer_new"
+            android:title="View as Orderer"
+            tools:ignore="HardcodedText" />
+
+        <item
+            android:id="@+id/profile"
+            android:icon="@drawable/ic_baseline_mood_24"
+            android:title="View Profile"
+            tools:ignore="HardcodedText" />
+
+        <item
+            android:id="@+id/chatroom"
+            android:icon="@drawable/ic_baseline_message_24"
+            android:title="Chat rooms"
+            tools:ignore="HardcodedText" />
+    </group>
+
+    <item
+        android:title="Account Settings"
+        tools:ignore="HardcodedText">
+
+        <menu>
+
+            <item
+                android:id="@+id/info"
+                android:icon="@drawable/ic_baseline_info_24"
+                android:title="Inbox" />
+
+            <item
+                android:id="@+id/setting"
+                android:icon="@drawable/ic_baseline_settings_24"
+                android:title="Inbox" />
+
+            <item
+                android:id="@+id/sign_out_deliverer"
+                android:icon="@drawable/ic_menu_signout"
+                android:title="Sign Out" />
+        </menu>
+    </item>
+
+</menu>

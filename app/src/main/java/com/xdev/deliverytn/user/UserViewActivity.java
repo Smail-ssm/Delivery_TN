@@ -75,6 +75,8 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
     boolean isRefreshing = false;
     NavigationView navigationView;
     View mHeaderView;
+    ImageView imageViewUserImage;
+
     TextView textViewUserName;
     TextView textViewEmail;
     Toolbar toolbar;
@@ -129,8 +131,6 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
     void setUpNavigationView() {
         navigationView = findViewById(R.id.nav_view_user);
-        ImageView imageViewUserImage = findViewById(R.id.imageViewUserImage);
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -213,6 +213,11 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
                     startActivity(i);
 
+                } else if (id == R.id.info) {
+                    Intent i = new Intent(UserViewActivity.this, inbox.class);
+
+                    startActivity(i);
+
                 }
                 // Add code here to update the UI based on the item selected
                 // For example, swap UI fragments here
@@ -236,7 +241,6 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                         // Respond when the drawer's position changes
 
                         userId = user.getUid();
-                        ImageView imageViewUserImage = findViewById(R.id.imageViewUserImage);
 
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
@@ -244,16 +248,18 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 userDetails = dataSnapshot.getValue(UserDetails.class);
+
                                 mHeaderView = navigationView.getHeaderView(0);
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
+                                imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
                                 int wallet = userDetails.getWallet();
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
-                                textViewUserName.setText(userDetails.getLast() + "" + userDetails.getFirst());
+                                textViewUserName.setText(userDetails.getLast() + " " + userDetails.getFirst());
                                 textViewEmail.setText(userDetails.getEmail());
-                                String photoUrl = userDetails.getCinPhoto();
+                                String photoUrl = userDetails.getProfile();
                                 try {
                                     Picasso.get()
                                             .load(photoUrl)

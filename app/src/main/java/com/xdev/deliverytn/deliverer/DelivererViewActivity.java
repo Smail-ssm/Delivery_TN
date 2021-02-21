@@ -106,6 +106,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
     boolean havelocation;
     boolean resumed;
     double latitude, longitude;
+    ImageView imageViewUserImage;
     private FirebaseAuth.AuthStateListener authListener;
     private DatabaseReference forUserData;
     private DatabaseReference childOrders;
@@ -168,18 +169,20 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
             add = add + "\n" + address.getSubAdminArea();
             */
             add = add + address.getLocality() + "," + address.getSubLocality(); //City
-address.toString();
+            address.toString();
             //add = add + "\n" + address.getSubThoroughfare();
-            Toast.makeText(DelivererViewActivity.this, add, Toast.LENGTH_LONG).show();
+//            Toast.makeText(DelivererViewActivity.this, add, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }   Address getfromLatAndLong(double lat, double lng) throws IOException {
+    }
+
+    Address getfromLatAndLong(double lat, double lng) throws IOException {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
-        return        address = geocoder.getFromLocation(lat, lng, 1).get(0);
+        return address = geocoder.getFromLocation(lat, lng, 1).get(0);
 
 
     }
@@ -235,12 +238,13 @@ address.toString();
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 if (ActivityCompat.checkSelfPermission(DelivererViewActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DelivererViewActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-        
+
                     return;
                 }
                 mFusedLocationClient.requestLocationUpdates
                         (getLocationRequest(), mLocationCallback,
-                                null /* Looper */); }
+                                null /* Looper */);
+            }
         });
 
         task.addOnFailureListener(this, new OnFailureListener() {
@@ -323,9 +327,9 @@ address.toString();
                     refreshOrders();
 
                 } else if (id == R.id.info) {
-                    Intent i=new Intent(DelivererViewActivity.this, inbox.class);
+                    Intent i = new Intent(DelivererViewActivity.this, inbox.class);
                     startActivity(i);
-                }else if (id == R.id.active_deliverer) {
+                } else if (id == R.id.active_deliverer) {
                     active = true;
                     pending = false;
                     finished = false;
@@ -339,7 +343,7 @@ address.toString();
                     refreshOrders();
                 } else if (id == R.id.use_as_user) {
                     startActivity(new Intent(DelivererViewActivity.this, UserViewActivity.class));
-                    usertype(root,"orderer");
+                    usertype(root, "orderer");
 
                     finish();
                 } else if (id == R.id.profile) {
@@ -353,6 +357,11 @@ address.toString();
 
                 } else if (id == R.id.chatroom) {
                     Intent i = new Intent(DelivererViewActivity.this, chatRooms.class);
+
+                    startActivity(i);
+
+                } else if (id == R.id.info) {
+                    Intent i = new Intent(DelivererViewActivity.this, inbox.class);
 
                     startActivity(i);
 
@@ -372,7 +381,8 @@ address.toString();
         auth.signOut();
         Intent loginIntent = new Intent(DelivererViewActivity.this, LoginActivity.class);
         startActivity(loginIntent);
-        finish();    }
+        finish();
+    }
 
 
     void setUpDrawerLayout() {
@@ -387,7 +397,6 @@ address.toString();
                     public void onDrawerSlide(View drawerView, float slideOffset) {
                         // Respond when the drawer's position changes
                         userId = user.getUid();
-                        ImageView imageViewUserImage=findViewById(R.id.imageViewUserImage);
 
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
@@ -398,17 +407,17 @@ address.toString();
                                 mHeaderView = navigationView.getHeaderView(0);
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
-                                int wallet = 1000;
-//                                userDetails.wallet;
+                                imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
+                                int wallet = userDetails.getWallet();
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
-                                textViewUserName.setText(userDetails.getLast()+""+userDetails.getFirst());
+                                textViewUserName.setText(userDetails.getFirst() + " " + userDetails.getLast());
                                 textViewEmail.setText(userDetails.getEmail());
-                                String photoUrl = userDetails.getCinPhoto();
+//                                String photoUrl = userDetails.getCinPhoto();
                                 try {
                                     Picasso.get()
-                                            .load(photoUrl)
+                                            .load(userDetails.getProfile())
                                             .into(imageViewUserImage);
                                 } catch (Exception e) {
                                     e.printStackTrace();
@@ -424,7 +433,7 @@ address.toString();
                         if (havelocation) {
                             mHeaderView = navigationView.getHeaderView(0);
                             ImageView currentLocation = mHeaderView.findViewById(R.id.currentLocation);
-                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(address.getLocality(), Color.WHITE, 100);
+                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(address.toString(), Color.WHITE, 100);
                             currentLocation.setImageDrawable(drawable);
                         }
                     }
@@ -594,7 +603,7 @@ address.toString();
                             continue;
                         Address order_adds = null;
                         try {
-                            order_adds = getfromLatAndLong(order.userLocation.Lat,order.userLocation.Lon);
+                            order_adds = getfromLatAndLong(order.userLocation.Lat, order.userLocation.Lon);
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -604,11 +613,11 @@ address.toString();
                         Log.e("ADDRESS", order.userId + " " + order_adds.getLocality() + " " + order.orderId);
                         String city;
 //                        city = tokens[size - 2];
-                        Toast.makeText(DelivererViewActivity.this, order_adds.toString(), Toast.LENGTH_SHORT).show();//                                 order_address;
+//                        Toast.makeText(DelivererViewActivity.this, order_adds.toString(), Toast.LENGTH_SHORT).show();//                                 order_address;
 //                        city = city.substring(1);
                         if ((order.userLocation.toString().contains(order_adds.getAddressLine(0)))
 //                                if ((order_adds.toString().contains(order.userLocation.toString()))
-                                        &&
+                                &&
                                 ((order.status.equals("PENDING") && pending) ||
                                         (order.status.equals("ACTIVE") &&
                                                 active && userId.equals(order.acceptedBy.delivererID)) ||

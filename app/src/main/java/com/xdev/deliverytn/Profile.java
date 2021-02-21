@@ -4,14 +4,12 @@ import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
-import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.net.Uri;
 import android.os.Build;
@@ -21,13 +19,10 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +37,7 @@ import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -124,24 +120,12 @@ public class Profile extends AppCompatActivity {
         profilei = findViewById(R.id.imageViewUserImage);
 
 
-        cin = (TextInputEditText) findViewById(R.id.cin);
-        birth = (TextInputEditText) findViewById(R.id.birth);
-        mobile = (TextInputEditText) findViewById(R.id.mobile);
-        rate = (TextInputEditText) findViewById(R.id.rate);
-        ratenumber = (TextInputEditText) findViewById(R.id.ratenumber);
-        addresss = (TextInputEditText) findViewById(R.id.address);
-
-//        storageReference = storage.getReference();
-//        StorageReference sRef = storageReference.child("uploads/" + user.getUid() + "/" + "profilePic" + ".jpg");//adding the file to reference
-//        profilei.setImageBitmap(loadImageFromStorage("profile"));
-//        if (sRef==null){
-//            Toast.makeText(this, "please add image ", Toast.LENGTH_SHORT).show();
-//        }else {
-//            Glide.with(this)
-//                    .load(sRef)
-//                    .into(profilei);
-//
-
+        cin = findViewById(R.id.cin);
+        birth = findViewById(R.id.birth);
+        mobile = findViewById(R.id.mobile);
+        rate = findViewById(R.id.rate);
+        ratenumber = findViewById(R.id.ratenumber);
+        addresss = findViewById(R.id.address);
         DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
         forUserData.keepSynced(true);
         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -149,7 +133,7 @@ public class Profile extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 userDetails = dataSnapshot.getValue(UserDetails.class);
 //                mHeaderView = navigationView.getHeaderView(0);
-                forUserData.child("cinPhoto").addValueEventListener(new ValueEventListener() {
+                forUserData.child("profile").addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String photoUrl = dataSnapshot.getValue(String.class);
@@ -168,7 +152,7 @@ public class Profile extends AppCompatActivity {
 
                     }
                 });
-                profilei.setImageBitmap( loadImageFromStorage("cin"));
+//                profilei.setImageBitmap(loadImageFromStorage("cin"));
                 textViewUserName = findViewById(R.id.headerUserName);
                 textViewEmail = findViewById(R.id.headerUserEmail);
                 Integer wallet = Integer.valueOf(userDetails.getWallet());
@@ -197,7 +181,7 @@ public class Profile extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 profilei.setOnClickListener(v1 -> {
-                    capturimage();
+//                    capturimage();
                 });
 
 
@@ -289,70 +273,57 @@ public class Profile extends AppCompatActivity {
         if (resultCode == RESULT_OK || requestCode == CAMERA_REQUEST
                 && data != null
                 && data.getData() != null) {
-            Dialog builder = new Dialog(this);
-            builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-            builder.getWindow().setBackgroundDrawable(
-                    new ColorDrawable(android.graphics.Color.TRANSPARENT));
-            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialogInterface) {
-
-                    AlertDialog.Builder builder = new AlertDialog.Builder(Profile.this);
-                    builder.setMessage("Save picture ?")
-                            .setCancelable(false)
-                            .setPositiveButton("upload", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (
-                                            requestCode
-                                                    ==
-                                                    CAMERA_REQUEST
-                                    ) if (
-                                            requestCode
-                                                    ==
-                                                    CAMERA_REQUEST_profile) {
-                                        if (data
-                                                == null ||
-                                                data.getData()
-                                                        == null) {
-                                            uploadProfile(photoURI);
-                                            try {
-                                                saveToStorage(photoURI, "profile");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+            Dialog builder1 = new Dialog(this);
+            builder1.create();
+            builder1.setContentView(R.layout.imgdialo);
+            ImageView a = builder1.findViewById(R.id.a);
+            builder1.setOnShowListener(dialogInterface -> {
+                Button btn1 = builder1.findViewById(R.id.btn1);
+                btn1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (requestCode == CAMERA_REQUEST_profile) {
+                            if (data == null || data.getData() == null) {
+                                uploadProfile(photoURI);
+                                builder1.dismiss();
+                            } else {
+                                uploadProfile(data.getData());
+                                builder1.dismiss();
+                            }
 
 
-                                        } else {
-                                            uploadProfile(data.getData());
-                                            try {
-                                                saveToStorage(data.getData(), "profile");
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
+                        }
+                    }
+                });
+                Button btn2 = builder1.findViewById(R.id.btn2);
+                btn2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        builder1.dismiss();
+                    }
+                });
 
-                                        }
-                                    }
-                                }
-                            })
-                            .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+//                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+//                builder1.setMessage("Save picture ?")
+//                        .setCancelable(false)
+//                        .setPositiveButton("upload", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//
+//                            }
+//                        })
+//                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+//                            @Override
+//                            public void onClick(DialogInterface dialog, int which) {
+//                            }
+//                        });
+//                AlertDialog alert = builder1.create();
+                a.setImageURI(photoURI);
+//                builder1.show();
 
-
-                }
             });
 
-            ImageView imageView = new ImageView(this);
-            imageView.setImageURI(photoURI);
-            builder.addContentView(imageView, new RelativeLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    ViewGroup.LayoutParams.MATCH_PARENT));
-            builder.show();
+            builder1.show();
 
 
         }
@@ -385,6 +356,7 @@ public class Profile extends AppCompatActivity {
         return directory.getAbsolutePath();
     }
 
+
     private void uploadProfile(Uri filePath) {
         if (filePath != null) {
 
@@ -404,11 +376,13 @@ public class Profile extends AppCompatActivity {
                 public void onComplete(@NonNull Task<Uri> task) {
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
-                        update_user_profile(downloadUri);
-                        profilei.setImageURI(downloadUri);
-                        Picasso.get().load(downloadUri).into(profilei);
+                        root.child("deliveryApp").child("users").child(user.getUid()).child("profile").setValue(downloadUri);
+                        showSnacks("Done ☺ ");
+                        Picasso.get()
+                                .load(downloadUri).into(profilei);
 
                     } else {
+                        showSnacks("error while uploading");
                     }
                 }
             });
@@ -419,8 +393,21 @@ public class Profile extends AppCompatActivity {
 
     }
 
+
+    private void showSnacks(String msg) {
+        int color;
+        color = Color.WHITE;
+        Snackbar snackbar = Snackbar
+                .make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG);
+
+        View sbView = snackbar.getView();
+        TextView textView = sbView.findViewById(R.id.snackbar_text);
+        textView.setTextColor(color);
+        snackbar.show();
+    }
+
     void update_user_profile(Uri test) {
-        root.child("deliveryApp").child("users").child(user.getUid()).child("profile").setValue(test.toString());
+
 //        profileexsists = true;
     }
 }

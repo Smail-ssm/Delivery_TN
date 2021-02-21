@@ -8,7 +8,6 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -53,11 +53,10 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     AnimationDrawable animationDrawable;
     GoogleSignInClient mGoogleSignInClient;
     SignInButton signInButton;
+    CircularProgressButton btnLogin;
     private EditText inputEmail, inputPassword;
     private FirebaseAuth auth;
     private ProgressBar progressBar;
-
-    CircularProgressButton btnLogin;
     private DatabaseReference root, database_users;
 
     @Override
@@ -65,10 +64,8 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        //animation();
+//        animation();
         checkConnection();
-
-        //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
@@ -83,8 +80,6 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
             finish();
         }
 
-
-        // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -93,11 +88,9 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .build();
         mGoogleApiClient.connect();
-        //super.onStart();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
 
-        // set the view now
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -164,9 +157,6 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                             .addOnCompleteListener(LoginActivity.this, new OnCompleteListener<AuthResult>() {
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
-                                    // If sign in fails, display a message to the com.thedeliveryapp.thedeliveryapp.user.user. If sign in succeeds
-                                    // the auth state listener will be notified and logic to handle the
-                                    // signed in com.thedeliveryapp.thedeliveryapp.user.user can be handled in the listener.
                                     progressBar.setVisibility(View.GONE);
                                     if (!task.isSuccessful()) {
                                         // there was an error
@@ -174,6 +164,8 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                             inputPassword.setError(getString(R.string.minimum_password));
                                         } else {
                                             Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
+                                            btnLogin.revertAnimation();
+
                                         }
                                     } else {
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -304,7 +296,7 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     void animation() {
         /*LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         View view = inflater.inflate(R.layout.activity_login,null);*/
-        LinearLayout linearLayout = findViewById(R.id.loginLinear);
+        ConstraintLayout linearLayout = findViewById(R.id.scrollView);
         animationDrawable = (AnimationDrawable) linearLayout.getBackground();
         animationDrawable.setEnterFadeDuration(5000);
         animationDrawable.setExitFadeDuration(5000);

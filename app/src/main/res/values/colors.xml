@@ -7,16 +7,32 @@
 
     <color name="gray">#edeaea</color>
 
-    <color name="primary">#b71c1c</color>
-    <color name="primaryLightColor">#f05545</color>
-    <color name="primary_dark">#7f0000</color>
-    <color name="secondaryColor">#009688</color>
+    <!--    <color name="primary">#b71c1c</color>-->
+    <!--    <color name="primaryLightColor">#f05545</color>-->
+    <!--    <color name="primary_dark">#7f0000</color>-->
+    <!--    <color name="secondaryColor">#009688</color>-->
+    <!--    <color name="accent">#52c7b8</color>-->
+    <!--    <color name="secondaryDarkColor">#00675b</color>-->
+    <!--    <color name="white">#ffffff</color>-->
+    <!--    <color name="black">#000000</color>-->
+    <!--    <color name="red">#ff0000</color>-->
+    <!--    <color name="green">#00ff00</color> -->
+
+
     <color name="accent">#52c7b8</color>
-    <color name="secondaryDarkColor">#00675b</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
     <color name="red">#ff0000</color>
     <color name="green">#00ff00</color>
+
+    <color name="primary">#2699ff</color>
+    <color name="primaryLightColor">#73c9ff</color>
+    <color name="primary_dark">#006ccb</color>
+    <color name="secondaryColor">#1d4d49</color>
+    <color name="secondaryLightColor">#4a7974</color>
+    <color name="secondaryDarkColor">#002522</color>
+    <color name="primaryTextColor">#000000</color>
+    <color name="secondaryTextColor">#ffffff</color>
 
 
     <!--colors for profile-->

@@ -16,6 +16,7 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -162,31 +163,35 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
         //Get Firebase auth instance
         auth = FirebaseAuth.getInstance();
-        ImageView imageView2 = (ImageView) findViewById(R.id.imageView2);
-        first = (EditText) findViewById(R.id.first);
-        last = (EditText) findViewById(R.id.last);
-        male = (RadioButton) findViewById(R.id.male);
-        RadioButton female = (RadioButton) findViewById(R.id.female);
-        gov = (Spinner) findViewById(R.id.gov);
+        ImageView imageView2 = findViewById(R.id.imageView2);
+        first = findViewById(R.id.first);
+        last = findViewById(R.id.last);
+        male = findViewById(R.id.male);
+        RadioButton female = findViewById(R.id.female);
+        gov = findViewById(R.id.gov);
+        ImageButton pin = findViewById(R.id.pin);
         datn = findViewById(R.id.datn);
-        mobile = (EditText) findViewById(R.id.mobile);
-        address = (EditText) findViewById(R.id.address);
-        cp = (EditText) findViewById(R.id.cp);
-        email = (EditText) findViewById(R.id.email);
-        password = (EditText) findViewById(R.id.password);
-        Confirmpass = (EditText) findViewById(R.id.Confirmpass);
-        EditText cin = (EditText) findViewById(R.id.cin);
+        mobile = findViewById(R.id.mobile);
+        address = findViewById(R.id.address);
+        cp = findViewById(R.id.cp);
+        email = findViewById(R.id.email);
+        password = findViewById(R.id.password);
+        Confirmpass = findViewById(R.id.Confirmpass);
+        EditText cin = findViewById(R.id.cin);
 
-        Button sign_up_button = (Button) findViewById(R.id.sign_up_button);
-        Button sign_in_button = (Button) findViewById(R.id.sign_in_button);
-        progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        Button sign_up_button = findViewById(R.id.sign_up_button);
+        Button sign_in_button = findViewById(R.id.sign_in_button);
+        progressBar = findViewById(R.id.progressBar);
         EditText cina = findViewById(R.id.cin);
 
         Intent i = getIntent();
         String google_name = i.getStringExtra("username");
+        String[] google_names = google_name.split(" ");
+//
         String google_email = i.getStringExtra("email");
-
-        first.setText(google_name);
+        getaddress();
+        first.setText(google_names[0]);
+        last.setText(google_names[1]);
         email.setText(google_email);
         datn.setOnClickListener(v -> {
             final Calendar cldr = Calendar.getInstance();
@@ -207,7 +212,12 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                 finish();
             }
         });
-
+        pin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                getaddress();
+            }
+        });
         sign_up_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -322,14 +332,16 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setZip(cp.getText().toString());
                                         u.setRole("null");
                                         u.setRate(0);
-                                        u.setProfilepic("nophoto");
+                                        u.setProfile("nophoto");
                                         u.setRate(0);
                                         u.setUsertype("");
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {
                                             FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                                            startActivity(new Intent(OtherSignup.this, VerifyEmailScreen.class));
+                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
+                                            i.putExtra("email", u.getEmail());
+                                            startActivity(i);
                                         } else {
                                             startActivity(new Intent(OtherSignup.this, MainActivity.class));
                                         }
@@ -353,9 +365,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         return locationRequest;
     }
 
-    void setGpsOn() {
-
-    }
 
     private void getaddress() {
 
@@ -365,14 +374,12 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
             address.setText(adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare());
         } else {
             getLatAndLong();
-            cp.setText(adddress.getPostalCode());
+//            cp.setText(adddress.getPostalCode());
 
         }
     }
 
-    void getAddressFromLatAndLong(double lat, double lng) {
 
-    }
 
     void getLatAndLong() {
         if (ActivityCompat.checkSelfPermission(this,

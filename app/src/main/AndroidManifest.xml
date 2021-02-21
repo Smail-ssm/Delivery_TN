@@ -33,13 +33,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Chat.chatroom.chatRooms"></activity>
+        <activity android:name=".inbox"></activity>
+        <activity android:name=".Chat.chatroom.chatRooms" />
 
         <service
             android:name=".MyService"
             android:icon="@drawable/ic_location"
             android:label="Location sync"
-            tools:ignore="Instantiatable"></service>
+            tools:ignore="Instantiatable" />
 
         <activity android:name=".Profile" /> <!-- <activity android:name=".friendlyMessage.ChatMain" /> -->
         <!-- <activity android:name=".deliverer.Path" /> -->
@@ -133,7 +134,6 @@
         <activity android:name=".deliverer.CompleteOrder" />
         <activity android:name=".login.VerifyEmailScreen" />
         <activity android:name=".deliverer.Pathc" />
-
     </application>
 
 </manifest>
