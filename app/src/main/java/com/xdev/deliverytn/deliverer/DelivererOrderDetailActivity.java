@@ -55,8 +55,8 @@ import com.xdev.deliverytn.Chat.chatroom.chatrrom;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.login.user_details.UserDetails;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import org.json.JSONArray;
 import org.json.JSONException;

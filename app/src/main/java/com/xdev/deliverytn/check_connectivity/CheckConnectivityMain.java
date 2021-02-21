@@ -15,8 +15,8 @@ import com.onesignal.OSNotification;
 import com.onesignal.OSNotificationAction;
 import com.onesignal.OSNotificationOpenResult;
 import com.onesignal.OneSignal;
+import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.user.UserOrderDetailActivity;
-import com.xdev.deliverytn.user.order.OrderData;
 
 import org.json.JSONObject;
 

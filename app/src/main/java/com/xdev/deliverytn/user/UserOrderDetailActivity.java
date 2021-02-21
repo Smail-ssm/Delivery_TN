@@ -49,9 +49,9 @@ import com.xdev.deliverytn.Chat.chatacti.ChatMain;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.order_form.EditOrderForm;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.IOException;
 import java.util.List;
@@ -223,13 +223,13 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             }
         });
         userDetails.getRate();
-        Button rankBtn = (Button) findViewById(R.id.ratebutton);
+        Button rankBtn = findViewById(R.id.ratebutton);
         rankBtn.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Dialog rankDialog = new Dialog(UserOrderDetailActivity.this, R.style.FullHeightDialog);
                 rankDialog.setContentView(R.layout.rank_dialog);
                 rankDialog.setCancelable(true);
-                RatingBar ratingBar = (RatingBar) rankDialog.findViewById(R.id.ratingbar);
+                RatingBar ratingBar = rankDialog.findViewById(R.id.ratingbar);
                 DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
 //                ratingRef.addValueEventListener(new ValueEventListener() {
 //                    @Override
@@ -244,7 +244,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
 //                    public void onCancelled(DatabaseError databaseError) {
 //                    }
 //                });
-                Button updateButton = (Button) rankDialog.findViewById(R.id.rank_dialog_button);
+                Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
 
                 DatabaseReference rate = ratingRef.child("rate");
 

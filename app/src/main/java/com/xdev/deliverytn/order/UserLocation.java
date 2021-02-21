@@ -1,4 +1,4 @@
-package com.xdev.deliverytn.user.order;
+package com.xdev.deliverytn.order;
 
 public class UserLocation {
     public String Name;//

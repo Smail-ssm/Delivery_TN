@@ -55,7 +55,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-auth:18.1.0'
     implementation 'com.google.firebase:firebase-database:19.5.1'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
-    implementation 'com.google.android.gms:play-services-places:17.0.0'
+
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.google.code.gson:gson:2.8.6'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.1.0'
@@ -113,6 +113,9 @@ dependencies {
     implementation 'de.hdodenhof:circleimageview:3.1.0'
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
+
+    implementation 'com.google.android.libraries.places:places-compat:1.0.0'
+
 
 }
 apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'

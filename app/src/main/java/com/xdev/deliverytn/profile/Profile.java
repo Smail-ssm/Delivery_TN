@@ -1,4 +1,4 @@
-package com.xdev.deliverytn;
+package com.xdev.deliverytn.profile;
 
 import android.Manifest;
 import android.app.Dialog;
@@ -50,9 +50,10 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -24,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.Chat.chatacti.Chat;
 import com.xdev.deliverytn.Chat.chatacti.ChatMain;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.util.ArrayList;
 

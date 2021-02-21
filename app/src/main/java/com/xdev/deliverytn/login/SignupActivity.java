@@ -54,7 +54,7 @@ import com.onesignal.OneSignal;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.IOException;
 import java.util.Calendar;

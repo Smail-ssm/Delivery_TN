@@ -3,7 +3,7 @@ package com.xdev.deliverytn.order_form;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.order.OrderData;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.text.DecimalFormat;
 
 public class DeliveryChargeCalculater {
@@ -68,7 +69,7 @@ public class DeliveryChargeCalculater {
                     final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     InputStream in = new BufferedInputStream(conn.getInputStream());
-                    response[0] = org.apache.commons.io.IOUtils.toString(in, "UTF-8");
+                    response[0] = org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
 
                     JSONObject jsonObject = new JSONObject(response[0]);
                     JSONArray array = jsonObject.getJSONArray("routes");

@@ -1,4 +1,4 @@
-package com.xdev.deliverytn.login.user_details;
+package com.xdev.deliverytn.user_details;
 
 public class UserDetails {
     public String usertype;

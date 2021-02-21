@@ -1,4 +1,4 @@
-package com.xdev.deliverytn.user.order;
+package com.xdev.deliverytn.order;
 
 public class AcceptedBy {
     public String name, mobile, alt_mobile, email, delivererID,currentLocation;

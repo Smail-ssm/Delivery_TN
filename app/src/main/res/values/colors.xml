@@ -22,7 +22,7 @@
     <color name="accent">#52c7b8</color>
     <color name="white">#ffffff</color>
     <color name="black">#000000</color>
-    <color name="red">#ff0000</color>
+
     <color name="green">#00ff00</color>
 
     <color name="primary">#2699ff</color>
@@ -33,10 +33,7 @@
     <color name="secondaryDarkColor">#002522</color>
     <color name="primaryTextColor">#000000</color>
     <color name="secondaryTextColor">#ffffff</color>
-
-
     <!--colors for profile-->
-    <color name="profilePrimaryDark">#FF3B30</color>
     <color name="profileAccentColor">#F7F7F7</color>
     <color name="whiteTextColor">#fff</color>
     <color name="profileBackground">#fff</color>

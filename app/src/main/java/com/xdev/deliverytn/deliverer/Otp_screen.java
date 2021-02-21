@@ -34,7 +34,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.order.OrderData;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -196,7 +196,7 @@ public class Otp_screen extends AppCompatActivity {
                                                     StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
                                                             .permitAll().build();
                                                     StrictMode.setThreadPolicy(policy);
-                                                    ImageView image = (ImageView) dialog1.findViewById(R.id.goProDialogImage);
+                                                    ImageView image = dialog1.findViewById(R.id.goProDialogImage);
                                                     try {
                                                         u = new URL("https://scx1.b-cdn.net/csz/news/800a/2014/jhbkb.jpg");
                                                     } catch (MalformedURLException e) {

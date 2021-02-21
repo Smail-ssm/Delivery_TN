@@ -9,5 +9,5 @@
     android:layout_marginBottom="2dp"
     android:clipChildren="false"
     android:clipToPadding="true"
-    tools:context=".inbox"
+    tools:context=".FirebaseNotifications.inbox"
     tools:listitem="@layout/item_list_content" />

@@ -14,6 +14,7 @@ import android.location.Geocoder;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -59,12 +60,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
+import com.xdev.deliverytn.order.AcceptedBy;
+import com.xdev.deliverytn.order.ExpiryDate;
+import com.xdev.deliverytn.order.ExpiryTime;
+import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.order.UserLocation;
 import com.xdev.deliverytn.user.UserViewActivity;
-import com.xdev.deliverytn.user.order.AcceptedBy;
-import com.xdev.deliverytn.user.order.ExpiryDate;
-import com.xdev.deliverytn.user.order.ExpiryTime;
-import com.xdev.deliverytn.user.order.OrderData;
-import com.xdev.deliverytn.user.order.UserLocation;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -251,8 +252,9 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                     try {
                         startActivityForResult(builder.build(OrderForm.this), PLACE_PICKER_REQUEST);
+
                     } catch (Exception e) {
-                        // Log.e(TAG, e.getStackTrace().toString());
+                        Log.e("location error", e.getMessage());
                     }
                 }
             }

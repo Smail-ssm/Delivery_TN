@@ -1,4 +1,4 @@
-package com.xdev.deliverytn;
+package com.xdev.deliverytn.FirebaseNotifications;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -33,12 +33,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
+import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.login.LoginActivity;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
 import com.xdev.deliverytn.user.UserViewActivity;
-import com.xdev.deliverytn.user.order.OrderData;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.util.List;
 

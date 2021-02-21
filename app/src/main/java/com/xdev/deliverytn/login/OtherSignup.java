@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -58,7 +59,7 @@ import com.pkmmte.view.CircularImageView;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.login.user_details.UserDetails;
+import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -193,14 +194,25 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         first.setText(google_names[0]);
         last.setText(google_names[1]);
         email.setText(google_email);
-        datn.setOnClickListener(v -> {
-            final Calendar cldr = Calendar.getInstance();
-            int day = cldr.get(Calendar.DAY_OF_MONTH);
-            int month = cldr.get(Calendar.MONTH);
-            int year = cldr.get(Calendar.YEAR);
-            datepicker = new DatePickerDialog(OtherSignup.this,
-                    (view, year1, monthOfYear, dayOfMonth) -> datn.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1), year, month, day);
-            datepicker.show();
+        datn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final Calendar cldr = Calendar.getInstance();
+                int day = cldr.get(Calendar.DAY_OF_MONTH);
+                int month = cldr.get(Calendar.MONTH);
+                int year = cldr.get(Calendar.YEAR);
+                // date picker dialog
+                datepicker = new DatePickerDialog(OtherSignup.this,
+                        new DatePickerDialog.OnDateSetListener() {
+                            @Override
+                            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                                datn.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year);
+                            }
+                        }, year, month, day);
+                datepicker.show();
+            }
+
+
         });
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -323,7 +335,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setEmail(email.getText().toString());
                                         u.setWallet(1000);
                                         u.setAddress(address.getText().toString());
-                                        u.setBirth(datn.getText().toString());
+                                        u.setBirth((String) datn.getText());
                                         u.setCinPhoto("noPhoto");
                                         u.setCity(gov.getSelectedItem().toString());
                                         u.setFirst(first.getText().toString());

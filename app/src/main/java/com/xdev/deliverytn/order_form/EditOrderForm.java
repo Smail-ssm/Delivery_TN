@@ -53,12 +53,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
+import com.xdev.deliverytn.order.AcceptedBy;
+import com.xdev.deliverytn.order.ExpiryDate;
+import com.xdev.deliverytn.order.ExpiryTime;
+import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.order.UserLocation;
 import com.xdev.deliverytn.user.UserOrderDetailActivity;
-import com.xdev.deliverytn.user.order.AcceptedBy;
-import com.xdev.deliverytn.user.order.ExpiryDate;
-import com.xdev.deliverytn.user.order.ExpiryTime;
-import com.xdev.deliverytn.user.order.OrderData;
-import com.xdev.deliverytn.user.order.UserLocation;
 
 import java.io.IOException;
 import java.text.DateFormat;

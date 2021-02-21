@@ -55,11 +55,11 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.xdev.deliverytn.Profile;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
+import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.File;
