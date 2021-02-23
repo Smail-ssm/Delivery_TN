@@ -538,6 +538,8 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                         "MyOrder",
                         clickedOrder
                 );
+                intent.putExtra("orderid", String.valueOf(clickedOrder.orderId));
+                intent.putExtra("userid", clickedOrder.userId);
                 startActivity(intent);
                 resumed = false;
 

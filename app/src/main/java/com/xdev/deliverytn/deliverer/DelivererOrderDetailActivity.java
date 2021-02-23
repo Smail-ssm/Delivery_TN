@@ -12,6 +12,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +38,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -56,6 +57,7 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.order.OrderObject;
 import com.xdev.deliverytn.user_details.UserDetails;
 
 import org.json.JSONArray;
@@ -73,38 +75,48 @@ import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 
-
 public class DelivererOrderDetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
     public static final int REQUEST_CHECK_SETTINGS = 20;
-    public static String orderidVal;
-    public static DatabaseReference myRef = null;
     public OrderData myOrder;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     double latitude, longitude;
     DatabaseReference refrooms;
     DatabaseReference refroomsA;
+    OrderObject myorder;
+    Location location;
+    String myUserId = "";
+    int myOrderId = 0;
     private LinearLayout userName_h;
     private TextView userName;
     private TextView userPhoneNumber;
     private TextView status;
     private String userId;
     private Button btn_accept;
-    private Button btn_mark_delivered;
     private Button btn_complete_order;
     private DatabaseReference root;
     private DatabaseReference ref1;
     private DatabaseReference ref2;
     private DatabaseReference wallet_ref;
     private DatabaseReference deliverer;
+    private DatabaseReference allorders;
     private UserDetails deliverer_data;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
     private Address address;
-    private int balance;
-    private GoogleMap googleMap;
     private UserDetails userDetails = new UserDetails();
-    Location location;
+    private OrderData order;
+    private Integer balance;
+
+    public static Double getDistanceBetween(LatLng latLon1, LatLng latLon2) {
+        if (latLon1 == null || latLon2 == null)
+            return null;
+        float[] result = new float[1];
+        Location.distanceBetween(latLon1.latitude, latLon1.longitude,
+                latLon2.latitude, latLon2.longitude, result);
+        return (double) result[0];
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
@@ -124,7 +136,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
-                 location = locationResult.getLastLocation();
+                location = locationResult.getLastLocation();
                 if (location != null) {
                     latitude = location.getLatitude();
                     longitude = location.getLongitude();
@@ -164,11 +176,14 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         }
         Intent intent = getIntent();
         myOrder = intent.getParcelableExtra("MyOrder");
+        myOrderId = Integer.parseInt(intent.getStringExtra("orderid"));
+        myUserId = intent.getStringExtra("userid");
+//        fetchorder(myOrderId, myUserId);
+
         CollapsingToolbarLayout appBarLayout = findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(myOrder.category);
         }
-
         if (myOrder.status.equals("FINISHED")) {
             btn_accept.setEnabled(false);
             btn_accept.setVisibility(View.GONE);
@@ -186,8 +201,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         if (myOrder.status.equals("PENDING")) {
             userName_h.setVisibility(View.GONE);
         }
-
-
         category.setText(myOrder.category);
         description.setText(myOrder.description);
         status.setText(myOrder.status);
@@ -198,7 +211,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         userLocationName.setText(myOrder.userLocation.Name);
         userLocationLocation.setText(myOrder.userLocation.Location);
         deliveryCharge.setText((myOrder.deliveryCharge + ""));
-
         if (myOrder.final_price == -1) {
             final_item_price.setText("- - - - -");
             final_total.setText("- - - - -");
@@ -206,7 +218,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             final_item_price.setText(myOrder.final_price + "");
             final_total.setText((myOrder.deliveryCharge + myOrder.final_price) + "");
         }
-
         String date;
         if (myOrder.expiryDate.day == 0) {
             date = "-";
@@ -214,8 +225,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             date = myOrder.expiryDate.day + "/" + myOrder.expiryDate.month + "/" + myOrder.expiryDate.year;
         }
         expiryTime_Date.setText(date);
-
-
         String time;
         if (myOrder.expiryTime.hour == -1) {
             time = "-";
@@ -231,7 +240,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             } else {
                 time += myOrder.expiryTime.minute + "";
             }
-
             if (myOrder.expiryTime.hour < 12) {
                 time += " AM";
             } else {
@@ -239,54 +247,79 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             }
         }
         expiryTime_Time.setText(time);
-
         final AlertDialog alertDialog = new AlertDialog.Builder(DelivererOrderDetailActivity.this)
                 .setCancelable(false)
                 .setTitle("Are you sure?")
                 .setPositiveButton("Yes", null)
                 .setNegativeButton("No", null)
                 .create();
-
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 Button yesButton = (alertDialog).getButton(android.app.AlertDialog.BUTTON_POSITIVE);
                 Button noButton = (alertDialog).getButton(android.app.AlertDialog.BUTTON_NEGATIVE);
-
                 yesButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        //Now Background Class To Update Operator State
+
+
+//                        Toast.makeText(DelivererOrderDetailActivity.this, "LOcation latlng=" +
+//                                        myorder.userLocation.Lat +
+//                                        myorder.userLocation.Lon,
+//                                Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                         userId = user.getUid();
                         ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId));
                         ref2 = ref1.child("acceptedBy");
+
                         ref2.keepSynced(true);
-//                        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
-//                        wallet_ref.keepSynced(true);
+                        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
+                        wallet_ref.keepSynced(true);
                         if (myOrder.status.equals("PENDING")) {
                             deliverer = root.child("deliveryApp").child("users").child(userId);
                             deliverer.keepSynced(true);
-
                             deliverer.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     deliverer_data = dataSnapshot.getValue(UserDetails.class);
-                                    ref2.child("name").setValue(deliverer_data.getLast() + "" + deliverer_data.getFirst());
+                                    ref2.child("name").setValue(deliverer_data.getLast() + " " + deliverer_data.getFirst());
                                     ref2.child("email").setValue(deliverer_data.getEmail());
                                     ref2.child("mobile").setValue(deliverer_data.getMobile());
                                     ref2.child("cin").setValue(deliverer_data.getCin());
                                     ref2.child("delivererID").setValue(userId);
-                                    LatLng cl = new LatLng(myOrder.userLocation.Lat, myOrder.userLocation.Lon);
-                                    LatLng delivererLatlng = new LatLng(location.getLatitude(), location.getLongitude());
-                                    myOrder.final_price = Math.round(getDistanceBetween(delivererLatlng,cl).intValue());
-
+//                                    LatLng cl = new LatLng(
+//                                            myorder.userLocation.Lat,
+//                                            myorder.userLocation.Lon);
+//                                    LatLng delivererLatlng = new LatLng(
+//                                            location.getLatitude(),
+//                                            location.getLongitude());
+//                                    myOrder.final_price = Math.round(getDistanceBetween(delivererLatlng, cl).intValue());
                                 }
 
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
+                            allorders = root.child("deliveryApp").child("orders").child(myUserId).child(String.valueOf(myOrderId));
+                            allorders.keepSynced(true);
+                            allorders.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot snapshot) {
+                                    order = snapshot.getValue(OrderData.class);
+                                    if (order.orderId == myOrderId) {
+                                        myorder = new OrderObject();
+                                        myorder.acceptedBy = order.acceptedBy;
+                                        myorder.userLocation = order.userLocation;
+                                        myorder.expiryDate = order.expiryDate;
+                                        myorder.expiryTime = order.expiryTime;
+                                    }
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
 
                                 }
+
                             });
                             ref1.child("status").setValue("ACTIVE");
                             btn_accept.setText("Reject");
@@ -294,7 +327,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             status.setText((myOrder.status));
                             refrooms = root.child("deliveryApp").child("chatRooms").child("roomId");
                             refroomsA = refrooms.child(String.valueOf(myOrder.orderId));
-                            chatrrom c=new chatrrom();
+                            chatrrom c = new chatrrom();
                             c.setRoomId(String.valueOf(myOrder.orderId));
                             c.setDeliverId(user.getUid());
                             c.setOrdererId(myOrder.userId);
@@ -302,25 +335,25 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 //                            refrooms.child("ordererId").setValue(myOrder.orderId);
 //                            refrooms.child("delivereId").setValue(user.getUid());
                             Toast.makeText(DelivererOrderDetailActivity.this, "Room of order N°" + myOrder.orderId + " created ", Toast.LENGTH_SHORT).show();
-
                             getLatAndLong();
                             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(DelivererOrderDetailActivity.this);
-
                             mLocationCallback = new LocationCallback() {
+                                @RequiresApi(api = Build.VERSION_CODES.N)
                                 @Override
                                 public void onLocationResult(LocationResult locationResult) {
-                                  Location location = locationResult.getLastLocation();
+                                    Location location = locationResult.getLastLocation();
                                     if (location != null) {
                                         latitude = location.getLatitude();
                                         longitude = location.getLongitude();
                                         //Toast.makeText(DelivererOrderDetailActivity.this, "Latitude = " + latitude + "\nLongitude = " + longitude, Toast.LENGTH_SHORT).show();
                                         getAddressFromLatAndLong(latitude, longitude);
-//                                        UserLocation cl=myOrder.userLocation;
-//                                        LatLng cl=new LatLng(, );
-
-//                                        LatLng clientlat = new LatLng(cl.Lat, cl.Lon);
-
-//                                        myOrder.final_price = Integer.parseInt(String.valueOf(getDistance( location.getLatitude(), location.getLongitude(),myOrder.userLocation.Lat, myOrder.userLocation.Lon)));
+//
+                                        LatLng l1 = new LatLng(location.getLatitude(), location.getLongitude());
+                                        LatLng l2 = new LatLng(myorder.userLocation.Lat, myorder.userLocation.Lon);
+                                        Double x = getDistanceBetween(l1, l2);
+                                        Toast.makeText(DelivererOrderDetailActivity.this, String.valueOf(x), Toast.LENGTH_SHORT).show();
+                                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("deliveryCharge:").setValue((int) Math.round(x * 0.001));
+                                        updateOrderPrice(Integer.sum(myOrder.max_range, myOrder.deliveryCharge));
 
                                         // Logic to handle location object
                                     } else {
@@ -328,20 +361,20 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                     }
                                 }
                             };
-//                            // Deducts max_int+deliveryCharge money from orderer's wallet when order accepted
-//                            wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//                                @Override
-//                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                                    Integer wal_bal = dataSnapshot.getValue(Integer.class);
-//                                    balance = wal_bal;
-//                                    wallet_ref.setValue(balance - (myOrder.max_range + myOrder.deliveryCharge));
-//                                }
-//
-//                                @Override
-//                                public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//                                }
-//                            });
+                            // Deducts max_int+deliveryCharge money from orderer's wallet when order accepted
+                            wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                                    Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                                    balance = wal_bal;
+                                    wallet_ref.setValue(balance - (myOrder.max_range + myOrder.deliveryCharge));
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                }
+                            });
 
                             setUpAcceptNotif(myOrder);
 
@@ -395,6 +428,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     }
                 });
             }
+
 
 //            public String Deleverycoast(LatLng delivererLatlng, LatLng clientLatlng, OrderData myOrder) {
 //
@@ -454,6 +488,51 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
     }
 
+    void fetchorder(int myOrderId, String uid) {
+//        OrderObject[] Order = new OrderObject[1];
+
+
+//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//        if (FirebaseAuth.getInstance().getCurrentUser()!=null)
+//        {
+//            allorders.addValueEventListener(new ValueEventListener() {
+//                @Override
+//                public void onDataChange(DataSnapshot dataSnapshot) {
+//                    for (DataSnapshot userdata : dataSnapshot.getChildren()) {
+//                        if (userdata.getKey().equals(uid)) {
+//                            for (DataSnapshot orderdata : userdata.getChildren()) {
+//                                OrderData order = orderdata.getValue(OrderData.class);
+//                                if (order.userId.equals(String.valueOf(myOrderId))) {
+//                                    myorder = new OrderObject();
+//                                    myorder.acceptedBy = order.acceptedBy;
+//                                    myorder.userLocation = order.userLocation;
+//                                    myorder.expiryDate = order.expiryDate;
+//                                    myorder.expiryTime = order.expiryTime;
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                public void onCancelled(DatabaseError databaseError) {
+//
+//                }
+//            });
+//        }
+
+
+//        return Order[0];
+    }
+
+    Address getfromLatAndLong(double lat, double lng) throws IOException {
+        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
+
+        return address = geocoder.getFromLocation(lat, lng, 1).get(0);
+
+
+    }
+
     void getAddressFromLatAndLong(double lat, double lng) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -476,6 +555,11 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void updateOrderPrice(double v) {
+        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("final_price").setValue(v);
+
     }
 
     void getLatAndLong() {
@@ -541,7 +625,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             }
         });
     }
-
 
     void fetchUserDetails() {
         DatabaseReference forUserData = root.child("deliveryApp").child("users").child(myOrder.userId);
@@ -640,7 +723,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             showSnack(isConnected);
     }
 
-
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
         String message;
@@ -667,21 +749,21 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         showSnack(isConnected);
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         CheckConnectivityMain.getInstance().setConnectivityListener(DelivererOrderDetailActivity.this);
     }
-    public String getDistance(final double lat1, final double lon1, final double lat2, final double lon2){
+
+    public String getDistance(final double lat1, final double lon1, final double lat2, final double lon2) {
         final String[] parsedDistance = new String[1];
         final String[] response = new String[1];
-        Thread thread=new Thread(new Runnable() {
+        Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 try {
 
-                    URL url = new URL("http://maps.googleapis.com/maps/api/directions/json?origin=" + lat1 + "," + lon1 + "&destination=" + lat2 + "," + lon2 + "&sensor=false&units=metric&mode=driving");
+                    URL url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + lat1 + "," + lon1 + "&destination=" + lat2 + "," + lon2 + "&sensor=false&units=metric&mode=driving");
                     final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
                     conn.setRequestMethod("POST");
                     InputStream in = new BufferedInputStream(conn.getInputStream());
@@ -693,7 +775,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     JSONArray legs = routes.getJSONArray("legs");
                     JSONObject steps = legs.getJSONObject(0);
                     JSONObject distance = steps.getJSONObject("distance");
-                    parsedDistance[0] =distance.getString("text");
+                    parsedDistance[0] = distance.getString("text");
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
@@ -713,13 +795,5 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             e.printStackTrace();
         }
         return parsedDistance[0];
-    }
-    public static Double getDistanceBetween(LatLng latLon1, LatLng latLon2) {
-        if (latLon1 == null || latLon2 == null)
-            return null;
-        float[] result = new float[1];
-        Location.distanceBetween(latLon1.latitude, latLon1.longitude,
-                latLon2.latitude, latLon2.longitude, result);
-        return (double) result[0];
     }
 }
