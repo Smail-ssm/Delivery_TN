@@ -15,6 +15,7 @@ public class OrderData implements Parcelable {
     };
     public String category, description, userId, status, otp;
     public int orderId, min_range, max_range, final_price, deliveryCharge;
+    public double earnings;
     public UserLocation userLocation = new UserLocation();
     public ExpiryDate expiryDate = new ExpiryDate();
     public ExpiryTime expiryTime = new ExpiryTime();
@@ -40,6 +41,7 @@ public class OrderData implements Parcelable {
         userLocation.PhoneNumber = in.readString();
         userLocation.Lat = in.readDouble();
         userLocation.Lon = in.readDouble();
+        earnings = in.readDouble();
         userLocation.addr = in.readString();
         userLocation.city = in.readString();
         userLocation.state = in.readString();
@@ -68,7 +70,7 @@ public class OrderData implements Parcelable {
 
     public OrderData(String category, String description, int orderId, int max_range, int min_range,
                      UserLocation location, ExpiryDate expiryDate, ExpiryTime expiryTime, String status,
-                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price) {
+                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price, double earnings) {
         this.category = category;
         this.description = description;
         this.orderId = orderId;
@@ -83,7 +85,11 @@ public class OrderData implements Parcelable {
         this.userId = userId;
         this.otp = otp;
         this.final_price = final_price;
+        this.earnings = earnings;
 
+    }
+
+    public OrderData(String order_category, String order_description, int order_id, int parseInt, int parseInt1, UserLocation userLocation, ExpiryDate expiryDate, ExpiryTime expiryTime, String pending, int i, AcceptedBy acceptedBy, String userId, String otp, int final_price) {
     }
 
     @Override
@@ -106,6 +112,8 @@ public class OrderData implements Parcelable {
         dest.writeString(userLocation.Location);
         dest.writeDouble(userLocation.Lat);
         dest.writeDouble(userLocation.Lon);
+        dest.writeDouble(earnings);
+
         dest.writeString(userLocation.PhoneNumber);
         dest.writeString(userLocation.addr);
         dest.writeString(userLocation.city);

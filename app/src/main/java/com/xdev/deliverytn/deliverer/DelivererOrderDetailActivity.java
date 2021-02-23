@@ -87,6 +87,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
     Location location;
     String myUserId = "";
     int myOrderId = 0;
+    private DatabaseReference WALET;
     private LinearLayout userName_h;
     private TextView userName;
     private TextView userPhoneNumber;
@@ -326,6 +327,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             myOrder.status = "ACTIVE";
                             status.setText((myOrder.status));
                             refrooms = root.child("deliveryApp").child("chatRooms").child("roomId");
+                            WALET = root.child("deliveryApp").child("SocEarnings");
                             refroomsA = refrooms.child(String.valueOf(myOrder.orderId));
                             chatrrom c = new chatrrom();
                             c.setRoomId(String.valueOf(myOrder.orderId));
@@ -354,7 +356,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                         Toast.makeText(DelivererOrderDetailActivity.this, String.valueOf(x), Toast.LENGTH_SHORT).show();
                                         root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("deliveryCharge:").setValue((int) Math.round(x * 0.001));
                                         updateOrderPrice(Integer.sum(myOrder.max_range, myOrder.deliveryCharge));
-
+                                        myOrder.earnings = ((((int) Math.round(x * 0.001)) * 70) / 100);
+                                        updateWalet((((int) Math.round(x * 0.001)) * 30) / 100);
                                         // Logic to handle location object
                                     } else {
                                         Toast.makeText(DelivererOrderDetailActivity.this, "location has NULL value", Toast.LENGTH_SHORT).show();
@@ -368,6 +371,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                     Integer wal_bal = dataSnapshot.getValue(Integer.class);
                                     balance = wal_bal;
                                     wallet_ref.setValue(balance - (myOrder.max_range + myOrder.deliveryCharge));
+
                                 }
 
                                 @Override
@@ -429,12 +433,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                 });
             }
 
-
-//            public String Deleverycoast(LatLng delivererLatlng, LatLng clientLatlng, OrderData myOrder) {
-//
-//
-//                return String.valueOf(distancecalc(delivererLatlng, clientLatlng, myOrder));
-//            }
         });
 
         btn_show_path.setOnClickListener(new View.OnClickListener() {
@@ -471,7 +469,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         btn_accept.setOnClickListener(v -> {
             alertDialog.show();
 
-//            Toast.makeText(DelivererOrderDetailActivity.this, "Chat room " + myOrder.orderId + "created", Toast.LENGTH_SHORT).show();
+
         });
 
         btn_complete_order.setOnClickListener(v -> {
@@ -488,49 +486,23 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
     }
 
-    void fetchorder(int myOrderId, String uid) {
-//        OrderObject[] Order = new OrderObject[1];
+    private void updateWalet(int i) {
+//        WALET.setValue(i);
+        wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @RequiresApi(api = Build.VERSION_CODES.N)
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                balance = wal_bal;
+                WALET.setValue(Integer.sum(balance, i));
 
+            }
 
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        if (FirebaseAuth.getInstance().getCurrentUser()!=null)
-//        {
-//            allorders.addValueEventListener(new ValueEventListener() {
-//                @Override
-//                public void onDataChange(DataSnapshot dataSnapshot) {
-//                    for (DataSnapshot userdata : dataSnapshot.getChildren()) {
-//                        if (userdata.getKey().equals(uid)) {
-//                            for (DataSnapshot orderdata : userdata.getChildren()) {
-//                                OrderData order = orderdata.getValue(OrderData.class);
-//                                if (order.userId.equals(String.valueOf(myOrderId))) {
-//                                    myorder = new OrderObject();
-//                                    myorder.acceptedBy = order.acceptedBy;
-//                                    myorder.userLocation = order.userLocation;
-//                                    myorder.expiryDate = order.expiryDate;
-//                                    myorder.expiryTime = order.expiryTime;
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onCancelled(DatabaseError databaseError) {
-//
-//                }
-//            });
-//        }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
 
-
-//        return Order[0];
-    }
-
-    Address getfromLatAndLong(double lat, double lng) throws IOException {
-        Geocoder geocoder = new Geocoder(this, Locale.getDefault());
-
-        return address = geocoder.getFromLocation(lat, lng, 1).get(0);
-
-
+            }
+        });
     }
 
     void getAddressFromLatAndLong(double lat, double lng) {
@@ -652,10 +624,19 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                 String player_id = dataSnapshot.getValue(String.class);
                 //TOAST
                 try {
-                    JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + order.description + "'}," +
-                            "'include_player_ids': ['" + player_id + "'], " +
-                            "'headings': {'en': 'Your Order Accepted! Order Id : " + order.orderId + "'} " +
-                            "}");
+                    JSONObject notificationContent = new JSONObject(
+                            "{'contents': " +
+                                    "{'en': '"
+                                    + order.description +
+                                    "'},"
+                                    +
+                                    "'include_player_ids': ['"
+                                    + player_id +
+                                    "'], " +
+                                    "'headings': {'en': 'Your Order Accepted! Order Id : "
+                                    + order.orderId +
+                                    "'} " +
+                                    "}");
                     JSONObject order = new JSONObject();
                     order.put("userId", myOrder.userId);
                     order.put("orderId", myOrder.orderId);
