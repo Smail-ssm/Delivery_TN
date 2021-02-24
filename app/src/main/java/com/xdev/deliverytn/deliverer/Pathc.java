@@ -8,7 +8,6 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,7 +15,6 @@ import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptor;
@@ -41,9 +39,9 @@ public class Pathc extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_path);
         Intent i = getIntent();
-
-        start = new LatLng(13.744246499553903, 100.53428772836924);
-        end = new LatLng(13.751279688694071, 100.54316081106663);
+//
+//        start = new LatLng(13.744246499553903, 100.53428772836924);
+//        end = new LatLng(13.751279688694071, 100.54316081106663);
 
 
         mapFragment = (SupportMapFragment) getSupportFragmentManager()

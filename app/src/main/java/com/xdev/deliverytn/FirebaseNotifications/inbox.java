@@ -1,28 +1,24 @@
 package com.xdev.deliverytn.FirebaseNotifications;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.location.Address;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.recyclerview.widget.DefaultItemAnimator;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
-import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,54 +27,42 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
+import com.xdev.deliverytn.FirebaseNotifications.recyclerview.NotifClickListener;
+import com.xdev.deliverytn.FirebaseNotifications.recyclerview.NotifTouchListener;
+import com.xdev.deliverytn.FirebaseNotifications.recyclerview.RecyclerViewotifAdapter;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.login.LoginActivity;
-import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.profile.Profile;
-import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
+import com.xdev.deliverytn.recyclerview.OrderViewHolder;
 import com.xdev.deliverytn.user.UserViewActivity;
-import com.xdev.deliverytn.user_details.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
 import static com.xdev.deliverytn.login.usertype.usertype;
 
-public class inbox extends AppCompatActivity {
-    public static final int REQUEST_LOCATION_PERMISSION = 10;
-    public static final int REQUEST_CHECK_SETTINGS = 20;
-    public static RecyclerViewOrderAdapter adapter;
+public class inbox extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
+
+    public static RecyclerViewotifAdapter adapter;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-    public List<OrderData> orderList;
+    public List<FBNotification> notiflist;
     MenuItem mPreviousMenuItem = null;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-    boolean isRefreshing = false;
     NavigationView navigationView;
-    View mHeaderView;
+    boolean isRefreshing = false;
+
     Toolbar toolbar;
-    TextView textViewUserName;
-    TextView textViewEmail;
-    boolean pending;
-    boolean active;
-    boolean finished;
-    boolean havelocation;
-    boolean resumed;
-    double latitude, longitude;
-    ImageView imageViewUserImage;
-    private FirebaseAuth.AuthStateListener authListener;
-    private DatabaseReference forUserData;
-    private DatabaseReference childOrders;
-    private String userId;
-    private UserDetails userDetails = new UserDetails();
-    private SwipeRefreshLayout swipeRefreshLayout;
+
+
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
-    private FusedLocationProviderClient mFusedLocationClient;
-    private LocationCallback mLocationCallback;
-    private Address address;
+    private SwipeRefreshLayout swipeRefreshLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +71,63 @@ public class inbox extends AppCompatActivity {
         setUpNavigationView();
         setUpDrawerLayout();
         setUpToolBarAndActionBar();
+        setUpRecyclerView();
+        refreshnotifs();
+        setUpSwipeRefresh();
+    }
+
+    void setUpSwipeRefresh() {
+        //Swipe Refresh Layout
+        swipeRefreshLayout = findViewById(R.id.swiperefresh);
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                if (isRefreshing) {
+                    swipeRefreshLayout.setRefreshing(false);
+                    return;
+                }
+
+                if (swipeRefreshLayout.isRefreshing())
+                    swipeRefreshLayout.setRefreshing(false);
+
+            }
+
+
+        });
+    }
+
+    void setUpRecyclerView() {
+
+        recyclerView = findViewById(R.id.notif_list);
+        notiflist = new ArrayList<FBNotification>();
+        adapter = new RecyclerViewotifAdapter(notiflist, getApplication());
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView.ItemAnimator itemAnimator = new
+                DefaultItemAnimator();
+        itemAnimator.setAddDuration(1000);
+        itemAnimator.setRemoveDuration(1000);
+        recyclerView.setItemAnimator(itemAnimator);
+//TODO fix show path using direction API / show more about user info and deliverer info /make contract to ensure well working processee
+        recyclerView.addOnItemTouchListener(new NotifTouchListener(this, recyclerView, new NotifClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                OrderViewHolder viewHolder = (OrderViewHolder) recyclerView.findViewHolderForAdapterPosition(position);
+                if (viewHolder != null && !viewHolder.isClickable)
+                    return;
+                FBNotification notifclick = notiflist.get(position);
+                Toast.makeText(inbox.this, "Notif=" + notifclick.getMessage() + "\n" + notifclick.getTitle(), Toast.LENGTH_SHORT).show();
+
+
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+
     }
 
     void setUpNavigationView() {
@@ -160,70 +201,6 @@ public class inbox extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        mDrawerLayout.addDrawerListener(
-                new DrawerLayout.DrawerListener() {
-                    @Override
-                    public void onDrawerSlide(View drawerView, float slideOffset) {
-                        // Respond when the drawer's position changes
-                        userId = user.getUid();
-
-                        forUserData = root.child("deliveryApp").child("users").child(userId);
-                        forUserData.keepSynced(true);
-                        forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                userDetails = dataSnapshot.getValue(UserDetails.class);
-                                mHeaderView = navigationView.getHeaderView(0);
-                                textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
-                                textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
-                                imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
-                                int wallet = userDetails.getWallet();
-                                ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
-                                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
-                                walletBalance.setImageDrawable(drawable);
-                                textViewUserName.setText(userDetails.getFirst() + " " + userDetails.getLast());
-                                textViewEmail.setText(userDetails.getEmail());
-//                                String photoUrl = userDetails.getCinPhoto();
-                                try {
-                                    Picasso.get()
-                                            .load(userDetails.getProfile())
-                                            .into(imageViewUserImage);
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        if (havelocation) {
-                            mHeaderView = navigationView.getHeaderView(0);
-                            ImageView currentLocation = mHeaderView.findViewById(R.id.currentLocation);
-                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(address.toString(), Color.WHITE, 100);
-                            currentLocation.setImageDrawable(drawable);
-                        }
-                    }
-
-                    @Override
-                    public void onDrawerOpened(View drawerView) {
-                        // Respond when the drawer is opened
-                    }
-
-                    @Override
-                    public void onDrawerClosed(View drawerView) {
-                        // Respond when the drawer is closed
-                    }
-
-                    @Override
-                    public void onDrawerStateChanged(int newState) {
-                        // Respond when the drawer motion state changes
-                    }
-                }
-        );
-
     }
 
     void setUpToolBarAndActionBar() {
@@ -234,6 +211,49 @@ public class inbox extends AppCompatActivity {
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         toolbar.setTitle(getTitle());
+
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+
+    }
+
+    void refreshnotifs() {
+        //TODO Add internet connectivity error
+        final ProgressBar progressBar = findViewById(R.id.progressBarUserOrder);
+        progressBar.setVisibility(View.VISIBLE);
+        isRefreshing = true;
+
+
+        final DatabaseReference allnotif = root.child("deliveryApp").child("Notifications");
+        allnotif.keepSynced(true);
+        allnotif.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                isRefreshing = true;
+                Calendar curr = Calendar.getInstance();
+                Calendar exp = Calendar.getInstance();
+                boolean somethingExpired = false;
+
+
+                for (DataSnapshot orderdata : dataSnapshot.getChildren()) {
+                    FBNotification notif = orderdata.getValue(FBNotification.class);
+                    adapter.insert(0, notif);
+                }
+
+
+                isRefreshing = false;
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
 
     }
 }

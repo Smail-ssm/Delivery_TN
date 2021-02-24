@@ -26,7 +26,7 @@ public class OrderViewHolder extends RecyclerView.ViewHolder {
 
     OrderViewHolder(View itemView) {
         super(itemView);
-        cv = itemView.findViewById(R.id.cardView);
+        cv = itemView.findViewById(R.id.notifCard);
         swipeLayout = itemView.findViewById(R.id.swipeLayout);
         undo = itemView.findViewById(R.id.undo);
         category = itemView.findViewById(R.id.category);
