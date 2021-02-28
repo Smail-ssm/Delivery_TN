@@ -78,10 +78,10 @@ public class ChatMain extends AppCompatActivity {
         keepitup();
         getallmessages();
         mbtSent.setOnClickListener(v -> {
-            String message = metText.getText().toString();
 
-            if (!message.isEmpty()) {
-                sendmsg(message);
+
+            if (!metText.getText().toString().isEmpty()) {
+                sendmsg(metText.getText().toString());
             } else {
                 Toast.makeText(ChatMain.this, "message can not be empty", Toast.LENGTH_SHORT).show();
             }
@@ -122,10 +122,7 @@ public class ChatMain extends AppCompatActivity {
 
             @Override
             public void onChildMoved(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildMoved:" + dataSnapshot.getKey());
 
-                Chat c = dataSnapshot.getValue(Chat.class);
-                Toast.makeText(ChatMain.this, "moved" + c.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override

@@ -50,11 +50,10 @@ public class RecyclerViewotifAdapter extends RecyclerView.Adapter<NotifViewHolde
         /** {show regular layout} and {hide swipe layout} */
         holder.cv.setVisibility(View.VISIBLE);
         holder.isClickable = true;
-        holder.swipeLayout.setVisibility(View.GONE);
         FBNotification notif = list.get(position);
         //Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
-        title = notif.getTitle();
-        description = notif.getMessage();
+        holder.title.setText(data.getTitle());
+        holder.description.setText(notif.getMessage());
     }
 
 
@@ -76,9 +75,9 @@ public class RecyclerViewotifAdapter extends RecyclerView.Adapter<NotifViewHolde
     }
 
     // Remove a RecyclerView item containing a specified OrderData object
-    public void remove(OrderData OrderData) {
+    public void remove(int notif) {
 
-        int position = list.indexOf(OrderData);
+        int position = list.indexOf(notif);
         if (position != -1) {
             list.remove(position);
             notifyItemRemoved(position);

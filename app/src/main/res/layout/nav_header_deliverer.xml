@@ -1,102 +1,115 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/nav_header_height"
-    android:background="@drawable/side_nav_bar"
+    android:layout_height="wrap_content"
+    android:background="@color/primary"
+    android:elevation="15dp"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:paddingBottom="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="100dp"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    app:cardBackgroundColor="@color/primary"
+    app:cardCornerRadius="20dp">
 
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="10dp">
-
-
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingTop="32dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="1dp">
+            android:layout_height="wrap_content">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/imageViewUserImage"
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_margin="8dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:src="@drawable/smiley"
+                app:civ_border_color="#FF000000"
+                app:civ_border_width="2dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:orientation="vertical"
+                android:padding="1dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:id="@+id/imageViewUserImage"
-                    android:layout_width="96dp"
-                    android:layout_height="96dp"
-                    android:layout_marginStart="8dp"
-                    android:layout_marginTop="8dp"
-                    android:src="@drawable/smiley"
-                    app:civ_border_color="#FF000000"
-                    app:civ_border_width="2dp"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/walletIcon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/nav_header_desc"
-                    android:paddingRight="5dp"
-                    app:srcCompat="@drawable/ic_wallet" />
-
-                <ImageView
-                    android:id="@+id/walletBalance"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
-            </LinearLayout>
+                    android:layout_height="match_parent"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                    <ImageView
+                        android:id="@+id/locationIcon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:contentDescription="@string/nav_header_desc"
+                        android:paddingRight="5dp"
+                        app:srcCompat="@drawable/ic_location" />
 
-                <ImageView
-                    android:id="@+id/locationIcon"
-                    android:layout_width="30dp"
-                    android:layout_height="30dp"
-                    android:contentDescription="@string/nav_header_desc"
-                    android:paddingRight="5dp"
-                    app:srcCompat="@drawable/ic_location" />
+                    <TextView
+                        android:id="@+id/currentLocation"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-                <ImageView
-                    android:id="@+id/currentLocation"
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="30dp"
-                    android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <ImageView
+                        android:id="@+id/walletIcon"
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:contentDescription="@string/nav_header_desc"
+                        android:paddingRight="5dp"
+                        app:srcCompat="@drawable/ic_wallet" />
+
+                    <ImageView
+                        android:id="@+id/walletBalance"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp"
+                        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+                </LinearLayout>
 
             </LinearLayout>
 
         </LinearLayout>
 
+        <TextView
+            android:id="@+id/headerUserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:paddingTop="@dimen/nav_header_vertical_spacing"
+            android:text=""
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <TextView
+            android:id="@+id/headerUserEmail"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingStart="24dp"
+            android:text="" />
+
     </LinearLayout>
 
-    <TextView
-        android:id="@+id/headerUserName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text=""
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+</androidx.cardview.widget.CardView>
 
-    <TextView
-        android:id="@+id/headerUserEmail"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="" />
 
-</LinearLayout>

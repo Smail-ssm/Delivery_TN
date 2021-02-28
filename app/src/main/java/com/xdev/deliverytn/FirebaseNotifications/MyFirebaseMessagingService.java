@@ -19,6 +19,8 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.xdev.deliverytn.R;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 import static android.content.ContentValues.TAG;
@@ -26,29 +28,27 @@ import static android.content.ContentValues.TAG;
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
     private DatabaseReference notifref, totalnotif;
-    private Integer notifcount = 0;
+    private Integer notifcount;
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
         Log.d("MSGF", remoteMessage.getNotification().getBody());
         shownotification(remoteMessage.getNotification());
-
-
         FBNotification notif = new FBNotification();
-
         notif.setMessage(remoteMessage.getNotification().getBody());
         notif.setTitle(remoteMessage.getNotification().getTitle());
-        notifref = root.child("deliveryApp").child("Notifications").child("NotificationId");
-        totalnotif = root.child("deliveryApp").child("totalnotif");
-        notifref.keepSynced(true);
+        notifref = root.child("deliveryApp").child("Notifications");
+        totalnotif = root.child("deliveryApp").child("totalNotifications");
         totalnotif.keepSynced(true);
-        totalnotif.addValueEventListener(new ValueEventListener() {
+        totalnotif.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                // This method is called once with the initial value and again
-                // whenever data at this location is updated.
-                notifcount = dataSnapshot.child("totalNotifications").getValue(Integer.class);
-                totalnotif.setValue(notifcount++);
+                notifcount = dataSnapshot.getValue(Integer.class);
+                totalnotif.setValue(notifcount + 1);
+                notifref.keepSynced(true);
+
+                notifref = root.child("deliveryApp").child("Notifications").child(String.valueOf(notifcount + 1));
+                addnotif(notif);
             }
 
             @Override
@@ -58,18 +58,20 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             }
         });
 
+    }
 
-        notifref.setValue(notif, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if (databaseError != null) {
-                    System.out.println("Data could not be saved " + databaseError.getMessage());
-                } else {
-                    System.out.println("Data saved successfully.");
-                }
+    private void addnotif(FBNotification notif) {
+        Map<String, Object> map = new HashMap<String, Object>();
+
+        map.put("message", notif.getMessage());
+        map.put("title", notif.getTitle());
+        notifref.setValue(map, (databaseError, databaseReference) -> {
+            if (databaseError != null) {
+                System.out.println("Data could not be saved " + databaseError.getMessage());
+            } else {
+                System.out.println("Data saved successfully.");
             }
         });
-
     }
 
 
@@ -84,11 +86,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
 
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        String NOTIFICATION_CHANNEL_ID = "com.****.*****.***"; //your app package name
+        String NOTIFICATION_CHANNEL_ID = "com.xdev.binidik"; //your app package name
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification",
-                    NotificationManager.IMPORTANCE_DEFAULT);
+                    NotificationManager.IMPORTANCE_HIGH);
 
             notificationChannel.setDescription("testt Channel");
             notificationChannel.enableLights(true);

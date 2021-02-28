@@ -30,43 +30,6 @@
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:visibility="gone" />
-
-        <!--<TextView
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="120dp"
-            android:text="@string/choose_mode"
-            android:textColor="@color/black"
-            android:textSize="30sp" />
-
-        <Button
-            android:id="@+id/use_as_user"
-            style="?android:textAppearanceMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="85dp"
-            android:text="@string/btn_use_as_user"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="@drawable/button_round_main"/>
-
-        <Button
-            android:id="@+id/use_as_deliverer"
-            style="?android:textAppearanceMedium"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="60dp"
-            android:text="@string/btn_use_as_deliverer"
-            android:textStyle="bold"
-            android:textColor="@android:color/white"
-            android:background="@drawable/button_round_main"/>-->
-
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -94,30 +57,46 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
-                    <TextView
-                        android:id="@+id/textView4"
+                    <LinearLayout
+                        android:id="@+id/getinfo"
                         android:layout_width="wrap_content"
-                        android:layout_height="0dp"
+                        android:layout_height="wrap_content"
                         android:layout_marginStart="8dp"
-                        android:layout_marginTop="8dp"
-                        android:layout_weight="1"
-                        android:text="Account statue :"
-                        android:textColor="@color/black"
-                        android:textSize="18sp"
+                        android:layout_marginTop="16dp"
+                        android:orientation="horizontal"
+                        app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
+                        app:layout_constraintHorizontal_bias="0.0"
                         app:layout_constraintStart_toEndOf="@+id/profile_image"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent">
+
+                        <TextView
+                            android:id="@+id/textView4"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Get informed:"
+                            android:textColor="@color/black"
+                            android:textSize="18sp" />
+
+                        <TextView
+                            android:id="@+id/notifNmbr"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="0"
+                            android:textSize="18sp" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/linearLayout4"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginBottom="8dp"
                         android:orientation="vertical"
-                        app:layout_constraintBottom_toBottomOf="@+id/username"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintHorizontal_bias="0.49"
-                        app:layout_constraintStart_toEndOf="@+id/textView4"
-                        app:layout_constraintTop_toTopOf="@+id/profile_image">
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <Button
                             android:id="@+id/recto"
@@ -157,19 +136,65 @@
 
                     <TextView
                         android:id="@+id/username"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:autoText="false"
                         android:text="zdadzd"
                         android:textColor="@color/black"
                         android:textSize="18sp"
-                        app:layout_constraintStart_toStartOf="@+id/profile_image"
-                        app:layout_constraintTop_toBottomOf="@+id/profile_image" />
+                        android:textStyle="italic"
+                        app:autoSizeTextType="uniform"
+                        app:layout_constraintEnd_toStartOf="@+id/linearLayout4"
+                        app:layout_constraintHorizontal_bias="0.0"
+                        app:layout_constraintStart_toStartOf="@+id/getinfo"
+                        app:layout_constraintTop_toBottomOf="@+id/getinfo" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:visibility="gone" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="25dp" />
+
+        <!--<TextView
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginTop="120dp"
+            android:text="@string/choose_mode"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+        <Button
+            android:id="@+id/use_as_user"
+            style="?android:textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="85dp"
+            android:text="@string/btn_use_as_user"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_round_main"/>
+
+        <Button
+            android:id="@+id/use_as_deliverer"
+            style="?android:textAppearanceMedium"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="60dp"
+            android:text="@string/btn_use_as_deliverer"
+            android:textStyle="bold"
+            android:textColor="@android:color/white"
+            android:background="@drawable/button_round_main"/>-->
 
         <GridLayout
             android:id="@+id/mainGrid"

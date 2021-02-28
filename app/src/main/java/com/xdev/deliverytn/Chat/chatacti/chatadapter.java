@@ -16,8 +16,8 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
     private static final int CHAT_END = 1;
     private static final int CHAT_START = 2;
 
-    private List<String> mDataSet;
-    private String mId;
+    private final List<String> mDataSet;
+    private final String mId;
 
     /**
      * Called when a view has been clicked.
@@ -73,7 +73,7 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
 
         ViewHolder(View v) {
             super(v);
-            mTextView = (TextView) itemView.findViewById(R.id.tvMessage);
+            mTextView = itemView.findViewById(R.id.tvMessage);
         }
     }
 }

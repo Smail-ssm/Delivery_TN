@@ -301,7 +301,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                 public void onCancelled(DatabaseError databaseError) {
                                 }
                             });
-                            allorders = root.child("deliveryApp").child("orders").child(myUserId).child(String.valueOf(myOrderId));
+                            allorders = root.child("deliveryApp").child("orders")
+                                    .child(myOrder.userId)
+                                    .child(String.valueOf(myOrder.orderId));
                             allorders.keepSynced(true);
                             allorders.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override

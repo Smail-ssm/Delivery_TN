@@ -21,8 +21,7 @@ public class NotifViewHolder extends RecyclerView.ViewHolder {
 
     NotifViewHolder(View itemView) {
         super(itemView);
-        cv = itemView.findViewById(R.id.notifCard);
-        swipeLayout = itemView.findViewById(R.id.swipeLayout);
+        cv = itemView.findViewById(R.id.notifCarda);
         title = itemView.findViewById(R.id.title);
         description = itemView.findViewById(R.id.description);
 

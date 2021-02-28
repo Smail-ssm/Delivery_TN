@@ -9,6 +9,7 @@
 
     <RatingBar
         android:id="@+id/ratingbar"
+        style="@android:style/Widget.Material.Light.RatingBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"

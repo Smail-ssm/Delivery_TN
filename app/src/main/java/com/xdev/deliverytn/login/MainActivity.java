@@ -13,7 +13,6 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
-import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
@@ -75,39 +74,31 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     public static final int REQUEST_LOCATION_PERMISSION = 10;
     public static final int REQUEST_CHECK_SETTINGS = 20;
     private static final int CAMERA_REQUEST = 1888;
-    private static final int CAMERA_REQUEST_profile = 1887;
-    private static final int CAMERA_REQUEST_profile_change = 1886;
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int PICK_IMAGE_REQUEST = 234;
     private static Context mContext;
-    private final int SELECT_FILE = 1;
-    private final Handler handler = new Handler();
-    private final int PICK_IMAGE_REQUEST_profile = 233;
+
     public Uri photoURI;
     GridLayout mainGrid;
     File imageFilePath;
     Boolean isCin = false, isProfile = false;
-    String cinphoto;
     AnimationDrawable animationDrawable;
     Button recto;
+    LinearLayout getinfo;
     AlertDialog.Builder builder;
     StorageReference storageReference;
     FirebaseStorage storage;
     DatabaseReference root;
     String userId;
     FirebaseUser user;
-    boolean profileexsists = false;
     String name;
-    String url;
+
     Snackbar snackbar;
-    ProgressBar p;
     ImageView profilepic;
-    String usertype;
-    boolean profilepicexsists = false;
+    int notif;
     private ProgressBar progressBar;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
-    private ImageView ivImage;
 
     public static Context getContext() {
         return mContext;
@@ -134,14 +125,15 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         requestLocationPermissions();
         requestcamera();
         profilepic = findViewById(R.id.profile_image);
-
-
+        getinfo = findViewById(R.id.getinfo);
+        getinfo.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, com.xdev.deliverytn.FirebaseNotifications.inbox.class)));
         Button logOutButton = findViewById(R.id.btnlogout);
         auth = FirebaseAuth.getInstance();
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
+        TextView notifNmbr = findViewById(R.id.notifNmbr);
         root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);
         userinfo.addValueEventListener(new ValueEventListener() {
@@ -213,6 +205,21 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
+            }
+        });
+//        totalnotif =;
+        FirebaseDatabase.getInstance().getReference().child("deliveryApp").child("totalNotifications").keepSynced(true);
+        FirebaseDatabase.getInstance().getReference().child("deliveryApp").child("totalNotifications").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Integer notifa = dataSnapshot.getValue(Integer.class);
+                Toast.makeText(MainActivity.this, "notif=" + notif, Toast.LENGTH_SHORT).show();
+                notifNmbr.setText(String.valueOf(notifa));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError error) {
+                // Failed to read value
             }
         });
 

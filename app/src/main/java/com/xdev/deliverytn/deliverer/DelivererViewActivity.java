@@ -432,9 +432,9 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
                         if (havelocation) {
                             mHeaderView = navigationView.getHeaderView(0);
-                            ImageView currentLocation = mHeaderView.findViewById(R.id.currentLocation);
-                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(address.toString(), Color.WHITE, 100);
-                            currentLocation.setImageDrawable(drawable);
+                            TextView currentLocation = mHeaderView.findViewById(R.id.currentLocation);
+//                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(, Color.WHITE, 100);
+                            currentLocation.setText(address.getLocality() + " " + address.getSubLocality());
                         }
                     }
 
@@ -618,7 +618,8 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                         Log.e("ADDRESS", order.userId + " " + order_adds.getLocality() + " " + order.orderId);
                         String city;
 //                        city = tokens[size - 2];
-//                        Toast.makeText(DelivererViewActivity.this, order_adds.toString(), Toast.LENGTH_SHORT).show();//                                 order_address;
+//                        Toast.makeText(DelivererViewActivity.this, order_adds.toString(), Toast.LENGTH_SHORT).show();//
+//                        order_address;
 //                        city = city.substring(1);
                         if ((order.userLocation.toString().contains(order_adds.getAddressLine(0)))
 //                                if ((order_adds.toString().contains(order.userLocation.toString()))
