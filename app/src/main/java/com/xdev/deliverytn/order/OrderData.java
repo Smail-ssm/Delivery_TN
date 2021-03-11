@@ -70,7 +70,7 @@ public class OrderData implements Parcelable {
 
     public OrderData(String category, String description, int orderId, int max_range, int min_range,
                      UserLocation location, ExpiryDate expiryDate, ExpiryTime expiryTime, String status,
-                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price, double earnings) {
+                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price) {
         this.category = category;
         this.description = description;
         this.orderId = orderId;
@@ -85,12 +85,10 @@ public class OrderData implements Parcelable {
         this.userId = userId;
         this.otp = otp;
         this.final_price = final_price;
-        this.earnings = earnings;
+
 
     }
 
-    public OrderData(String order_category, String order_description, int order_id, int parseInt, int parseInt1, UserLocation userLocation, ExpiryDate expiryDate, ExpiryTime expiryTime, String pending, int i, AcceptedBy acceptedBy, String userId, String otp, int final_price) {
-    }
 
     @Override
     public int describeContents() {

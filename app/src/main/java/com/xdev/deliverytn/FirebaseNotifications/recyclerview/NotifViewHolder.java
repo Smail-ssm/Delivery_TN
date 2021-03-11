@@ -1,7 +1,6 @@
 package com.xdev.deliverytn.FirebaseNotifications.recyclerview;
 
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -14,7 +13,7 @@ public class NotifViewHolder extends RecyclerView.ViewHolder {
 
     public boolean isClickable = true;
     CardView cv;
-    LinearLayout swipeLayout;
+
     TextView title;
     TextView description;
 

@@ -8,9 +8,7 @@
     android:fitsSystemWindows="true">
 
 
-    <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fitsSystemWindows="true"
@@ -45,6 +43,11 @@
             android:layout_height="match_parent"
             app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+            <ListView
+                android:id="@+id/notiflv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
             <ProgressBar
                 android:id="@+id/progressBarUserOrder"
                 android:layout_width="30dp"
@@ -53,8 +56,10 @@
                 android:layout_marginBottom="20dp"
                 android:visibility="gone" />
 
-
-                <include layout="@layout/notif_list" />
+            <!--            <include-->
+            <!--                layout="@layout/notif_list"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent" />-->
 
 
         </FrameLayout>

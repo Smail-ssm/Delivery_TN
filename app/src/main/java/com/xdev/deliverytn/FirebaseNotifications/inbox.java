@@ -1,11 +1,18 @@
 package com.xdev.deliverytn.FirebaseNotifications;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -16,7 +23,6 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -42,23 +48,21 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
     public static RecyclerViewotifAdapter adapter;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
     final DatabaseReference allnotif = root.child("deliveryApp").child("Notifications");
-    public List<FBNotification> notiflist;
+    public List<String> notiflist;
+    public List<FBNotification> fbobjectList;
     MenuItem mPreviousMenuItem = null;
-    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     NavigationView navigationView;
-    boolean isRefreshing = false;
     Toolbar toolbar;
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
     private SwipeRefreshLayout swipeRefreshLayout;
+    AlertDialog.Builder builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
         navigationView = findViewById(R.id.nav_view_deliverer);
-        recyclerView = findViewById(R.id.notif_list);
-
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -70,9 +74,7 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
                 }
                 mPreviousMenuItem = menuItem;// close drawer when item is tapped
                 mDrawerLayout.closeDrawers();
-
                 int id = menuItem.getItemId();
-
                 if (id == R.id.use_as_deliverer) {
                     startActivity(new Intent(inbox.this, DelivererViewActivity.class));
                     usertype(root, "deliverer");
@@ -81,16 +83,13 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
                 } else if (id == R.id.use_as_user) {
                     startActivity(new Intent(inbox.this, UserViewActivity.class));
                     usertype(root, "orderer");
-
                     finish();
                 } else if (id == R.id.profile) {
                     Intent i = new Intent(inbox.this, Profile.class);
                     FirebaseAuth authx = FirebaseAuth.getInstance();
                     String user = authx.getCurrentUser().toString();
-
                     i.putExtra("UserDetail", user);
                     startActivity(i);
-
                 } else if (id == R.id.chatroom) {
                     Intent i = new Intent(inbox.this, chatRooms.class);
 
@@ -113,34 +112,31 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
                 return true;
             }
         });
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         mDrawerLayout = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(inbox.this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        notiflist = new ArrayList<>();
-        adapter = new RecyclerViewotifAdapter(notiflist, getApplication());
-        recyclerView.setAdapter(adapter);
+        //  recyclerView = findViewById(R.id.notif_list);
 
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        notiflist = new ArrayList<>();
+        fbobjectList = new ArrayList<>();
+        final ListView dynamic = findViewById(R.id.notiflv);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        toolbar.setTitle(getTitle());
+        toolbar.setTitle("Get informed");
         allnotif.keepSynced(true);
         allnotif.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-//
                 for (DataSnapshot orderdata : dataSnapshot.getChildren()) {
                     FBNotification notif = orderdata.getValue(FBNotification.class);
-                    notiflist.add(notif);
-                    adapter.insert(0, notif);
+                    Toast.makeText(inbox.this, notif.toString(), Toast.LENGTH_SHORT).show();
+                    notiflist.add(notif.getTitle());
+                    fbobjectList.add(notif);
                 }
-
-
-//                swipeRefreshLayout.setRefreshing(false);
-
             }
 
 
@@ -151,8 +147,31 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
         });
 
 
-//
-//        setUpSwipeRefresh();
+        //Create adapter for ArrayList
+        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notiflist);
+
+        //Insert Adapter into List
+        dynamic.setAdapter(adapter);
+
+        //set click functionality for each list item
+        dynamic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                AlertDialog alertDialog = new AlertDialog.Builder(inbox.this).create();
+                alertDialog.setMessage(fbobjectList.get(position).getMessage());
+                alertDialog.setTitle(fbobjectList.get(position).getTitle());
+                alertDialog.setButton(AlertDialog.BUTTON_NEUTRAL, "OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                            }
+                        });
+                alertDialog.show();
+            }
+
+        });
+
 
     }
 
@@ -162,5 +181,8 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
 
     }
 
+    void setUpRecyclerView() {
+        recyclerView.setAdapter(adapter);
 
+    }
 }

@@ -83,7 +83,8 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
             holder.isClickable = true;
             holder.swipeLayout.setVisibility(View.GONE);
             OrderData order = list.get(position);
-            //Use the provided View Holder on the onCreateViewHolder method to populate the current row on the RecyclerView
+            //Use the provided View Holder on the onCreateViewHolder method to
+            // populate the current row on the RecyclerView
             status = String.valueOf(order.status.charAt(0));
             price = Integer.toString(order.max_range);
             charge = Integer.toString(order.deliveryCharge);

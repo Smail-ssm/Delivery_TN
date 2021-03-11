@@ -36,4 +36,13 @@ public class FBNotification {
     public void setId(int id) {
         this.id = id;
     }
+
+    @Override
+    public String toString() {
+        return "FBNotification{" +
+                "title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                ", id=" + id +
+                '}';
+    }
 }

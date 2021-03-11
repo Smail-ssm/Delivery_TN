@@ -858,7 +858,20 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
                     OrderNumber++;
                     order_id = OrderNumber;
-                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
+                    order = new OrderData(order_category,
+                            order_description,
+                            order_id,
+                            Integer.parseInt(order_max_range),
+                            Integer.parseInt(order_min_range),
+                            userLocation,
+                            expiryDate,
+                            expiryTime,
+                            "PENDING",
+                            0,
+                            acceptedBy,
+                            userId,
+                            otp,
+                            final_price);
                     root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
                 }

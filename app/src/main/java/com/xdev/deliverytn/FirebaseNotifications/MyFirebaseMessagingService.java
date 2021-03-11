@@ -32,7 +32,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
-        Log.d("MSGF", remoteMessage.getNotification().getBody());
         shownotification(remoteMessage.getNotification());
         FBNotification notif = new FBNotification();
         notif.setMessage(remoteMessage.getNotification().getBody());
@@ -46,7 +45,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 notifcount = dataSnapshot.getValue(Integer.class);
                 totalnotif.setValue(notifcount + 1);
                 notifref.keepSynced(true);
-
                 notifref = root.child("deliveryApp").child("Notifications").child(String.valueOf(notifcount + 1));
                 addnotif(notif);
             }
@@ -62,14 +60,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
     private void addnotif(FBNotification notif) {
         Map<String, Object> map = new HashMap<String, Object>();
-
         map.put("message", notif.getMessage());
         map.put("title", notif.getTitle());
         notifref.setValue(map, (databaseError, databaseReference) -> {
             if (databaseError != null) {
-                System.out.println("Data could not be saved " + databaseError.getMessage());
             } else {
-                System.out.println("Data saved successfully.");
             }
         });
     }

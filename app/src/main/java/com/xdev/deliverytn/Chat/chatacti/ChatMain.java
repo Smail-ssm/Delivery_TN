@@ -106,13 +106,7 @@ public class ChatMain extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildChanged:" + dataSnapshot.getKey());
-
-
-                Chat c = dataSnapshot.getValue(Chat.class);
-                Toast.makeText(ChatMain.this, "changed" + c.getMessage(), Toast.LENGTH_SHORT).show();
-
-            }
+                            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
