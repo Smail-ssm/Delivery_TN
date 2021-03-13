@@ -5,7 +5,6 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -49,7 +48,7 @@ public class CompleteOrder extends AppCompatActivity {
 
 
         Intent intent = getIntent();
-        myOrder = intent.getParcelableExtra("MyOrder");
+        myOrder = intent.getParcelableExtra("MyOrder"); //NON-NLS
 
         actual_price = findViewById(R.id.actual_price);
         btn_send_otp = findViewById(R.id.btn_send_otp);
@@ -86,17 +85,17 @@ public class CompleteOrder extends AppCompatActivity {
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                     userId = user.getUid();
                     root = FirebaseDatabase.getInstance().getReference();
-                    ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("otp");
+                    ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("otp"); //NON-NLS //NON-NLS //NON-NLS
                     ref1.keepSynced(true);
                     ref1.setValue(secret);
-                    ref2 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("final_price");
+                    ref2 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("final_price"); //NON-NLS //NON-NLS //NON-NLS
                     ref2.keepSynced(true);
                     ref2.setValue(Integer.parseInt(actual_price.getText().toString()));
                     setUpOTPNotif(myOrder, secret);
                     Intent intent = new Intent(CompleteOrder.this, Otp_screen.class);
-                    intent.putExtra("Final Price", actual_price.getText().toString());
-                    intent.putExtra("OTP", secret);
-                    intent.putExtra("MyOrder", myOrder);
+                    intent.putExtra("Final Price", actual_price.getText().toString()); //NON-NLS
+                    intent.putExtra("OTP", secret); //NON-NLS
+                    intent.putExtra("MyOrder", myOrder); //NON-NLS
                     startActivity(intent);
                     finish();
                 }
@@ -110,10 +109,10 @@ public class CompleteOrder extends AppCompatActivity {
         String message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = getString(R.string.coodConnectedTOinternet);
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = getString(R.string.pasdinternet);
             color = Color.RED;
         }
 
@@ -140,24 +139,23 @@ public class CompleteOrder extends AppCompatActivity {
         return s;
     }
 
-    public void setUpOTPNotif(final OrderData order, final String otp) {
+    public void setUpOTPNotif(final OrderData order, final String otp) { //NON-NLS //NON-NLS
         String userId = order.userId;
-        root.child("deliveryApp").child("users").child(userId).child("playerId").addListenerForSingleValueEvent(new ValueEventListener() {
+        root.child("deliveryApp").child("users").child(userId).child("playerId").addListenerForSingleValueEvent(new ValueEventListener() { //NON-NLS
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String player_id = dataSnapshot.getValue(String.class);
                 //TOAST
                 try {
-                    String notif = otp + "\nActual price of order : " + Integer.parseInt(actual_price.getText().toString()) + "\nDelivery charge : " + myOrder.deliveryCharge + "\nTotal to pay : " + (Integer.parseInt(actual_price.getText().toString()) + myOrder.deliveryCharge);
-                    JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + notif + "'}, " +
-                            "'include_player_ids': ['" + player_id + "'], " +
-                            "'headings': {'en': 'Your OTP for Order Id : " + order.orderId + "'} " +
+                    String notif = otp + "\n" + getString(R.string.prixactuel) + Integer.parseInt(actual_price.getText().toString()) + "\n" + getString(R.string.coutdelaivraison) + myOrder.deliveryCharge + "\n" + getString(R.string.totalapaye) + (Integer.parseInt(actual_price.getText().toString()) + myOrder.deliveryCharge);
+                    JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + notif + "'}, " + //NON-NLS
+                            "'include_player_ids': ['" + player_id + "'], " + //NON-NLS
+                            "'headings': {'en': 'Your OTP for Order Id : " + order.orderId + "'} " + //NON-NLS
                             "}");
-                    JSONObject order = new JSONObject();
-                    order.put("userId", myOrder.userId);
-                    order.put("orderId", myOrder.orderId);
-                    notificationContent.putOpt("data", order);
-                    Log.i("JSONExample", "JSON parsed");
+                    JSONObject order = new JSONObject(); //NON-NLS
+                    order.put("userId", myOrder.userId); //NON-NLS
+                    order.put("orderId", myOrder.orderId); //NON-NLS
+                    notificationContent.putOpt("data", order); //NON-NLS //NON-NLS
                     OneSignal.postNotification(notificationContent, null);
                 } catch (JSONException e) {
                     e.printStackTrace();

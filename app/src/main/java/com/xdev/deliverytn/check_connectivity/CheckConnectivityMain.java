@@ -71,12 +71,10 @@ public class CheckConnectivityMain extends Application {
 
             String customKey;
 
-            Log.i("OneSignalExample", "NotificationID received: " + notificationID);
-
             if (data != null) {
-                customKey = data.optString("customkey", null);
+                customKey = data.optString("customkey", null); //NON-NLS
                 if (customKey != null)
-                    Log.i("OneSignalExample", "customkey set with value: " + customKey);
+                    Log.i("OneSignalExample", "customkey set with value: " + customKey); //NON-NLS //NON-NLS
             }
         }
     }
@@ -89,15 +87,15 @@ public class CheckConnectivityMain extends Application {
             JSONObject data = result.notification.payload.additionalData;
 
             if (data != null) {
-                String userId = data.optString("userId");
-                String orderId = data.optString("orderId");
+                String userId = data.optString("userId"); //NON-NLS
+                String orderId = data.optString("orderId"); //NON-NLS
                 DatabaseReference root = FirebaseDatabase.getInstance().getReference();
-                root.child("deliveryApp").child("orders").child(userId).child(orderId).addListenerForSingleValueEvent(new ValueEventListener() {
+                root.child("deliveryApp").child("orders").child(userId).child(orderId).addListenerForSingleValueEvent(new ValueEventListener() { //NON-NLS //NON-NLS
                     @Override
                     public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         OrderData myOrder = dataSnapshot.getValue(OrderData.class);
-                        Intent intent = new Intent(getApplicationContext(), UserOrderDetailActivity.class);
-                        intent.putExtra("MyOrder", myOrder);
+                        Intent intent = new Intent(getApplicationContext(), UserOrderDetailActivity.class); //NON-NLS
+                        intent.putExtra("MyOrder", myOrder); //NON-NLS
                         intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
                         startActivity(intent);
                     }

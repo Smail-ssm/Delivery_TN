@@ -32,7 +32,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FirebaseNotifications.inbox"></activity>
+        <activity android:name=".FirebaseNotifications.inbox" />
         <activity android:name=".Chat.chatroom.chatRooms" />
 
         <activity android:name=".profile.Profile" /> <!-- <activity android:name=".friendlyMessage.ChatMain" /> -->
@@ -126,7 +126,6 @@
         <activity android:name=".deliverer.Otp_screen" />
         <activity android:name=".deliverer.CompleteOrder" />
         <activity android:name=".login.VerifyEmailScreen" />
-        <activity android:name=".deliverer.Pathc" />
 
         <service android:name=".FirebaseNotifications.MyFirebaseMessagingService">
             <intent-filter>

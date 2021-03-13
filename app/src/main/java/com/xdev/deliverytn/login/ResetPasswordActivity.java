@@ -87,13 +87,13 @@ public class ResetPasswordActivity extends AppCompatActivity implements Connecti
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = R.string.pasdinternet;
             color = Color.RED;
         }
 

@@ -9,7 +9,6 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
@@ -21,10 +20,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.xdev.deliverytn.Chat.chatacti.Chat;
 import com.xdev.deliverytn.Chat.chatacti.ChatMain;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.util.ArrayList;
 
@@ -36,8 +33,6 @@ public class chatRooms extends AppCompatActivity {
     ArrayAdapter<String> arrayAdapter;
     ArrayList<chatrrom> chatrooms = new ArrayList<>();
     SwipeRefreshLayout swipe;
-    private UserDetails currentUserDetails = new UserDetails();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,11 +46,11 @@ public class chatRooms extends AppCompatActivity {
             public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
                 chatrrom chatrrom = chatrooms.get(position);
                 Intent intent = new Intent(chatRooms.this, ChatMain.class);
-                intent.putExtra("DeliverId",
+                intent.putExtra("DeliverId", //NON-NLS
                         chatrrom.getDeliverId());
-                intent.putExtra("OrdererId",
+                intent.putExtra("OrdererId", //NON-NLS
                         chatrrom.getOrdererId());
-                intent.putExtra("RoomId",
+                intent.putExtra("RoomId", //NON-NLS
                         chatrrom.getRoomId());
                 startActivity(intent);
             }
@@ -68,15 +63,15 @@ public class chatRooms extends AppCompatActivity {
                 swipe.setRefreshing(false);
             }
         });
-//        getcurrentuserUId();
+
     }
 
 
     private void getrooms() {
 
-        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference("deliveryApp")
-                .child("chatRooms")
-                .child("roomId");
+        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference("deliveryApp") //NON-NLS
+                .child("chatRooms") //NON-NLS
+                .child("roomId"); //NON-NLS
         nm.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -86,13 +81,12 @@ public class chatRooms extends AppCompatActivity {
                                 getValue(chatrrom.class);
 
                         if (FirebaseAuth.getInstance().getUid().equals(l.ordererId) || FirebaseAuth.getInstance().getUid().equals(l.deliverId)) {
-                            chats.add(l.getRoomId());
+                            chats.add(getString(R.string.commndnumber) + l.getRoomId());
                             chatrooms.add(l);
 
                         } else {
-                            showsnacks("no rooms");
+                            showsnacks(getString(R.string.nochatrooms));
                         }
-
                     }
                     arrayAdapter = new ArrayAdapter<String>(chatRooms.this, android.R.layout.simple_list_item_1, chats);
                     chatlist.setAdapter(arrayAdapter);
@@ -110,10 +104,7 @@ public class chatRooms extends AppCompatActivity {
 
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//        ActionBar actionbar = getSupportActionBar();
-//        actionbar.setDisplayHomeAsUpEnabled(true);
-//        actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        toolbar.setTitle("Chat rooms");
+        toolbar.setTitle(R.string.chatrooms);
 
     }
 
@@ -129,23 +120,6 @@ public class chatRooms extends AppCompatActivity {
         snackbar.show();
     }
 
-    public void getcurrentuserUId(Chat c) {
-        DatabaseReference root = FirebaseDatabase.getInstance().getReference();
 
-        DatabaseReference forUserData = root.child("deliveryApp").child("users").child(c.getId());
-        forUserData.keepSynced(true);
-        forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                currentUserDetails = dataSnapshot.getValue(UserDetails.class);
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
 
 }

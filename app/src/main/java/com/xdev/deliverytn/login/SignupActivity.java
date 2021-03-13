@@ -60,6 +60,8 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static com.xdev.deliverytn.R.string.Enter8digitnumber;
+
 public class SignupActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_CHECK_SETTINGS = 20;
     private static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -178,30 +180,30 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                     final String cin = cina.getText().toString().trim();
 
                     if (TextUtils.isEmpty(name)) {
-                        Toast.makeText(getApplicationContext(), "Enter your Name!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.entrename, Toast.LENGTH_SHORT).show();
                         first.requestFocus();
                         return;
                     }
 
                     if (TextUtils.isEmpty(Mobile)) {
-                        Toast.makeText(getApplicationContext(), "Enter your Mobile No.!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.entremobile, Toast.LENGTH_SHORT).show();
                         mobile.requestFocus();
                         return;
                     }
                     if (mobile.length() != 8) {
-                        Toast.makeText(getApplicationContext(), "Enter 8-digit Mobile No.!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), Enter8digitnumber, Toast.LENGTH_SHORT).show();
                         mobile.requestFocus();
                         return;
                     }
 
                     if (cin.length() != 8) {
-                        Toast.makeText(getApplicationContext(), "CIN must be 8 numbers !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.cin8, Toast.LENGTH_SHORT).show();
                         cina.requestFocus();
                         return;
                     }
 
                     if (TextUtils.isEmpty(Email)) {
-                        Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), R.string.emailem, Toast.LENGTH_SHORT).show();
                         email.requestFocus();
                         return;
                     }

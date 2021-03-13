@@ -61,6 +61,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static com.xdev.deliverytn.R.string.yourordersexpired;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
 import static com.xdev.deliverytn.login.usertype.usertype;
 
@@ -145,7 +146,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
                 int id = menuItem.getItemId();
                 if (id == R.id.sign_out_user) {
-                    Toast.makeText(UserViewActivity.this, "You have been successfully logged out.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UserViewActivity.this, R.string.logoutsuccsess, Toast.LENGTH_LONG).show();
                     signOut();
                 } else if (id == R.id.use_as_deliverer) {
                     startActivity(new Intent(UserViewActivity.this, DelivererViewActivity.class));
@@ -154,7 +155,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     finish();
                 } else if (id == R.id.all_orders_user) {
                     setDefaultFlags();
-                    toolbar.setTitle("My orders");
+                    toolbar.setTitle(R.string.myorders);
                     refreshOrders();
                 } else if (id == R.id.active_user) {
                     active = true;
@@ -162,7 +163,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     cancelled = false;
                     expired = false;
                     finished = false;
-                    toolbar.setTitle("Active");
+                    toolbar.setTitle(R.string.activeorders);
                     refreshOrders();
                 } else if (id == R.id.info) {
                     Intent i = new Intent(UserViewActivity.this, inbox.class);
@@ -173,7 +174,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     cancelled = false;
                     expired = false;
                     finished = false;
-                    toolbar.setTitle("Pending");
+                    toolbar.setTitle(R.string.pendingorders);
                     refreshOrders();
                 } else if (id == R.id.cancelled_user) {
                     active = false;
@@ -181,7 +182,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     cancelled = true;
                     expired = false;
                     finished = false;
-                    toolbar.setTitle("Cancelled");
+                    toolbar.setTitle(R.string.cancledorders);
                     refreshOrders();
                 } else if (id == R.id.expired_user) {
                     active = false;
@@ -189,7 +190,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     cancelled = false;
                     expired = true;
                     finished = false;
-                    toolbar.setTitle("Expired");
+                    toolbar.setTitle(R.string.expiredorders);
                     refreshOrders();
                 } else if (id == R.id.completed_user) {
                     active = false;
@@ -197,7 +198,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
                     cancelled = false;
                     expired = false;
                     finished = true;
-                    toolbar.setTitle("Finished");
+                    toolbar.setTitle(R.string.finihsidorders);
                     refreshOrders();
                 } else if (id == R.id.profile) {
                     Intent i = new Intent(UserViewActivity.this, Profile.class);
@@ -351,13 +352,13 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = R.string.pasdinternet;
             color = Color.RED;
         }
 
@@ -552,7 +553,7 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
                 }
                 if (somethingExpired)
-                    Toast.makeText(UserViewActivity.this, "Your some orders expired", Toast.LENGTH_LONG).show();
+                    Toast.makeText(UserViewActivity.this, yourordersexpired, Toast.LENGTH_LONG).show();
                 isRefreshing = false;
                 progressBar.setVisibility(View.GONE);
 

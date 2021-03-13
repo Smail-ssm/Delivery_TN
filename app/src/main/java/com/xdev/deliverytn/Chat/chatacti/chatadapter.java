@@ -45,15 +45,6 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
         return new ViewHolder(v);
     }
 
-//    @Override
-//    public int getItemViewType(int position) {
-//        if (mDataSet.get(position).equals(mId)) {
-//            return CHAT_END;
-//        }
-//
-//        return CHAT_START;
-//    }
-
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         String chat = mDataSet.get(position);
@@ -65,9 +56,7 @@ class chatadapter extends RecyclerView.Adapter<chatadapter.ViewHolder> {
         return mDataSet.size();
     }
 
-    /**
-     * Inner Class for a recycler view
-     */
+
     class ViewHolder extends RecyclerView.ViewHolder {
         TextView mTextView;
 

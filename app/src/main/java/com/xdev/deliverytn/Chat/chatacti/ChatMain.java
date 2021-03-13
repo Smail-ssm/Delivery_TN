@@ -6,7 +6,6 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.MediaPlayer;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.widget.Button;
 import android.widget.EditText;
@@ -35,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.xdev.deliverytn.R.string.filedloadingmsgs;
+import static com.xdev.deliverytn.R.string.msgcantbeempty;
+
 public class ChatMain extends AppCompatActivity {
     private static final String TAG = ChatMain.class.getName();
     private static final int Orderer = 1;
@@ -58,32 +60,30 @@ public class ChatMain extends AppCompatActivity {
         setContentView(R.layout.activity_mainchat);
         Intent i = getIntent();
         chatrrom c = new chatrrom();
-        c.setOrdererId(i.getStringExtra("OrdererId"));
-        c.setDeliverId(i.getStringExtra("DeliverId"));
-        c.setRoomId(i.getStringExtra("RoomId"));
+        c.setOrdererId(i.getStringExtra("OrdererId")); //NON-NLS
+        c.setDeliverId(i.getStringExtra("DeliverId")); //NON-NLS
+        c.setRoomId(i.getStringExtra("RoomId")); //NON-NLS
         metText = findViewById(R.id.queryEditText);
         mbtSent = findViewById(R.id.sendBtn);
-//        delevimg=findViewById(R.id.deleveririmg);
-//        userimg=findViewById(R.id.userimg);
         mChats = new ArrayList<String>();
         chatLayout = findViewById(R.id.chatLayout);
         final ScrollView scrollview = findViewById(R.id.chatScrollView);
         scrollview.post(() -> scrollview.fullScroll(ScrollView.FOCUS_DOWN));
         userid = FirebaseAuth.getInstance().getUid();
-        msgss = FirebaseDatabase.getInstance().getReference("deliveryApp")
-                .child("chatRooms").child("roomId").child(c.roomId)
-                .child("messages");
+        msgss = FirebaseDatabase.getInstance().getReference("deliveryApp") //NON-NLS
+                .child("chatRooms").child("roomId").child(c.roomId) //NON-NLS //NON-NLS
+                .child("messages"); //NON-NLS
         msgss.keepSynced(true);
-        root = FirebaseDatabase.getInstance().getReference("deliveryApp").child("users");
+        root = FirebaseDatabase.getInstance().getReference("deliveryApp").child("users"); //NON-NLS //NON-NLS
         keepitup();
-        getallmessages();
+//        getallmessages();
         mbtSent.setOnClickListener(v -> {
 
 
             if (!metText.getText().toString().isEmpty()) {
                 sendmsg(metText.getText().toString());
-            } else {
-                Toast.makeText(ChatMain.this, "message can not be empty", Toast.LENGTH_SHORT).show();
+            } else { //NON-NLS
+                Toast.makeText(ChatMain.this, msgcantbeempty, Toast.LENGTH_SHORT).show();
             }
 
             metText.setText("");
@@ -95,9 +95,6 @@ public class ChatMain extends AppCompatActivity {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
             public void onChildAdded(DataSnapshot dataSnapshot, String previousChildName) {
-                Log.d(TAG, "onChildAdded:" + dataSnapshot.getKey());
-
-                // A new comment has been added, add it to the displayed list
                 Chat c = dataSnapshot.getValue(Chat.class);
                 setupMsgNotif(c);
                 getallmessages();
@@ -110,7 +107,6 @@ public class ChatMain extends AppCompatActivity {
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
-                Log.d(TAG, "onChildRemoved:" + dataSnapshot.getKey());
 
             }
 
@@ -121,8 +117,7 @@ public class ChatMain extends AppCompatActivity {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                Log.w(TAG, "postComments:onCancelled", databaseError.toException());
-                Toast.makeText(ChatMain.this, "Failed to load messages.",
+                Toast.makeText(ChatMain.this, filedloadingmsgs,
                         Toast.LENGTH_SHORT).show();
             }
         };
@@ -162,10 +157,10 @@ public class ChatMain extends AppCompatActivity {
 
         DatabaseReference childRoot = msgss.push();
 
-        Map<String, Object> map = new HashMap<String, Object>();
+        Map<String, Object> map = new HashMap<String, Object>(); //NON-NLS //NON-NLS
 
-        map.put("id", userid);
-        map.put("message", msg);
+        map.put("id", userid); //NON-NLS
+        map.put("message", msg); //NON-NLS
 
         childRoot.updateChildren(map);
         return true;
@@ -184,7 +179,7 @@ public class ChatMain extends AppCompatActivity {
 // the addAction re-use the same intent to keep the example short
         DatabaseReference sender = root.child(c.getId());
         Notification n = new Notification.Builder(this)
-                .setContentTitle("New Message ")
+                .setContentTitle(getString(R.string.newmsgs))
                 .setContentText(c.getMessage())
                 .setSmallIcon(R.drawable.bg_button_send_message)
                 .setContentIntent(pIntent)

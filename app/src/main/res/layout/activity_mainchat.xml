@@ -9,7 +9,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:background="@color/primaryLightColor"
         android:gravity="bottom"
         android:padding="2dp">
 
@@ -43,7 +42,8 @@
         android:id="@+id/chatScrollView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/inputLayout">
+        android:layout_above="@+id/inputLayout"
+        android:layout_alignParentTop="true">
 
         <LinearLayout
             android:id="@+id/chatLayout"

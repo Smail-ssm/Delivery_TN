@@ -18,6 +18,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.xdev.deliverytn.R;
 
+import static com.xdev.deliverytn.R.string.completverification;
+import static com.xdev.deliverytn.R.string.faildtosend;
+import static com.xdev.deliverytn.R.string.suuclogout;
+
 public class VerifyEmailScreen extends AppCompatActivity {
 
     TextView email_to_verify;
@@ -63,9 +67,9 @@ public class VerifyEmailScreen extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<Void> task) {
                                     btn_resend_email.setEnabled(true);
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(getApplicationContext(), "Verification email sent to : " + FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), getString(R.string.emailsentto) + FirebaseAuth.getInstance().getCurrentUser().getEmail(), Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Failed to send verification email!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), faildtosend, Toast.LENGTH_SHORT).show();
                                     }
 
                                 }
@@ -89,7 +93,7 @@ public class VerifyEmailScreen extends AppCompatActivity {
                                         startActivity(new Intent(VerifyEmailScreen.this, MainActivity.class));
                                         finish();
                                     } else {
-                                        Toast.makeText(getApplicationContext(), "Please complete email verification first!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(), completverification, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             });
@@ -101,7 +105,7 @@ public class VerifyEmailScreen extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(VerifyEmailScreen.this, "You have been successfully logged out.", Toast.LENGTH_LONG).show();
+                Toast.makeText(VerifyEmailScreen.this, suuclogout, Toast.LENGTH_LONG).show();
                 signOut();
             }
         });

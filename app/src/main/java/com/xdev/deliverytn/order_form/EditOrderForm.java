@@ -67,6 +67,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.xdev.deliverytn.R.string.canteditacceptedorder;
+import static com.xdev.deliverytn.R.string.coodConnectedTOinternet;
+import static com.xdev.deliverytn.R.string.locationpermessiondenied;
+import static com.xdev.deliverytn.R.string.locationpermessiongranted;
+import static com.xdev.deliverytn.R.string.mincantbebiggerthanmax;
+import static com.xdev.deliverytn.R.string.pasdinternet;
+
 public class EditOrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     private DatabaseReference root, ref1;
@@ -108,7 +115,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         requestLocationPermissions();
 
         Toolbar toolbar = findViewById(R.id.my_toolbar);
-        toolbar.setTitle("Edit Order");
+        toolbar.setTitle(R.string.editorder);
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
@@ -175,21 +182,21 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
             @Override
             public void onClick(View v) {
                 List<String> mcategories = new ArrayList<String>();
-                mcategories.add("Food");
-                mcategories.add("Medicine");
-                mcategories.add("Household");
-                mcategories.add("Electronics");
-                mcategories.add("Toiletries");
-                mcategories.add("Books");
-                mcategories.add("Clothing");
-                mcategories.add("Shoes");
-                mcategories.add("Sports");
-                mcategories.add("Games");
-                mcategories.add("Others");
+                mcategories.add(getString(R.string.food));
+                mcategories.add(getString(R.string.medcin));
+                mcategories.add(getString(R.string.houshold));
+                mcategories.add(getString(R.string.electronic));
+                mcategories.add(getString(R.string.toileterie));
+                mcategories.add(getString(R.string.books));
+                mcategories.add(getString(R.string.clothing));
+                mcategories.add(getString(R.string.shoes));
+                mcategories.add(getString(R.string.sport));
+                mcategories.add(getString(R.string.games));
+                mcategories.add(getString(R.string.others));
                 //Create sequence of items
                 final CharSequence[] Categories = mcategories.toArray(new String[mcategories.size()]);
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(EditOrderForm.this);
-                dialogBuilder.setTitle("Choose Category");
+                dialogBuilder.setTitle(R.string.choosecategorie);
                 dialogBuilder.setItems(Categories, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         String selectedText = Categories[item].toString();  //Selected item in listview
@@ -339,7 +346,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                                 .show();
                         return;
                     } else if (Integer.parseInt(order_min_range) > Integer.parseInt(order_max_range)) {
-                        Toast.makeText(getApplicationContext(), "Min value cannot be more than Max value!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), mincantbebiggerthanmax, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -357,7 +364,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                             if (current_order.status.equals("PENDING")) {
 //                                DeliveryChargeCalculater calc = new DeliveryChargeCalculater(Integer.parseInt(order_max_range));
                             } else {
-                                Toast.makeText(EditOrderForm.this, "can't edit already accepted order", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EditOrderForm.this, canteditacceptedorder, Toast.LENGTH_SHORT).show();
                             }
 
                         }
@@ -392,7 +399,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                                 startActivity(intent);
                                 finish();
                             } else {
-                                Toast.makeText(EditOrderForm.this, "can't edit already accepted order", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(EditOrderForm.this, canteditacceptedorder, Toast.LENGTH_SHORT).show();
                             }
                         }
 
@@ -415,17 +422,14 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
     }
 
     void requestLocationPermissions() {
-        System.out.println("Inside getLatAndLong");
         if (ActivityCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
-            System.out.println("Permission lerha");
             ActivityCompat.requestPermissions(this, new String[]
                             {Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
         } else {
-            System.out.println("Permission pehle se hai");
-            Toast.makeText(EditOrderForm.this, "Location permission granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(EditOrderForm.this, locationpermessiongranted, Toast.LENGTH_SHORT).show();
             setGpsOn();
         }
     }
@@ -440,10 +444,9 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                 // otherwise, show a Toast
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("onRequestPermissionsResult ki if condition ke andar");
                     setGpsOn();
                 } else {
-                    Toast.makeText(EditOrderForm.this, "Location permission Denied", Toast.LENGTH_LONG).show();
+                    Toast.makeText(EditOrderForm.this, locationpermessiondenied, Toast.LENGTH_LONG).show();
                 }
                 return;
         }
@@ -458,7 +461,6 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
     }
 
     void setGpsOn() {
-        System.out.println("Inside setGpsOn");
         LocationRequest mLocationRequest = getLocationRequest();
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -470,7 +472,6 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                System.out.println("task ke OnSuccess mai hoon");
                 if (ActivityCompat.checkSelfPermission(EditOrderForm.this, Manifest.permission.ACCESS_FINE_LOCATION)
                         != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(EditOrderForm.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                     // TODO: Consider calling
@@ -494,7 +495,6 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         task.addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("task ke onFailure mai hoon");
                 if (e instanceof ResolvableApiException) {
                     // Location settings are not satisfied, but this can be fixed
                     // by showing the user a dialog.
@@ -542,15 +542,9 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
             }
         }
         if (requestCode == REQUEST_CHECK_SETTINGS) {
-            System.out.println("onActivityResult ke if mai hoon");
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
+
                 return;
             }
             mFusedLocationClient.requestLocationUpdates
@@ -600,13 +594,13 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = pasdinternet;
             color = Color.RED;
         }
 
@@ -629,13 +623,6 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
     protected void onResume() {
         super.onResume();
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return;
         }
         mFusedLocationClient.requestLocationUpdates

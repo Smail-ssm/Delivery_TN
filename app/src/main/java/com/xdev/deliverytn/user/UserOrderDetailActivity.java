@@ -3,16 +3,12 @@ package com.xdev.deliverytn.user;
 
 import android.Manifest;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,13 +24,6 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -45,16 +34,13 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.xdev.deliverytn.Chat.chatacti.ChatMain;
+import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.order_form.EditOrderForm;
 import com.xdev.deliverytn.user_details.UserDetails;
-
-import java.io.IOException;
-import java.util.List;
 
 
 public class UserOrderDetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
@@ -160,30 +146,30 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             }
         });
 
-        deliverer_details = "Name: \t\t\t" + myOrder.acceptedBy.name + "\nMobile: \t\t\t" + myOrder.acceptedBy.mobile;
+        deliverer_details = getString(R.string.nom) + " \t\t\t" + myOrder.acceptedBy.name + "\n" + getString(R.string.mobile) + " \t\t\t" + myOrder.acceptedBy.mobile;
         if (!myOrder.acceptedBy.alt_mobile.equals("")) {
-            deliverer_details += "\nAlt. Mobile: \t\t\t" + myOrder.acceptedBy.alt_mobile;
+            deliverer_details += "\n" + getString(R.string.alt_mobile) + " \t\t\t" + myOrder.acceptedBy.alt_mobile;
 
         }
-        deliverer_details += "\nE-mail: \t\t\t" + myOrder.acceptedBy.email;
+        deliverer_details += "\n" + getString(R.string.emaill) + " \t\t\t" + myOrder.acceptedBy.email;
         acceptedBy.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 //                callDeliverer();
 
                 new AlertDialog.Builder(UserOrderDetailActivity.this)
-                        .setTitle("Deliverer Details")
+                        .setTitle(R.string.delevirerDetails)
                         .setMessage(deliverer_details)
                         .setPositiveButton(getString(R.string.dialog_ok), null)
                         .setNeutralButton("chat", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 Toast.makeText(UserOrderDetailActivity.this, myOrder.acceptedBy.delivererID, Toast.LENGTH_SHORT).show();
-                                Intent i = new Intent(UserOrderDetailActivity.this, ChatMain.class);
-                                i.putExtra("Delivererid", myOrder.acceptedBy.delivererID);
+                                Intent i = new Intent(UserOrderDetailActivity.this, chatRooms.class);
+//                                i.putExtra("Delivererid", myOrder.acceptedBy.delivererID);
                                 startActivity(i);
                             }
-                        }).setNegativeButton("call", new DialogInterface.OnClickListener() {
+                        }).setNegativeButton(R.string.call, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -231,19 +217,19 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
                 rankDialog.setCancelable(true);
                 RatingBar ratingBar = rankDialog.findViewById(R.id.ratingbar);
                 DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
-//                ratingRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-//                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
-//                            ratingBar.setRating(rating);
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                });
+                ratingRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
+                            ratingBar.setRating(rating);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                    }
+                });
                 Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
 
                 DatabaseReference rate = ratingRef.child("rate");
@@ -345,111 +331,8 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
 
     }
 
-    private void syncDelLocation() {
-        //todo cal this method to update deliverer location on map
-        Toast.makeText(this, "accepted by " + myOrder.acceptedBy, Toast.LENGTH_SHORT).show();
-        deliveryApp = root.child("deliveryApp").child("orders").child(myOrder.acceptedBy.delivererID).child(myOrder.acceptedBy.currentLocation);
-        deliveryApp.keepSynced(true);
-        deliveryApp.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                AlertDialog alertDialog = new AlertDialog.Builder(UserOrderDetailActivity.this).create();
-                alertDialog.setTitle("Hotel Info");
-                alertDialog.setIcon(R.drawable.ic_location);
-                LayoutInflater layoutInflater = LayoutInflater.from(UserOrderDetailActivity.this);
-                View promptView = layoutInflater.inflate(R.layout.delmap, null);
-                alertDialog.setView(promptView);
-
-                MapView mMapView = promptView.findViewById(R.id.mapView);
-                MapsInitializer.initialize(UserOrderDetailActivity.this);
-
-                mMapView.onCreate(alertDialog.onSaveInstanceState());
-                mMapView.onResume();
 
 
-                mMapView.getMapAsync(new OnMapReadyCallback() {
-                    @Override
-                    public void onMapReady(final GoogleMap googleMap) {
-                        LatLng p1 = getLocationFromAddress(UserOrderDetailActivity.this, myOrder.acceptedBy.currentLocation);
-                        LatLng posisiabsen = new LatLng(p1.latitude, p1.longitude); ////your lat lng
-                        googleMap.addMarker(new MarkerOptions().position(posisiabsen).title(myOrder.acceptedBy.name + " current location"));
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLng(posisiabsen));
-                        googleMap.getUiSettings().setZoomControlsEnabled(true);
-                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(15), 2000, null);
-
-                    }
-                });
-
-//
-//                final RatingBar rb = (RatingBar) promptView.findViewById(R.id.ratingBar);
-//                rb.setRating(3);
-//
-//                final TextView hoteltitle= (TextView)promptView.findViewById(R.id.HotelInfoTitle);
-//                hoteltitle.setText("Hotel " + hotelname);
-
-                alertDialog.setButton(AlertDialog.BUTTON_POSITIVE, "update", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Toast.makeText(UserOrderDetailActivity.this, "update", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                });
-                alertDialog.show();
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
-    }
-
-    public LatLng getLocationFromAddress(Context context, String strAddress) {
-
-        Geocoder coder = new Geocoder(context);
-        List<Address> address;
-        LatLng p1 = null;
-
-        try {
-            // May throw an IOException
-            address = coder.getFromLocationName(strAddress, 5);
-            if (address == null) {
-                return null;
-            }
-
-            Address location = address.get(0);
-            p1 = new LatLng(location.getLatitude(), location.getLongitude());
-
-        } catch (IOException ex) {
-
-            ex.printStackTrace();
-        }
-
-        return p1;
-    }
-
-    //    public GeoPoint getLocationFromAddress(String strAddress){
-//
-//        Geocoder coder = new Geocoder(this);
-//        List<Address> address;
-//        GeoPoint p1 = null;
-//
-//        try {
-//            address = coder.getFromLocationName(strAddress,5);
-//            if (address==null) {
-//                return null;
-//            }
-//            Address location=address.get(0);
-//            location.getLatitude();
-//            location.getLongitude();
-//
-//            p1 = new GeoPoint((double) (location.getLatitude() * 1E6),
-//                    (double) (location.getLongitude() * 1E6));
-//
-//            return p1;
-//        }
-//    }
     void fetchDelivererdetail() {
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         DatabaseReference forUserData = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
@@ -511,13 +394,13 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = R.string.pasdinternet;
             color = Color.RED;
         }
 
@@ -557,14 +440,10 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
                     startActivity(mIntent);
                 } else {
 
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
                 }
                 return;
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 }

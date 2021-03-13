@@ -11,8 +11,8 @@ public class usertype {
         String userId;
         FirebaseUser userr =  FirebaseAuth.getInstance().getCurrentUser();
         userId = userr.getUid();
-        root.child("deliveryApp").child("users")
+        root.child("deliveryApp").child("users") //NON-NLS //NON-NLS
                 .child(userId)
-                .child("usertype").setValue(type);
+                .child("usertype").setValue(type); //NON-NLS
     }
 }

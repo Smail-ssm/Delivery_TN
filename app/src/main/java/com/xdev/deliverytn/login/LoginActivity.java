@@ -45,6 +45,13 @@ import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 
 import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
+import static com.xdev.deliverytn.R.string.coodConnectedTOinternet;
+import static com.xdev.deliverytn.R.string.entremailaddress;
+import static com.xdev.deliverytn.R.string.entrepass;
+import static com.xdev.deliverytn.R.string.faildtologin;
+import static com.xdev.deliverytn.R.string.loggedsucc;
+import static com.xdev.deliverytn.R.string.pasdinternet;
+
 public class LoginActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final int RC_SIGN_IN = 101;
@@ -142,12 +149,12 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
 
                     if (TextUtils.isEmpty(email)) {
-                        Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), entremailaddress, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
                     if (TextUtils.isEmpty(password)) {
-                        Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), entrepass, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -220,13 +227,13 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = pasdinternet;
             color = Color.RED;
         }
 
@@ -276,14 +283,14 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
                                 }
                             });
-                            Toast.makeText(LoginActivity.this, "Logged in Successfully", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(LoginActivity.this, loggedsucc, Toast.LENGTH_SHORT).show();
                         } else {
                             progressBar.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.
                             if (!ConnectivityReceiver.isConnected()) {
                                 showSnack(false);
                             } else {
-                                Toast.makeText(LoginActivity.this, "Failed to Log in!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(LoginActivity.this, faildtologin, Toast.LENGTH_SHORT).show();
                             }
                             Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         }

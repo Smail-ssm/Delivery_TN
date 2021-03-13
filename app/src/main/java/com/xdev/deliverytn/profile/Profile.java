@@ -1,20 +1,15 @@
 package com.xdev.deliverytn.profile;
 
-import android.Manifest;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.location.Address;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
 import android.view.MenuItem;
@@ -30,7 +25,6 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.content.FileProvider;
 
 import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.tasks.Continuation;
@@ -56,14 +50,9 @@ import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
 import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
 public class Profile extends AppCompatActivity {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -198,75 +187,9 @@ public class Profile extends AppCompatActivity {
         }
     }
 
-    private void capturimage() {
-        builder = new AlertDialog.Builder(Profile.this);
-        builder.setMessage("camera ?")
-                .setCancelable(false)
-                .setPositiveButton("camera", (dialog, id) -> {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        if (checkSelfPermission(android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                        } else {
 
-                            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            try {
-                                imageFilePath = createImageFile();
-                            } catch (IOException e) {
-                                e.printStackTrace();
-                            }
-                            photoURI = FileProvider.getUriForFile(Profile.this, "com.xdev.pfe.utils.fileprovider", imageFilePath);
-                            cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                            startActivityForResult(cameraIntent, CAMERA_REQUEST_profile);
-                        }
-                    }
-                })
-                .setNegativeButton("Gallery", (dialog, id) -> chooseImage());
-        //Creating dialog box
-        AlertDialog alert = builder.create();
-        //Setting the title manually
-        alert.setTitle("add profile pic");
-        alert.show();
-    }
 
-    Bitmap loadImageFromStorage(String type) {
-        ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);
-        Bitmap b = null;
-        try {
-            File f = new File(directory, type + ".jpg");
-            b = BitmapFactory.decodeStream(new FileInputStream(f));
-        } catch (FileNotFoundException e) {
-            Toast.makeText(cw, "no file found ", Toast.LENGTH_SHORT).show();
-            profilei.setImageResource(R.drawable.smiley);
 
-        }
-        profileexsists = true;
-        return b;
-    }
-
-    private void chooseImage() {
-        Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp =
-                new SimpleDateFormat("yyyyMMdd_HHmmss",
-                        Locale.getDefault()).format(new Date());
-        String imageFileName = "IMG_" + timeStamp + "_";
-        File storageDir =
-                getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
-                imageFileName,  /* prefix */
-                ".jpg",         /* suffix */
-                storageDir      /* directory */
-        );
-
-        imageFilePath = new File(image.getAbsolutePath());
-        return image;
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -304,23 +227,9 @@ public class Profile extends AppCompatActivity {
                     }
                 });
 
-//                AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-//                builder1.setMessage("Save picture ?")
-//                        .setCancelable(false)
-//                        .setPositiveButton("upload", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//
-//                            }
-//                        })
-//                        .setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-//                            @Override
-//                            public void onClick(DialogInterface dialog, int which) {
-//                            }
-//                        });
-//                AlertDialog alert = builder1.create();
+
                 a.setImageURI(photoURI);
-//                builder1.show();
+
 
             });
 
@@ -333,7 +242,7 @@ public class Profile extends AppCompatActivity {
 
     private String saveToStorage(Uri data, String pictype) throws IOException {
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
-        // path to /data/data/yourapp/app_data/imageDir
+
         Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data);
 
         File directory = cw.getDir("imageDir", Context.MODE_PRIVATE);

@@ -23,8 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import static android.content.ContentValues.TAG;
-
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
     private DatabaseReference notifref, totalnotif;
@@ -52,7 +50,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-                Log.w(TAG, "Failed to read value.", error.toException());
             }
         });
 
@@ -84,10 +81,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         String NOTIFICATION_CHANNEL_ID = "com.xdev.binidik"; //your app package name
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, "Notification",
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, getString(R.string.notification),
                     NotificationManager.IMPORTANCE_HIGH);
 
-            notificationChannel.setDescription("testt Channel");
+            notificationChannel.setDescription("Channel");
             notificationChannel.enableLights(true);
             notificationChannel.setLightColor(Color.BLUE);
             notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
@@ -102,7 +99,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setSmallIcon(R.drawable.ic_baseline_info_24)
                 .setContentTitle(message.getTitle())
                 .setContentText(message.getBody())
-                .setContentInfo("Info");
+                .setContentInfo(getString(R.string.info));
 
         notificationManager.notify(new Random().nextInt(), notificationBuilder.build());
 

@@ -67,6 +67,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+import static com.xdev.deliverytn.R.string.addcinpic;
+import static com.xdev.deliverytn.R.string.camerapermesiongranted;
+import static com.xdev.deliverytn.R.string.deletedoldpic;
+import static com.xdev.deliverytn.R.string.locationpermessiongranted;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
 import static com.xdev.deliverytn.login.usertype.usertype;
 
@@ -140,13 +144,13 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 name = dataSnapshot.child("first").getValue(String.class) + " , " + dataSnapshot.child("last").getValue(String.class);
-                showSnacks("Welcome " + name);
-                username.setText("Welcome " + name);
+                showSnacks(getString(R.string.welcom) + name);
+                username.setText(getString(R.string.welcom) + name);
 
                 if (dataSnapshot.child("cinPhoto").getValue(String.class).equalsIgnoreCase("nophoto")) {
-                    recto.setText("verify");
+                    recto.setText(R.string.verifie);
                     recto.setBackgroundColor(Color.RED);
-                    showSnacks("account waiting verification");
+                    showSnacks(getString(R.string.enattentverification));
                 } else {
 //
                     recto.setText("verified");
@@ -155,8 +159,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     recto.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            showSnacks("no need for verification you r ready to go ");
-                            showSnacks("long click to view picture");
+                            showSnacks(getString(R.string.noneedtoverify));
+                            showSnacks(getString(R.string.longclicktoviewimage));
                             return;
                         }
                     });
@@ -213,7 +217,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Integer notifa = dataSnapshot.getValue(Integer.class);
-                Toast.makeText(MainActivity.this, "notif=" + notif, Toast.LENGTH_SHORT).show();
                 notifNmbr.setText(String.valueOf(notifa));
             }
 
@@ -250,9 +253,9 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         profilepic.setOnLongClickListener(v -> {
             isProfile = true;
             builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("Choose image source")
+            builder.setMessage(R.string.choisireimageSource)
                     .setCancelable(true)
-                    .setPositiveButton("camera", (dialog, id) -> {
+                    .setPositiveButton(R.string.camera, (dialog, id) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                                 requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
@@ -271,11 +274,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             }
                         }
                     })
-                    .setNegativeButton("Gallery", (dialog, id) -> chooseImage());
+                    .setNegativeButton(R.string.gallery, (dialog, id) -> chooseImage());
             //Creating dialog box
             AlertDialog alert = builder.create();
             //Setting the title manually
-            alert.setTitle("add profile pic");
+            alert.setTitle(getString(R.string.addprofilepic));
             alert.show();
             return false;
         });
@@ -284,7 +287,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         logOutButton.setOnClickListener(v -> {
             builder = new AlertDialog.Builder(MainActivity.this);
             builder.setCancelable(false)
-                    .setPositiveButton("yes", (dialog, id) -> {
+                    .setPositiveButton(R.string.yes, (dialog, id) -> {
                         FirebaseAuth auth = FirebaseAuth.getInstance();
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         auth.signOut();
@@ -292,11 +295,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         startActivity(loginIntent);
                         finish();
                     })
-                    .setNegativeButton("NO", (dialog, id) -> dialog.dismiss());
+                    .setNegativeButton(R.string.no, (dialog, id) -> dialog.dismiss());
             //Creating dialog box
             AlertDialog alert = builder.create();
             //Setting the title manually
-            alert.setTitle("Logout ?");
+            alert.setTitle(getString(R.string.logout));
             alert.show();
 
         });
@@ -310,9 +313,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         recto.setOnClickListener(v -> {
             isCin = true;
             builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setMessage("camera ?")
-                    .setCancelable(false)
-                    .setPositiveButton("camera", (dialog, id) -> {
+            builder.setMessage(addcinpic).setCancelable(false)
+                    .setPositiveButton(R.string.camera, (dialog, id) -> {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                                 requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
@@ -330,7 +332,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             }
                         }
                     })
-                    .setNegativeButton("Gallery", (dialog, id) -> chooseImage());
+                    .setNegativeButton(R.string.gallery, (dialog, id) -> chooseImage());
             //Creating dialog box
             AlertDialog alert = builder.create();
             //Setting the title manually
@@ -395,7 +397,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             {Manifest.permission.ACCESS_FINE_LOCATION},
                     REQUEST_LOCATION_PERMISSION);
         } else {
-            Toast.makeText(MainActivity.this, "Location permission granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, locationpermessiongranted, Toast.LENGTH_SHORT).show();
             setGpsOn();
         }
     }
@@ -409,7 +411,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             {Manifest.permission.CAMERA},
                     REQUEST_CAMERA);
         } else {
-            Toast.makeText(MainActivity.this, "Camera permission granted", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, camerapermesiongranted, Toast.LENGTH_SHORT).show();
 
         }
     }
@@ -418,7 +420,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+        startActivityForResult(Intent.createChooser(intent, getString(R.string.selectpic)), PICK_IMAGE_REQUEST);
     }
 
     private LocationRequest getLocationRequest() {
@@ -430,7 +432,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     }
 
     void setGpsOn() {
-        System.out.println("Inside setGpsOn");
         LocationRequest mLocationRequest = getLocationRequest();
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -449,7 +450,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         task.addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("task ke onFailure mai hoon");
                 if (e instanceof ResolvableApiException) {
 
                     try {
@@ -552,7 +552,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             int color;
             color = Color.WHITE;
             snackbar = Snackbar
-                    .make(findViewById(android.R.id.content), "uploading...", Snackbar.LENGTH_INDEFINITE);
+                    .make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_INDEFINITE);
 
             View sbView = snackbar.getView();
             TextView textView = sbView.findViewById(R.id.snackbar_text);
@@ -573,16 +573,16 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     if (task.isSuccessful()) {
                         Uri downloadUri = task.getResult();
                         update_user_cin(downloadUri);
-                        showSnacks("Done ☺ CIN ");
+                        showSnacks(getString(R.string.donecin));
 
                     } else {
-                        showSnacks("error while uploading");
+                        showSnacks(getString(R.string.errorwhileuploading));
                     }
                 }
             });
             // [END upload_get_download_url]
         } else {
-            Toast.makeText(this, "NO file is selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.nofilesemcted, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -598,7 +598,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             desertRef.delete().addOnSuccessListener(new OnSuccessListener<Void>() {
                 @Override
                 public void onSuccess(Void aVoid) {
-                    Toast.makeText(MainActivity.this, "deleted old pic", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, deletedoldpic, Toast.LENGTH_SHORT).show();
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override

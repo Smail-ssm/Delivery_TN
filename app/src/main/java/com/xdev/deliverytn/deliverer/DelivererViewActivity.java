@@ -81,6 +81,8 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import static com.xdev.deliverytn.R.string.logoutsuccsess;
+import static com.xdev.deliverytn.R.string.pasdinternet;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
 import static com.xdev.deliverytn.login.usertype.usertype;
 
@@ -286,7 +288,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     (getLocationRequest(), mLocationCallback,
                             null /* Looper */);
         } else {
-            Toast.makeText(DelivererViewActivity.this, "GPS permission Denied", Toast.LENGTH_LONG).show();
+            Toast.makeText(DelivererViewActivity.this, R.string.gpspermisiiondenied, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -313,17 +315,17 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                 int id = menuItem.getItemId();
 
                 if (id == R.id.sign_out_deliverer) {
-                    Toast.makeText(DelivererViewActivity.this, "You have been successfully logged out.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(DelivererViewActivity.this, logoutsuccsess, Toast.LENGTH_LONG).show();
                     signOut();
                 } else if (id == R.id.all_orders_deliverer) {
                     setDefaultFlags();
-                    toolbar.setTitle("All Orders");
+                    toolbar.setTitle(R.string.allorders);
                     refreshOrders();
                 } else if (id == R.id.completed_deliverer) {
                     active = false;
                     pending = false;
                     finished = true;
-                    toolbar.setTitle("Finished");
+                    toolbar.setTitle(R.string.finishedorder);
                     refreshOrders();
 
                 } else if (id == R.id.info) {
@@ -333,13 +335,13 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     active = true;
                     pending = false;
                     finished = false;
-                    toolbar.setTitle("Active");
+                    toolbar.setTitle(R.string.activeorders);
                     refreshOrders();
                 } else if (id == R.id.pending_deliverer) {
                     active = false;
                     pending = true;
                     finished = false;
-                    toolbar.setTitle("Pending");
+                    toolbar.setTitle(R.string.pendingorders);
                     refreshOrders();
                 } else if (id == R.id.use_as_user) {
                     startActivity(new Intent(DelivererViewActivity.this, UserViewActivity.class));
@@ -633,7 +635,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     }
                 }
                 if (somethingExpired)
-                    Toast.makeText(DelivererViewActivity.this, "Some orders expired", Toast.LENGTH_LONG).show();
+                    Toast.makeText(DelivererViewActivity.this, R.string.yourordersexpired, Toast.LENGTH_LONG).show();
                 isRefreshing = false;
                 progressBar.setVisibility(View.GONE);
             }
@@ -691,13 +693,13 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = pasdinternet;
             color = Color.RED;
         }
 

@@ -118,15 +118,13 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(inbox.this, mDrawerLayout, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         mDrawerLayout.addDrawerListener(toggle);
         toggle.syncState();
-        //  recyclerView = findViewById(R.id.notif_list);
-
         notiflist = new ArrayList<>();
         fbobjectList = new ArrayList<>();
         final ListView dynamic = findViewById(R.id.notiflv);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
-        toolbar.setTitle("Get informed");
+        toolbar.setTitle(R.string.getinformed);
         allnotif.keepSynced(true);
         allnotif.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

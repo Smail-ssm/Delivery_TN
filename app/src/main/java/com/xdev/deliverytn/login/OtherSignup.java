@@ -65,6 +65,16 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
+import static com.xdev.deliverytn.R.string.Enter8digitnumber;
+import static com.xdev.deliverytn.R.string.cin8;
+import static com.xdev.deliverytn.R.string.emailem;
+import static com.xdev.deliverytn.R.string.entremobile;
+import static com.xdev.deliverytn.R.string.entrename;
+import static com.xdev.deliverytn.R.string.entrpass;
+import static com.xdev.deliverytn.R.string.faildreg;
+import static com.xdev.deliverytn.R.string.passworddntmatch;
+import static com.xdev.deliverytn.R.string.passwordshort;
+import static com.xdev.deliverytn.R.string.succesregistr;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
 
 public class OtherSignup extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
@@ -246,42 +256,42 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 //                    final String alt_mobile = inputAltMobile.getText().toString().trim();
 
                     if (TextUtils.isEmpty(name)) {
-                        Toast.makeText(getApplicationContext(), "Enter your Name!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), entrename, Toast.LENGTH_SHORT).show();
                         first.requestFocus();
                         return;
                     }
 
                     if (TextUtils.isEmpty(Mobile)) {
-                        Toast.makeText(getApplicationContext(), "Enter your Mobile No.!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), entremobile, Toast.LENGTH_SHORT).show();
                         mobile.requestFocus();
                         return;
                     }
                     if (mobile.length() != 8) {
-                        Toast.makeText(getApplicationContext(), "Enter 8-digit Mobile No.!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), Enter8digitnumber, Toast.LENGTH_SHORT).show();
                         mobile.requestFocus();
                         return;
                     }
 
                     if ((cin.length() != 0) && (cin.length() != 8)) {
-                        Toast.makeText(getApplicationContext(), "CIN must be 8 numbers !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), cin8, Toast.LENGTH_SHORT).show();
                         cina.requestFocus();
                         return;
                     }
 
                     if (TextUtils.isEmpty(Email)) {
-                        Toast.makeText(getApplicationContext(), "Enter email address!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), emailem, Toast.LENGTH_SHORT).show();
                         email.requestFocus();
                         return;
                     }
 
 
                     if (TextUtils.isEmpty(Password) || TextUtils.isEmpty(Confirmpassword)) {
-                        Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), entrpass, Toast.LENGTH_SHORT).show();
                         password.requestFocus();
                         return;
                     }
                     if (password.equals(Confirmpass)) {
-                        Toast.makeText(getApplicationContext(), "password don't match !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), passworddntmatch, Toast.LENGTH_SHORT).show();
                         password.requestFocus();
                         return;
                     }
@@ -298,9 +308,9 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(OtherSignup.this, "Successfully Registered.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(OtherSignup.this, succesregistr, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(OtherSignup.this, "Registration Failed!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(OtherSignup.this, faildreg, Toast.LENGTH_SHORT).show();
                                     }
 
                                     progressBar.setVisibility(View.GONE);
@@ -314,17 +324,17 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
                                             case "ERROR_INVALID_EMAIL":
                                                 email.requestFocus();
-                                                Toast.makeText(OtherSignup.this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(OtherSignup.this, R.string.emailtyperror, Toast.LENGTH_SHORT).show();
                                                 break;
 
                                             case "ERROR_EMAIL_ALREADY_IN_USE":
                                                 email.requestFocus();
-                                                Toast.makeText(OtherSignup.this, "The email address is already in use by another account.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(OtherSignup.this, R.string.emailused, Toast.LENGTH_SHORT).show();
                                                 break;
 
                                             case "ERROR_WEAK_PASSWORD":
                                                 password.requestFocus();
-                                                Toast.makeText(OtherSignup.this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(OtherSignup.this, passwordshort, Toast.LENGTH_SHORT).show();
                                                 break;
                                         }
                                     } else {
@@ -390,7 +400,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
         }
     }
-
 
 
     void getLatAndLong() {
@@ -480,13 +489,13 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = R.string.pasdinternet;
             color = Color.RED;
         }
 

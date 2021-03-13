@@ -552,7 +552,7 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/button_round_main"
-                android:text="Rate"
+                android:text="@string/rate"
                 android:textColor="#FFFFFF" />
 
 

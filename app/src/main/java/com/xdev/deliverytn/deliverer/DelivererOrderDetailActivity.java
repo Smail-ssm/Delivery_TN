@@ -60,18 +60,10 @@ import com.xdev.deliverytn.order.OrderData;
 import com.xdev.deliverytn.order.OrderObject;
 import com.xdev.deliverytn.user_details.UserDetails;
 
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 
@@ -176,30 +168,30 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         Intent intent = getIntent();
-        myOrder = intent.getParcelableExtra("MyOrder");
-        myOrderId = Integer.parseInt(intent.getStringExtra("orderid"));
-        myUserId = intent.getStringExtra("userid");
+        myOrder = intent.getParcelableExtra("MyOrder"); //NON-NLS
+        myOrderId = Integer.parseInt(intent.getStringExtra("orderid")); //NON-NLS
+        myUserId = intent.getStringExtra("userid"); //NON-NLS
 //        fetchorder(myOrderId, myUserId);
 
         CollapsingToolbarLayout appBarLayout = findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(myOrder.category);
         }
-        if (myOrder.status.equals("FINISHED")) {
+        if (myOrder.status.equals("FINISHED")) { //NON-NLS
             btn_accept.setEnabled(false);
             btn_accept.setVisibility(View.GONE);
             btn_show_path.setEnabled(false);
             btn_show_path.setVisibility(View.GONE);
             btn_complete_order.setEnabled(false);
             btn_complete_order.setVisibility(View.GONE);
-        } else if (myOrder.status.equals("ACTIVE")) {
+        } else if (myOrder.status.equals("ACTIVE")) { //NON-NLS
             btn_accept.setText("Reject");
         } else {
             btn_complete_order.setEnabled(false);
             btn_complete_order.setVisibility(View.GONE);
         }
 
-        if (myOrder.status.equals("PENDING")) {
+        if (myOrder.status.equals("PENDING")) { //NON-NLS
             userName_h.setVisibility(View.GONE);
         }
         category.setText(myOrder.category);
@@ -250,9 +242,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         expiryTime_Time.setText(time);
         final AlertDialog alertDialog = new AlertDialog.Builder(DelivererOrderDetailActivity.this)
                 .setCancelable(false)
-                .setTitle("Are you sure?")
-                .setPositiveButton("Yes", null)
-                .setNegativeButton("No", null)
+                .setTitle(R.string.areyousure)
+                .setPositiveButton(R.string.yes, null)
+                .setNegativeButton(R.string.no, null)
                 .create();
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
@@ -270,11 +262,11 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 //                                Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                         userId = user.getUid();
-                        ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId));
-                        ref2 = ref1.child("acceptedBy");
+                        ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)); //NON-NLS //NON-NLS
+                        ref2 = ref1.child("acceptedBy"); //NON-NLS
 
                         ref2.keepSynced(true);
-                        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
+                        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet"); //NON-NLS //NON-NLS
                         wallet_ref.keepSynced(true);
                         if (myOrder.status.equals("PENDING")) {
                             deliverer = root.child("deliveryApp").child("users").child(userId);
@@ -282,10 +274,10 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             deliverer.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
-                                    deliverer_data = dataSnapshot.getValue(UserDetails.class);
+                                    deliverer_data = dataSnapshot.getValue(UserDetails.class); //NON-NLS
                                     ref2.child("name").setValue(deliverer_data.getLast() + " " + deliverer_data.getFirst());
                                     ref2.child("email").setValue(deliverer_data.getEmail());
-                                    ref2.child("mobile").setValue(deliverer_data.getMobile());
+                                    ref2.child("mobile").setValue(deliverer_data.getMobile()); //NON-NLS
                                     ref2.child("cin").setValue(deliverer_data.getCin());
                                     ref2.child("delivererID").setValue(userId);
 //                                    LatLng cl = new LatLng(
@@ -300,7 +292,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                 @Override
                                 public void onCancelled(DatabaseError databaseError) {
                                 }
-                            });
+                            }); //NON-NLS
                             allorders = root.child("deliveryApp").child("orders")
                                     .child(myOrder.userId)
                                     .child(String.valueOf(myOrder.orderId));
@@ -323,13 +315,13 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
                                 }
 
-                            });
-                            ref1.child("status").setValue("ACTIVE");
+                            }); //NON-NLS
+                            ref1.child("status").setValue("ACTIVE"); //NON-NLS
                             btn_accept.setText("Reject");
                             myOrder.status = "ACTIVE";
                             status.setText((myOrder.status));
-                            refrooms = root.child("deliveryApp").child("chatRooms").child("roomId");
-                            WALET = root.child("deliveryApp").child("SocEarnings");
+                            refrooms = root.child("deliveryApp").child("chatRooms").child("roomId"); //NON-NLS
+                            WALET = root.child("deliveryApp").child("SocEarnings"); //NON-NLS
                             refroomsA = refrooms.child(String.valueOf(myOrder.orderId));
                             chatrrom c = new chatrrom();
                             c.setRoomId(String.valueOf(myOrder.orderId));
@@ -338,7 +330,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             refroomsA.setValue(c);
 //                            refrooms.child("ordererId").setValue(myOrder.orderId);
 //                            refrooms.child("delivereId").setValue(user.getUid());
-                            Toast.makeText(DelivererOrderDetailActivity.this, "Room of order N°" + myOrder.orderId + " created ", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(DelivererOrderDetailActivity.this, "Room of order N°" + myOrder.orderId + " created ", Toast.LENGTH_SHORT).show(); //NON-NLS
                             getLatAndLong();
                             mFusedLocationClient = LocationServices.getFusedLocationProviderClient(DelivererOrderDetailActivity.this);
                             mLocationCallback = new LocationCallback() {
@@ -355,14 +347,14 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                         LatLng l1 = new LatLng(location.getLatitude(), location.getLongitude());
                                         LatLng l2 = new LatLng(myorder.userLocation.Lat, myorder.userLocation.Lon);
                                         Double x = getDistanceBetween(l1, l2);
-                                        Toast.makeText(DelivererOrderDetailActivity.this, String.valueOf(x), Toast.LENGTH_SHORT).show();
-                                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("deliveryCharge:").setValue((int) Math.round(x * 0.001));
+                                        Toast.makeText(DelivererOrderDetailActivity.this, String.valueOf(x), Toast.LENGTH_SHORT).show(); //NON-NLS
+                                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("deliveryCharge:").setValue((int) Math.round(x * 0.001)); //NON-NLS
                                         updateOrderPrice(Integer.sum(myOrder.max_range, myOrder.deliveryCharge));
                                         myOrder.earnings = ((((int) Math.round(x * 0.001)) * 70) / 100);
                                         updateWalet((((int) Math.round(x * 0.001)) * 30) / 100);
                                         // Logic to handle location object
                                     } else {
-                                        Toast.makeText(DelivererOrderDetailActivity.this, "location has NULL value", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(DelivererOrderDetailActivity.this, R.string.locationhasenullvalue, Toast.LENGTH_SHORT).show();
                                     }
                                 }
                             };
@@ -389,7 +381,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             userName_h.setVisibility(View.VISIBLE);
 
 
-                        } else if (myOrder.status.equals("ACTIVE")) {
+                        } else if (myOrder.status.equals("ACTIVE")) { //NON-NLS //NON-NLS
 
                             ref1.child("status").setValue("PENDING");
 
@@ -397,8 +389,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             myOrder.status = "PENDING";
                             status.setText((myOrder.status));
 
-                            ref2.child("name").setValue("-");
-                            ref2.child("email").setValue("-");
+                            ref2.child("name").setValue("-"); //NON-NLS //NON-NLS
+                            ref2.child("email").setValue("-"); //NON-NLS
                             ref2.child("mobile").setValue("-");
                             ref2.child("alt_mobile").setValue("-");
                             ref2.child("delivererID").setValue("-");
@@ -443,17 +435,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             @Override
             public void onClick(View v) {
 // use this to start and trigger a service
-                Intent i = new Intent(DelivererOrderDetailActivity.this, Pathc.class);
-// potentially add data to the intent
-                LatLng orderLatLng = new LatLng(myOrder.userLocation.Lon, myOrder.userLocation.Lat);
-//                i.putExtra("orderer", orderLatLng);
-//                latng = new LatLng(latitude, longitude);
-//                i.putExtra("deli", latng);
-////                i.putExtra("current_location", address);
-////                DelivererOrderDetailActivity.this.startService(i);
-//                startActivity(i);
-                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&daddr=" + myOrder.userLocation.Location));
-                intent.setComponent(new ComponentName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity"));
+
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&daddr=" + myOrder.userLocation.Location)); //NON-NLS //NON-NLS
+                intent.setComponent(new ComponentName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity")); //NON-NLS
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
 ////TODO
@@ -520,16 +504,16 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             add = add + "\n" + address.getPostalCode();
             add = add + "\n" + address.getSubAdminArea();
             */
-            add = add + address.getLocality() + ",," + address.getSubLocality(); //City
+            add = add + address.getLocality() + "," + address.getSubLocality(); //City
 
             //add = add + "\n" + address.getSubThoroughfare();
             Toast.makeText(DelivererOrderDetailActivity.this, add, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
+            // TODO Auto-generated catch block //NON-NLS
             e.printStackTrace();
-            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show(); //NON-NLS
         }
-    }
+    } //NON-NLS
 
     private void updateOrderPrice(double v) {
         root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("final_price").setValue(v);
@@ -591,7 +575,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                         // and check the result in onActivityResult().
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         resolvable.startResolutionForResult(DelivererOrderDetailActivity.this,
-                                REQUEST_CHECK_SETTINGS);
+                                REQUEST_CHECK_SETTINGS); //NON-NLS
                     } catch (IntentSender.SendIntentException sendEx) {
                         // Ignore the error.
                     }
@@ -612,7 +596,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             }
 
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError databaseError) { //NON-NLS
 
             }
         });
@@ -622,7 +606,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         String userId = order.userId;
         root.child("deliveryApp").child("users").child(userId).child("playerId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) { //NON-NLS
                 String player_id = dataSnapshot.getValue(String.class);
                 //TOAST
                 try {
@@ -638,9 +622,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                     "'headings': {'en': 'Your Order Accepted! Order Id : "
                                     + order.orderId +
                                     "'} " +
-                                    "}");
+                                    "}"); //NON-NLS //NON-NLS
                     JSONObject order = new JSONObject();
-                    order.put("userId", myOrder.userId);
+                    order.put("userId", myOrder.userId); //NON-NLS
                     order.put("orderId", myOrder.orderId);
                     order.put("price", myOrder.final_price);
                     notificationContent.putOpt("data", order);
@@ -660,13 +644,13 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
     }
 
-    public void setUpRejectNotif(final OrderData order) {
+    public void setUpRejectNotif(final OrderData order) { //NON-NLS
         String userId = order.userId;
         root.child("deliveryApp").child("users").child(userId).child("playerId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 String player_id = dataSnapshot.getValue(String.class);
-                //TOAST
+                //TOAST //NON-NLS
                 try {
                     JSONObject notificationContent = new JSONObject("{'contents': {'en': '" + order.description + "'}," +
                             "'include_player_ids': ['" + player_id + "'], " +
@@ -708,13 +692,13 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
     // Showing the status in Snackbar
     private void showSnack(boolean isConnected) {
-        String message;
+        int message;
         int color;
         if (isConnected) {
-            message = "Good! Connected to Internet";
+            message = R.string.coodConnectedTOinternet;
             color = Color.WHITE;
         } else {
-            message = "Sorry! Not connected to internet";
+            message = R.string.pasdinternet;
             color = Color.RED;
         }
 
@@ -738,45 +722,5 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         CheckConnectivityMain.getInstance().setConnectivityListener(DelivererOrderDetailActivity.this);
     }
 
-    public String getDistance(final double lat1, final double lon1, final double lat2, final double lon2) {
-        final String[] parsedDistance = new String[1];
-        final String[] response = new String[1];
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
 
-                    URL url = new URL("https://maps.googleapis.com/maps/api/directions/json?origin=" + lat1 + "," + lon1 + "&destination=" + lat2 + "," + lon2 + "&sensor=false&units=metric&mode=driving");
-                    final HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                    conn.setRequestMethod("POST");
-                    InputStream in = new BufferedInputStream(conn.getInputStream());
-                    response[0] = org.apache.commons.io.IOUtils.toString(in, StandardCharsets.UTF_8);
-
-                    JSONObject jsonObject = new JSONObject(response[0]);
-                    JSONArray array = jsonObject.getJSONArray("routes");
-                    JSONObject routes = array.getJSONObject(0);
-                    JSONArray legs = routes.getJSONArray("legs");
-                    JSONObject steps = legs.getJSONObject(0);
-                    JSONObject distance = steps.getJSONObject("distance");
-                    parsedDistance[0] = distance.getString("text");
-
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-        });
-        thread.start();
-        try {
-            thread.join();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        return parsedDistance[0];
-    }
 }
