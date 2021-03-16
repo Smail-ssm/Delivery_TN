@@ -1,5 +1,8 @@
 package com.xdev.deliverytn.models;
 
+import android.widget.EditText;
+import android.widget.TextView;
+
 public class OrderWeb {
     public String category, description, userId, status, otp;
     public int orderId, min_range, max_range, final_price, deliveryCharge;
@@ -12,32 +15,7 @@ public class OrderWeb {
     public Time time = new Time();
     public Deliverer delivere = new Deliverer();
 
-
-    public OrderWeb() {
-        //For DataSnapshot.getValue()
-        //Don't ever try to delete it.
-    }
-
-    public OrderWeb(String category, String description, String userId, String status, String otp, int orderId, int min_range, int max_range, int final_price, int deliveryCharge, UserLocation userLocation, double earnings, double socWalet, ExpiryDate expiryDate, ExpiryTime expiryTime, AcceptedBy acceptedBy, Client client, Time time, Deliverer delivere) {
-        this.category = category;
-        this.description = description;
-        this.userId = userId;
-        this.status = status;
-        this.otp = otp;
-        this.orderId = orderId;
-        this.min_range = min_range;
-        this.max_range = max_range;
-        this.final_price = final_price;
-        this.deliveryCharge = deliveryCharge;
-        this.userLocation = userLocation;
-        this.earnings = earnings;
-        this.socWalet = socWalet;
-        this.expiryDate = expiryDate;
-        this.expiryTime = expiryTime;
-        this.acceptedBy = acceptedBy;
-        this.client = client;
-        this.time = time;
-        this.delivere = delivere;
+    public OrderWeb(TextView category, EditText description, String userId, String pending, String otp, int order_id, int parseInt, int parseInt1, int final_price, int i, UserLocation userLocation, ExpiryDate expiryDate, ExpiryTime expiryTime, AcceptedBy acceptedBy, Client client, Time time, Deliverer deliverer) {
     }
 
     public String getCategory() {
@@ -190,5 +168,31 @@ public class OrderWeb {
 
     public void setDelivere(Deliverer delivere) {
         this.delivere = delivere;
+    }
+
+
+
+
+    public OrderWeb(String category, String description, String userId, String status, String otp, int orderId, int min_range, int max_range, int final_price, int deliveryCharge, UserLocation userLocation, double earnings, double socWalet, ExpiryDate expiryDate, ExpiryTime expiryTime, AcceptedBy acceptedBy, Client client, Time time, Deliverer delivere) {
+        this.category = category;
+        this.description = description;
+        this.userId = userId;
+        this.status = status;
+        this.otp = otp;
+        this.orderId = orderId;
+        this.min_range = min_range;
+        this.max_range = max_range;
+        this.final_price = final_price;
+        this.deliveryCharge = deliveryCharge;
+        this.userLocation = userLocation;
+        this.earnings = earnings;
+        this.socWalet = socWalet;
+        this.expiryDate = expiryDate;
+        this.expiryTime = expiryTime;
+        this.acceptedBy = acceptedBy;
+        this.client = client;
+        this.time = time;
+        this.delivere = delivere;
+
     }
 }

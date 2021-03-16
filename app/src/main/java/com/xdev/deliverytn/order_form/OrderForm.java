@@ -61,14 +61,20 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.models.AcceptedBy;
+import com.xdev.deliverytn.models.Client;
+import com.xdev.deliverytn.models.Deliverer;
 import com.xdev.deliverytn.models.ExpiryDate;
 import com.xdev.deliverytn.models.ExpiryTime;
 import com.xdev.deliverytn.models.OrderData;
 import com.xdev.deliverytn.models.OrderWeb;
+import com.xdev.deliverytn.models.OrderedBy;
+import com.xdev.deliverytn.models.Time;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.IOException;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,6 +109,9 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     AcceptedBy acceptedBy = null;
     OrderData order;
     OrderWeb orderweb;
+    Time time = new Time();
+    Client client = null;
+    Deliverer deliverer = new Deliverer();
     int PLACE_PICKER_REQUEST = 1;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -115,6 +124,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
+    UserDetails cu;
     private final DeliveryChargeCalculater calc = new DeliveryChargeCalculater();
 
     @Override
@@ -629,209 +639,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         }
     }
 
-//    PAYTM
-//
-//    private void generateCheckSum() {
-//        final String order_max_range = max_int_range.getText().toString();
-//
-//        //getting the tax amount first.
-//        String txnAmount = Integer.toString(calc.total_price).trim();
-//
-//        //creating a retrofit object.
-//        Retrofit retrofit = new Retrofit.Builder()
-//                .baseUrl(Api.BASE_URL)
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .build();
-//
-//        //creating the retrofit api service
-//        Api apiService = retrofit.create(Api.class);
-//
-//        //creating paytm object
-//        //containing all the values required
-//        final Paytm paytm = new Paytm(
-//                Constants.M_ID,
-//                Constants.CHANNEL_ID,
-//                txnAmount,
-//                Constants.WEBSITE,
-//                Constants.CALLBACK_URL,
-//                Constants.INDUSTRY_TYPE_ID
-//        );
-//
-//        //creating a call object from the apiService
-//        Call<Checksum> call = apiService.getChecksum(
-//                paytm.getmId(),
-//                paytm.getOrderId(),
-//                paytm.getCustId(),
-//                paytm.getChannelId(),
-//                paytm.getTxnAmount(),
-//                paytm.getWebsite(),
-//                paytm.getCallBackUrl(),
-//                paytm.getIndustryTypeId()
-//        );
-//
-//        //making the call to generate checksum
-//        call.enqueue(new Callback<Checksum>() {
-//            @Override
-//            public void onResponse(Call<Checksum> call, Response<Checksum> response) {
-//                //once we get the checksum we will initiailize the payment.
-//                //the method is taking the checksum we got and the paytm object as the parameter
-//                Toast.makeText(getApplicationContext(), "Payment initialized ", Toast.LENGTH_SHORT).show();
-//              //TODO paiment here
-//                // initialize PaytmPayment(response.body().getChecksumHash(), paytm);
-//            }
-//
-//            @Override
-//            public void onFailure(Call<Checksum> call, Throwable t) {
-//                progressBar.setVisibility(View.GONE);
-//                Toast.makeText(getApplicationContext(), " Checksum Failed to fetch. ", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
-//
-//    private void initializePaytmPayment(String checksumHash, Paytm paytm) {
-//        progressBar.setVisibility(View.GONE);
-//        //getting paytm service
-//        PaytmPGService Service = PaytmPGService.getStagingService();
-//
-//        //use this when using for production
-//        //PaytmPGService Service = PaytmPGService.getProductionService();
-//
-//        //creating a hashmap and adding all the values required
-//        Map<String, String> paramMap = new HashMap<>();
-//        paramMap.put("MID", Constants.M_ID);
-//        paramMap.put("ORDER_ID", paytm.getOrderId());
-//        paramMap.put("CUST_ID", paytm.getCustId());
-//        paramMap.put("CHANNEL_ID", paytm.getChannelId());
-//        paramMap.put("TXN_AMOUNT", paytm.getTxnAmount());
-//        paramMap.put("WEBSITE", paytm.getWebsite());
-//        paramMap.put("CALLBACK_URL", paytm.getCallBackUrl());
-//        paramMap.put("CHECKSUMHASH", checksumHash);
-//        paramMap.put("INDUSTRY_TYPE_ID", paytm.getIndustryTypeId());
-//
-//
-//        //creating a paytm order object using the hashmap
-//        PaytmOrder order = new PaytmOrder(paramMap);
-//
-//        //intializing the paytm service
-//        Service.initialize(order, null);
-//
-//        //finally starting the payment transaction
-//        Service.startPaymentTransaction(this, true, true, this);
-//
-//    }
-//
-//    //all these overriden method is to detect the payment result accordingly
-//    public void someUIErrorOccurred(String inErrorMessage) {
-//
-//        Log.d("LOG", "UI Error Occur.");
-//
-//        Toast.makeText(getApplicationContext(), " UI Error Occur. ", Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//
-//    public void onTransactionResponse(Bundle inResponse) {
-//
-//        Log.d("LOG", "Payment Transaction : " + inResponse);
-//        if(inResponse.getString("STATUS").equals("TXN_FAILURE")) {
-//            Toast.makeText(getApplicationContext(), "Payment Transaction Failed " , Toast.LENGTH_SHORT).show();
-//            finish();
-//            return;
-//        }
-//        //Toast.makeText(getApplicationContext(), "Payment Transaction response "+inResponse.toString(), Toast.LENGTH_LONG).show();
-//        Toast.makeText(getApplicationContext(), "Payment Transaction Successful ", Toast.LENGTH_LONG).show();
-//        final String order_description = description.getText().toString();
-//        final String order_category = category.getText().toString();
-//        final String order_min_range = min_int_range.getText().toString();
-//        final String order_max_range = max_int_range.getText().toString();
-//        flag = 0;
-//        //Default text for date_picker = "ExpiryDate"
-//        //Default text for time_picker = "ExpiryTime"
-//
-//
-//        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//        userId = user.getUid();
-//
-//        root = FirebaseDatabase.getInstance().getReference();
-//
-//        deliveryApp = root.child("deliveryApp");
-//        deliveryApp.keepSynced(true);
-//
-//        deliveryApp.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(DataSnapshot dataSnapshot) {
-//                if (!dataSnapshot.hasChild("totalOrders")) {
-//                    root.child("deliveryApp").child("totalOrders").setValue(1);
-//                    OrderNumber = 1;
-//                    order_id = OrderNumber;
-//                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", calc.deliveryCharge, acceptedBy, userId, otp, final_price);
-//                    root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-//                } else {
-//                    OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
-//                    OrderNumber++;
-//                    order_id = OrderNumber;
-//                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", calc.deliveryCharge, acceptedBy, userId, otp, final_price);
-//                    root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
-//                    root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-//                }
-//                UserViewActivity.adapter.insert(0, order);
-//            }
-//
-//            @Override
-//            public void onCancelled(DatabaseError databaseError) {
-//
-//            }
-//        });
-//        finish();
-//        Toast.makeText(getApplicationContext(), "Payment Transaction Successful " , Toast.LENGTH_SHORT).show();
-//        Log.d("RESPONSE",inResponse.toString());
-//    }
-//
-//    @Override
-//
-//    public void networkNotAvailable() {
-//
-//        Log.d("LOG", "UI Error Occur.");
-//
-//        Toast.makeText(getApplicationContext(), " UI Error Occur. ", Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//
-//    public void clientAuthenticationFailed(String inErrorMessage) {
-//
-//        Log.d("LOG", "UI Error Occur.");
-//
-//        Toast.makeText(getApplicationContext(), " Severside Error "+ inErrorMessage, Toast.LENGTH_LONG).show();
-//
-//    }
-//
-//    @Override
-//
-//    public void onErrorLoadingWebPage(int iniErrorCode,
-//
-//                                      String inErrorMessage, String inFailingUrl) {
-//
-//    }
-//
-//    @Override
-//
-//    public void onBackPressedCancelTransaction() {
-//
-//        // TODO Auto-generated method stub
-//
-//    }
-//
-//    @Override
-//
-//    public void onTransactionCancel(String inErrorMessage, Bundle inResponse) {
-//
-//        Log.d("LOG", "Payment Transaction Failed " + inErrorMessage);
-//
-//        Toast.makeText(getBaseContext(), "Payment Transaction Failed ", Toast.LENGTH_LONG).show();
-
 
     public Boolean addOrder() {
         final String order_description = description.getText().toString();
@@ -842,8 +649,24 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
 
-        root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
+        forUserData.keepSynced(true);
+        forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                 cu = dataSnapshot.getValue(UserDetails.class);
+                client = new Client(cu.getDisplayName(), cu.getMobile(), cu.getEmail(), cu.getProfile(), userId);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        deliverer = new Deliverer("-", "-", "-", "-", "-");
+        root = FirebaseDatabase.getInstance().getReference();
+        time = new Time(0, 0, System.currentTimeMillis() / 1000);
         DatabaseReference deliveryApp = root.child("deliveryApp");
         deliveryApp.keepSynced(true);
 
@@ -854,9 +677,14 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     root.child("deliveryApp").child("totalOrders").setValue(1);
                     OrderNumber = 1;
                     order_id = OrderNumber;
-                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
+
+                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    orderweb = new OrderWeb();
+                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            final_price, 0, userLocation,
+                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
+
                     root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 } else {
                     OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
@@ -878,6 +706,11 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             final_price);
                     root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
+                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            final_price, 0, userLocation,
+                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
+
+                    root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 }
                 UserViewActivity.adapter.insert(0, order);
             }
@@ -891,6 +724,10 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
         return true;
 //    Log.d("RESPONSE",inResponse.toString());
+
+    }
+
+    private void getcurrentUser(String uid) {
 
     }
 }

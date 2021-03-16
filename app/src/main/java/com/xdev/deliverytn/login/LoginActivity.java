@@ -168,7 +168,8 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                     if (!task.isSuccessful()) {
                                         // there was an error
                                         if (password.length() < 6) {
-                                            inputPassword.setError(getString(R.string.minimum_password));
+                                            inputPassword.setError(getString(R.string.minimum_password));                                            btnLogin.revertAnimation();
+
                                         } else {
                                             Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
                                             btnLogin.revertAnimation();
