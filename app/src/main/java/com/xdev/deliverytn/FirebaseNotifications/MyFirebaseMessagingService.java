@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.models.FBNotification;
 
 import java.util.HashMap;
 import java.util.Map;

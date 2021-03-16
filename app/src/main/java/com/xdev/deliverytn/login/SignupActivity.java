@@ -54,7 +54,7 @@ import com.onesignal.OneSignal;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.user_details.UserDetails;
+import com.xdev.deliverytn.models.UserDetails;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -268,9 +268,8 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setEmail(email.getText().toString());
                                         u.setWallet(1000);
                                         u.setAddress(address.getText().toString());
-                                        u.setBirth(datn.getText().toString());
+                                        u.setBirth((String) datn.getText());
                                         u.setCinPhoto("noPhoto");
-                                        u.setProfile("nophoto");
                                         u.setCity(gov.getSelectedItem().toString());
                                         u.setFirst(first.getText().toString());
                                         u.setGender(gender);
@@ -278,8 +277,10 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setZip(cp.getText().toString());
                                         u.setRole("null");
                                         u.setRate(0);
+                                        u.setProfile("nophoto");
+                                        u.setRate(0);
                                         u.setUsertype("");
-                                        u.setRatenumber(0);
+                                        u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {
@@ -452,8 +453,11 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
         ud.setPlayerId(playerId);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
-
+        ud.setUid(userId);
         root.child("deliveryApp").child("users").child(userId).setValue(ud);
+        root.child("web").child("users").child(userId).setValue(ud);
+
+
     }
 
 

@@ -45,9 +45,9 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
-import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.File;
 import java.io.FileOutputStream;

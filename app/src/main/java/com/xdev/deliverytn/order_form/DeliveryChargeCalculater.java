@@ -3,7 +3,7 @@ package com.xdev.deliverytn.order_form;
 import android.util.Log;
 
 import com.google.android.gms.maps.model.LatLng;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.OrderData;
 
 import org.json.JSONArray;
 import org.json.JSONException;

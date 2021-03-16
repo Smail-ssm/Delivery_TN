@@ -21,9 +21,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.order.ExpiryDate;
-import com.xdev.deliverytn.order.ExpiryTime;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.ExpiryDate;
+import com.xdev.deliverytn.models.ExpiryTime;
+import com.xdev.deliverytn.models.OrderData;
 
 import java.text.DateFormat;
 import java.util.ArrayList;

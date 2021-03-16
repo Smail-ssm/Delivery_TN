@@ -59,7 +59,7 @@ import com.pkmmte.view.CircularImageView;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.user_details.UserDetails;
+import com.xdev.deliverytn.models.UserDetails;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -67,9 +67,7 @@ import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.Enter8digitnumber;
 import static com.xdev.deliverytn.R.string.cin8;
-import static com.xdev.deliverytn.R.string.emailem;
 import static com.xdev.deliverytn.R.string.entremobile;
-import static com.xdev.deliverytn.R.string.entrename;
 import static com.xdev.deliverytn.R.string.entrpass;
 import static com.xdev.deliverytn.R.string.faildreg;
 import static com.xdev.deliverytn.R.string.passworddntmatch;
@@ -187,9 +185,9 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         cp = findViewById(R.id.cp);
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
+//        password.setVisibility(View.GONE);
         Confirmpass = findViewById(R.id.Confirmpass);
-        EditText cin = findViewById(R.id.cin);
-
+//        Confirmpass.setVisibility(View.GONE);
         Button sign_up_button = findViewById(R.id.sign_up_button);
         Button sign_in_button = findViewById(R.id.sign_in_button);
         progressBar = findViewById(R.id.progressBar);
@@ -202,8 +200,11 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         String google_email = i.getStringExtra("email");
         getaddress();
         first.setText(google_names[0]);
+        first.setEnabled(false);
         last.setText(google_names[1]);
+        last.setEnabled(false);
         email.setText(google_email);
+        email.setEnabled(false);
         datn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -250,16 +251,16 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                     final String Email = email.getText().toString().trim();
                     String Password = password.getText().toString().trim();
                     String Confirmpassword = Confirmpass.getText().toString().trim();
-                    final String name = first.getText().toString().trim() + last.getText().toString().trim();
+//                    final String name = first.getText().toString().trim() + last.getText().toString().trim();
                     final String Mobile = mobile.getText().toString().trim();
                     final String cin = cina.getText().toString().trim();
 //                    final String alt_mobile = inputAltMobile.getText().toString().trim();
 
-                    if (TextUtils.isEmpty(name)) {
-                        Toast.makeText(getApplicationContext(), entrename, Toast.LENGTH_SHORT).show();
-                        first.requestFocus();
-                        return;
-                    }
+//                    if (TextUtils.isEmpty(name)) {
+//                        Toast.makeText(getApplicationContext(), entrename, Toast.LENGTH_SHORT).show();
+//                        first.requestFocus();
+//                        return;
+//                    }
 
                     if (TextUtils.isEmpty(Mobile)) {
                         Toast.makeText(getApplicationContext(), entremobile, Toast.LENGTH_SHORT).show();
@@ -278,11 +279,11 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                         return;
                     }
 
-                    if (TextUtils.isEmpty(Email)) {
-                        Toast.makeText(getApplicationContext(), emailem, Toast.LENGTH_SHORT).show();
-                        email.requestFocus();
-                        return;
-                    }
+//                    if (TextUtils.isEmpty(Email)) {
+//                        Toast.makeText(getApplicationContext(), emailem, Toast.LENGTH_SHORT).show();
+//                        email.requestFocus();
+//                        return;
+//                    }
 
 
                     if (TextUtils.isEmpty(Password) || TextUtils.isEmpty(Confirmpassword)) {
@@ -357,16 +358,17 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setProfile("nophoto");
                                         u.setRate(0);
                                         u.setUsertype("");
+                                        u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                         update_userdetails_database(u);
-                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                        if (!user.isEmailVerified()) {
-                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
-                                            i.putExtra("email", u.getEmail());
-                                            startActivity(i);
-                                        } else {
-                                            startActivity(new Intent(OtherSignup.this, MainActivity.class));
-                                        }
+//                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//                                        if (!user.isEmailVerified()) {
+//                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
+//                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
+//                                            i.putExtra("email", u.getEmail());
+//                                            startActivity(i);
+//                                        } else {
+                                        startActivity(new Intent(OtherSignup.this, MainActivity.class));
+//                                        }
                                         finish();
                                     }
                                 }
@@ -476,8 +478,11 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         ud.setPlayerId(playerId);
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String userId = user.getUid();
-
+        ud.setUid(userId);
         root.child("deliveryApp").child("users").child(userId).setValue(ud);
+        root.child("web").child("users").child(userId).setValue(ud);
+
+
     }
 
 

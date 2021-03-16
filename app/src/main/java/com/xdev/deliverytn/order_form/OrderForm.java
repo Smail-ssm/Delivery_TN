@@ -60,11 +60,12 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.order.AcceptedBy;
-import com.xdev.deliverytn.order.ExpiryDate;
-import com.xdev.deliverytn.order.ExpiryTime;
-import com.xdev.deliverytn.order.OrderData;
-import com.xdev.deliverytn.order.UserLocation;
+import com.xdev.deliverytn.models.AcceptedBy;
+import com.xdev.deliverytn.models.ExpiryDate;
+import com.xdev.deliverytn.models.ExpiryTime;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.OrderWeb;
+import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.IOException;
@@ -101,6 +102,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     ExpiryDate expiryDate = null;
     AcceptedBy acceptedBy = null;
     OrderData order;
+    OrderWeb orderweb;
     int PLACE_PICKER_REQUEST = 1;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -854,6 +856,8 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     order_id = OrderNumber;
                     order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
+                    orderweb = new OrderWeb();
+                    root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 } else {
                     OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
                     OrderNumber++;

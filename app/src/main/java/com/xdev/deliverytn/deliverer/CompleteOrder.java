@@ -24,7 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.OrderData;
 
 import org.json.JSONException;
 import org.json.JSONObject;

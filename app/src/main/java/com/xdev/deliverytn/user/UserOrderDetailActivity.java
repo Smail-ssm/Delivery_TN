@@ -38,9 +38,9 @@ import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.order_form.EditOrderForm;
-import com.xdev.deliverytn.user_details.UserDetails;
 
 
 public class UserOrderDetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {

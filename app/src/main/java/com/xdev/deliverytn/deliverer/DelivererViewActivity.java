@@ -64,16 +64,16 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.login.LoginActivity;
-import com.xdev.deliverytn.order.ExpiryDate;
-import com.xdev.deliverytn.order.ExpiryTime;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.ExpiryDate;
+import com.xdev.deliverytn.models.ExpiryTime;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.recyclerview.OrderViewHolder;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
 import com.xdev.deliverytn.recyclerview.UserOrderItemClickListener;
 import com.xdev.deliverytn.recyclerview.UserOrderTouchListener;
 import com.xdev.deliverytn.user.UserViewActivity;
-import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -84,7 +84,7 @@ import java.util.Locale;
 import static com.xdev.deliverytn.R.string.logoutsuccsess;
 import static com.xdev.deliverytn.R.string.pasdinternet;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.login.usertype.usertype;
+import static com.xdev.deliverytn.models.usertype.usertype;
 
 
 public class DelivererViewActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {

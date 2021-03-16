@@ -7,8 +7,8 @@ import android.view.ViewGroup;
 
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.xdev.deliverytn.FirebaseNotifications.FBNotification;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.models.FBNotification;
 
 import java.util.List;
 

@@ -45,9 +45,10 @@ import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.login.LoginActivity;
-import com.xdev.deliverytn.order.ExpiryDate;
-import com.xdev.deliverytn.order.ExpiryTime;
-import com.xdev.deliverytn.order.OrderData;
+import com.xdev.deliverytn.models.ExpiryDate;
+import com.xdev.deliverytn.models.ExpiryTime;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.order_form.OrderForm;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.recyclerview.OrderViewHolder;
@@ -55,7 +56,6 @@ import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
 import com.xdev.deliverytn.recyclerview.SwipeOrderUtil;
 import com.xdev.deliverytn.recyclerview.UserOrderItemClickListener;
 import com.xdev.deliverytn.recyclerview.UserOrderTouchListener;
-import com.xdev.deliverytn.user_details.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -63,7 +63,7 @@ import java.util.List;
 
 import static com.xdev.deliverytn.R.string.yourordersexpired;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.login.usertype.usertype;
+import static com.xdev.deliverytn.models.usertype.usertype;
 
 
 public class UserViewActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {

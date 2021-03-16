@@ -53,11 +53,11 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.order.AcceptedBy;
-import com.xdev.deliverytn.order.ExpiryDate;
-import com.xdev.deliverytn.order.ExpiryTime;
-import com.xdev.deliverytn.order.OrderData;
-import com.xdev.deliverytn.order.UserLocation;
+import com.xdev.deliverytn.models.AcceptedBy;
+import com.xdev.deliverytn.models.ExpiryDate;
+import com.xdev.deliverytn.models.ExpiryTime;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.user.UserOrderDetailActivity;
 
 import java.io.IOException;

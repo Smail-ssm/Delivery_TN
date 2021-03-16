@@ -72,7 +72,7 @@ import static com.xdev.deliverytn.R.string.camerapermesiongranted;
 import static com.xdev.deliverytn.R.string.deletedoldpic;
 import static com.xdev.deliverytn.R.string.locationpermessiongranted;
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.login.usertype.usertype;
+import static com.xdev.deliverytn.models.usertype.usertype;
 
 public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -235,13 +235,15 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 String photoUrl = dataSnapshot.getValue(String.class);
-                try {
-                    Picasso.get()
-                            .load(photoUrl)
-                            .into(profilepic);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                if (!photoUrl.equalsIgnoreCase("noPhoto") || photoUrl.equalsIgnoreCase(""))
+                    try {
+                        Picasso.get()
+                                .load(photoUrl)
+                                .into(profilepic);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                else Picasso.get().load(R.drawable.smiley).into(profilepic);
 
             }
 

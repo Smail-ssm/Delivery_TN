@@ -52,13 +52,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.onesignal.OneSignal;
-import com.xdev.deliverytn.Chat.chatroom.chatrrom;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
-import com.xdev.deliverytn.order.OrderData;
-import com.xdev.deliverytn.order.OrderObject;
-import com.xdev.deliverytn.user_details.UserDetails;
+import com.xdev.deliverytn.models.OrderData;
+import com.xdev.deliverytn.models.OrderObject;
+import com.xdev.deliverytn.models.UserDetails;
+import com.xdev.deliverytn.models.chatrrom;
 
 import org.json.JSONException;
 import org.json.JSONObject;

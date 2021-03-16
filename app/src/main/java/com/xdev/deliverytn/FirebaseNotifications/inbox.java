@@ -34,6 +34,7 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.login.LoginActivity;
+import com.xdev.deliverytn.models.FBNotification;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.user.UserViewActivity;
 
@@ -41,7 +42,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.login.usertype.usertype;
+import static com.xdev.deliverytn.models.usertype.usertype;
 
 public class inbox extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 

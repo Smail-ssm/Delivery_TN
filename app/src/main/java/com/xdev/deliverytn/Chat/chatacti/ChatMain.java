@@ -26,8 +26,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.xdev.deliverytn.Chat.chatroom.chatrrom;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.models.Chat;
+import com.xdev.deliverytn.models.chatrrom;
 
 import java.util.ArrayList;
 import java.util.HashMap;

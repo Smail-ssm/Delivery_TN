@@ -136,10 +136,10 @@
     <string name="entrepass">Enter password!</string>
     <string name="loggedsucc">Logged in Successfully</string>
     <string name="faildtologin">Failed to Log in!</string>
-    <string name="welcom">\"Welcome \"</string>
+    <string name="welcom">Welcome</string>
     <string name="verifie">verify</string>
     <string name="enattentverification">account waiting verification</string>
-    <string name="noneedtoverify">\"no need for verification you r ready to go \"</string>
+    <string name="noneedtoverify">no need for verification you r ready to go</string>
     <string name="longclicktoviewimage">long click to view picture</string>
     <string name="choisireimageSource">Choose image source</string>
     <string name="camera">camera</string>
