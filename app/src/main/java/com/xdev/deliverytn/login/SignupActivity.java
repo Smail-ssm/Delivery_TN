@@ -396,9 +396,9 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
 //                    refreshadds();
             Toast.makeText(SignupActivity.this, adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare(), Toast.LENGTH_SHORT).show();
             address.setText(adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare());
+            cp.setText(adddress.getPostalCode());
         } else {
             getLatAndLong();
-            cp.setText(adddress.getPostalCode());
 
         }
     }

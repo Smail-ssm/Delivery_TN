@@ -61,14 +61,20 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.models.AcceptedBy;
+import com.xdev.deliverytn.models.Client;
+import com.xdev.deliverytn.models.Deliverer;
 import com.xdev.deliverytn.models.ExpiryDate;
 import com.xdev.deliverytn.models.ExpiryTime;
 import com.xdev.deliverytn.models.OrderData;
 import com.xdev.deliverytn.models.OrderWeb;
+import com.xdev.deliverytn.models.OrderedBy;
+import com.xdev.deliverytn.models.Time;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.IOException;
+import java.security.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -103,6 +109,9 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     AcceptedBy acceptedBy = null;
     OrderData order;
     OrderWeb orderweb;
+    Time time = new Time();
+    Client client = null;
+    Deliverer deliverer = new Deliverer();
     int PLACE_PICKER_REQUEST = 1;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -115,6 +124,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
+    UserDetails cu;
     private final DeliveryChargeCalculater calc = new DeliveryChargeCalculater();
 
     @Override
@@ -516,11 +526,60 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         return super.dispatchTouchEvent(event);
     }
 
+    /*
+    @Override
+    public void onPointerCaptureChanged(boolean hasCapture) {
+
+    }*/
+
+/*
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.menu_main, menu);
+        return true;
+    }
+
+
+    public static int getImageId(String category) {
+        if(category.equals("None"))
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Food") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Medicine") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Household") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Electronics") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Toiletries") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Books") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Clothing") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Shoes") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Sports") )
+            return R.drawable.ic_action_movie;
+        else if(category.equals("Games") )
+            return R.drawable.ic_action_movie;
+        else
+            return R.drawable.ic_action_movie;
+    }*/
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        // final String order_description = description.getText().toString();
+        //final String order_category = category.getText().toString();
+        //final String order_min_range = min_int_range.getText().toString();
+        //final String order_max_range = max_int_range.getText().toString();
+        //final String order_delivery_charge = delivery_charge.getText().toString();
         if (id == android.R.id.home) {
 
         }
@@ -579,6 +638,8 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             mFusedLocationClient.removeLocationUpdates(mLocationCallback);
         }
     }
+
+
     public Boolean addOrder() {
         final String order_description = description.getText().toString();
         final String order_category = category.getText().toString();
@@ -588,8 +649,24 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
 
-        root = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
+        forUserData.keepSynced(true);
+        forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                 cu = dataSnapshot.getValue(UserDetails.class);
+                client = new Client(cu.getDisplayName(), cu.getMobile(), cu.getEmail(), cu.getProfile(), userId);
 
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        deliverer = new Deliverer("-", "-", "-", "-", "-");
+        root = FirebaseDatabase.getInstance().getReference();
+        time = new Time(0, 0, System.currentTimeMillis() / 1000);
         DatabaseReference deliveryApp = root.child("deliveryApp");
         deliveryApp.keepSynced(true);
 
@@ -600,9 +677,14 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     root.child("deliveryApp").child("totalOrders").setValue(1);
                     OrderNumber = 1;
                     order_id = OrderNumber;
-                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
+
+                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    orderweb = new OrderWeb();
+                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            final_price, 0, userLocation,
+                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
+
                     root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 } else {
                     OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
@@ -624,6 +706,11 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             final_price);
                     root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
+                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
+                            final_price, 0, userLocation,
+                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
+
+                    root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 }
                 UserViewActivity.adapter.insert(0, order);
             }
@@ -637,6 +724,10 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
         return true;
 //    Log.d("RESPONSE",inResponse.toString());
+
+    }
+
+    private void getcurrentUser(String uid) {
 
     }
 }

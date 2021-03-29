@@ -360,15 +360,15 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                         u.setUsertype("");
                                         u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                         update_userdetails_database(u);
-//                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-//                                        if (!user.isEmailVerified()) {
-//                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-//                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
-//                                            i.putExtra("email", u.getEmail());
-//                                            startActivity(i);
-//                                        } else {
+                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                        if (!user.isEmailVerified()) {
+                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
+                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
+                                            i.putExtra("email", u.getEmail());
+                                            startActivity(i);
+                                        } else {
                                         startActivity(new Intent(OtherSignup.this, MainActivity.class));
-//                                        }
+                                        }
                                         finish();
                                     }
                                 }
@@ -394,14 +394,15 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
         if (havelocation) {
 //                    refreshadds();
-            Toast.makeText(getBaseContext(), adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(OtherSignup.this, adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare(), Toast.LENGTH_SHORT).show();
             address.setText(adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare());
+            cp.setText(adddress.getPostalCode());
         } else {
             getLatAndLong();
-//            cp.setText(adddress.getPostalCode());
 
         }
     }
+
 
 
     void getLatAndLong() {
