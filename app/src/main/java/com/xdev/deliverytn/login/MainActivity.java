@@ -4,9 +4,12 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.net.Uri;
@@ -81,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     private static final int MY_CAMERA_PERMISSION_CODE = 100;
     private static final int PICK_IMAGE_REQUEST = 234;
     private static Context mContext;
-
+    private final String lang = "";
     public Uri photoURI;
     GridLayout mainGrid;
     File imageFilePath;
@@ -96,7 +99,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     String userId;
     FirebaseUser user;
     String name;
-
     Snackbar snackbar;
     ImageView profilepic;
     int notif;
@@ -110,6 +112,17 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
     public static void setContext(Context mContext) {
         MainActivity.mContext = mContext;
+    }
+
+    public static void restart(Context context, String lang) {
+        Locale locale = new Locale(lang);
+        Locale.setDefault(locale);
+        Resources resources = context.getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        System.exit(0);
+
     }
 
     //todo add icon to call deliverer
@@ -128,15 +141,62 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         checkConnection();
         requestLocationPermissions();
         requestcamera();
+        final String[] checkedItem = new String[1];
         profilepic = findViewById(R.id.profile_image);
         getinfo = findViewById(R.id.getinfo);
         getinfo.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, com.xdev.deliverytn.FirebaseNotifications.inbox.class)));
         Button logOutButton = findViewById(R.id.btnlogout);
+        Button setting = findViewById(R.id.settings);
         auth = FirebaseAuth.getInstance();
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         userId = user.getUid();
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // setup the alert builder
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setTitle("Choose an animal");
+                String[] items = {"Francais", "ENglais", "تونسي"};
+
+// cow
+                builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                        checkedItem[0] = items[which];
+                        switch (which) {
+                            case 0:
+                                Toast.makeText(MainActivity.this, "FR", Toast.LENGTH_LONG).show();
+                                checkedItem[0] = "FR";
+                                break;
+                            case 1:
+                                Toast.makeText(MainActivity.this, "EN", Toast.LENGTH_LONG).show();
+                                checkedItem[0] = "EN";
+                                break;
+                            case 2:
+                                Toast.makeText(MainActivity.this, "TN", Toast.LENGTH_LONG).show();
+                                checkedItem[0] = "ar";
+                                break;
+
+                        }
+
+                    }
+                });
+                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        restart(MainActivity.this, checkedItem[0]);
+
+                    }
+                });
+                builder.setNegativeButton("Cancel", null);
+                AlertDialog dialog = builder.create();
+                dialog.show();
+            }
+        });
         TextView notifNmbr = findViewById(R.id.notifNmbr);
         root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);

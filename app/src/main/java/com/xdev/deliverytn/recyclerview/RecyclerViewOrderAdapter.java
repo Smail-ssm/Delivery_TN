@@ -78,7 +78,7 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
                 }
             });
         } else {
-            /** {show regular layout} and {hide swipe layout} */
+
             holder.cv.setVisibility(View.VISIBLE);
             holder.isClickable = true;
             holder.swipeLayout.setVisibility(View.GONE);

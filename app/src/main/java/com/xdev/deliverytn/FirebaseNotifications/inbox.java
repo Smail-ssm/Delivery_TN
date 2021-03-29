@@ -8,7 +8,6 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -17,19 +16,17 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
-import com.xdev.deliverytn.FirebaseNotifications.recyclerview.RecyclerViewotifAdapter;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
@@ -46,7 +43,6 @@ import static com.xdev.deliverytn.models.usertype.usertype;
 
 public class inbox extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
-    public static RecyclerViewotifAdapter adapter;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
     final DatabaseReference allnotif = root.child("deliveryApp").child("Notifications");
     public List<String> notiflist;
@@ -54,16 +50,25 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
     MenuItem mPreviousMenuItem = null;
     NavigationView navigationView;
     Toolbar toolbar;
-    private RecyclerView recyclerView;
-    private DrawerLayout mDrawerLayout;
-    private SwipeRefreshLayout swipeRefreshLayout;
+    ListView notiflv;
     AlertDialog.Builder builder;
+    SwipeRefreshLayout mSwipeRefreshLayout;
+    ArrayList<String> arrayList = new ArrayList<>();
+    ArrayAdapter<String> arrayAdapter;
+    ListView dynamic;
+    private DrawerLayout mDrawerLayout;
+    private DatabaseReference notifref, totalnotif;
+    private Integer notifcount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_inbox);
         navigationView = findViewById(R.id.nav_view_deliverer);
+        mSwipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeToRefresh);
+        refresh();
+        mSwipeRefreshLayout.setColorSchemeResources(R.color.accent);
         navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -121,38 +126,23 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
         toggle.syncState();
         notiflist = new ArrayList<>();
         fbobjectList = new ArrayList<>();
-        final ListView dynamic = findViewById(R.id.notiflv);
+        dynamic = findViewById(R.id.notiflv);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
         toolbar.setTitle(R.string.getinformed);
-        allnotif.keepSynced(true);
-        allnotif.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for (DataSnapshot orderdata : dataSnapshot.getChildren()) {
-                    FBNotification notif = orderdata.getValue(FBNotification.class);
-                    Toast.makeText(inbox.this, notif.toString(), Toast.LENGTH_SHORT).show();
-                    notiflist.add(notif.getTitle());
-                    fbobjectList.add(notif);
-                }
+            public void onRefresh() {
+                notiflist.clear();
+                refresh();
+                mSwipeRefreshLayout.setRefreshing(false);
             }
 
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
         });
 
-
-        //Create adapter for ArrayList
-        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, notiflist);
-
-        //Insert Adapter into List
-        dynamic.setAdapter(adapter);
-
-        //set click functionality for each list item
         dynamic.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -174,14 +164,45 @@ public class inbox extends AppCompatActivity implements ConnectivityReceiver.Con
 
     }
 
+    private void refresh() {
+        allnotif.keepSynced(true);
+        allnotif.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                FBNotification value = dataSnapshot.getValue(FBNotification.class);
+                notiflist.add(value.getTitle());
+                fbobjectList.add(value);
+                arrayAdapter = new ArrayAdapter<String>(inbox.this, android.R.layout.simple_list_item_1, notiflist);
+                dynamic.setAdapter(arrayAdapter);
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
 
     }
 
-    void setUpRecyclerView() {
-        recyclerView.setAdapter(adapter);
 
-    }
 }
