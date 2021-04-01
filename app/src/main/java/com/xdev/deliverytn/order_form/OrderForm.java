@@ -67,14 +67,12 @@ import com.xdev.deliverytn.models.ExpiryDate;
 import com.xdev.deliverytn.models.ExpiryTime;
 import com.xdev.deliverytn.models.OrderData;
 import com.xdev.deliverytn.models.OrderWeb;
-import com.xdev.deliverytn.models.OrderedBy;
 import com.xdev.deliverytn.models.Time;
 import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.IOException;
-import java.security.Timestamp;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -82,12 +80,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.locationValidation;
-
-//import com.xdev.deliverytn.paytm.Api;
-//import com.xdev.deliverytn.paytm.Checksum;
-//import com.xdev.deliverytn.paytm.Constants;
-//import com.xdev.deliverytn.paytm.Paytm;
-//import com.xdev.deliverytn.user.UserViewActivity;
 
 
 public class OrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener
@@ -98,10 +90,12 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     public static final int REQUEST_CHECK_SETTINGS = 20;
     public static LatLng clientLocation;
     private final int final_price = -1;
+    private final DeliveryChargeCalculater calc = new DeliveryChargeCalculater();
     TextView category, delivery_charge, price, total_charge;
     Button date_picker, time_picker, user_location;
     Calendar calendar;
-    EditText description, min_int_range, max_int_range;
+    EditText description, min_int_range,
+            max_int_range;
     int flag;
     UserLocation userLocation = null;
     ExpiryTime expiryTime = null;
@@ -113,6 +107,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     Client client = null;
     Deliverer deliverer = new Deliverer();
     int PLACE_PICKER_REQUEST = 1;
+    UserDetails cu;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FusedLocationProviderClient mFusedLocationClient;
     private LocationCallback mLocationCallback;
@@ -124,8 +119,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
-    UserDetails cu;
-    private final DeliveryChargeCalculater calc = new DeliveryChargeCalculater();
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -323,33 +316,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 
                     root = FirebaseDatabase.getInstance().getReference();
                     addOrder();
-//                    walletBalance = root.child("deliveryApp").child("users").child(userId).child("wallet");
-//                    walletBalance.keepSynced(true);
-//
-//                    walletBalance.addListenerForSingleValueEvent(new ValueEventListener() {
-//                        @Override
-//                        public void onDataChange(DataSnapshot dataSnapshot) {
-//                            userBalance = dataSnapshot.getValue(Integer.class);
-//                            if (userBalance >= calc.total_price && addOrder()) {
-//                                progressBar.setVisibility(View.VISIBLE);
-//                                userBalance = userBalance - calc.total_price;
-////                                generateCheckSum();
-//
-//                                progressBar.setVisibility(View.INVISIBLE);
-//                            }
-////                            else {
-////                                new AlertDialog.Builder(OrderForm.this)
-////                                        .setMessage(getString(R.string.insufficientBalance))
-////                                        .setPositiveButton(getString(R.string.dialog_ok), null)
-////                                        .show();
-////                            }
-//                        }
-//
-//                        @Override
-//                        public void onCancelled(DatabaseError databaseError) {
-//
-//                        }
-//                    });
                 }
             }
         });
@@ -654,7 +620,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                 cu = dataSnapshot.getValue(UserDetails.class);
+                cu = dataSnapshot.getValue(UserDetails.class);
                 client = new Client(cu.getDisplayName(), cu.getMobile(), cu.getEmail(), cu.getProfile(), userId);
 
             }
@@ -680,10 +646,25 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 
                     order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
                             userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
+                    orderweb = new OrderWeb(
+                            order.category,
+                            order.description,
+                            order.userId,
+                            order.status,
+                            order.otp,
+                            order.orderId,
+                            order.min_range,
+                            order.max_range,
+                            order.final_price,
+                            order.deliveryCharge,
+                            order.userLocation,
+                            order.expiryDate,
+                            order.expiryTime,
+                            order.acceptedBy,
+                            client,
+                            time,
+                            deliverer);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
-                            final_price, 0, userLocation,
-                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
 
                     root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 } else {
@@ -704,11 +685,28 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             userId,
                             otp,
                             final_price);
+
+                    orderweb = new OrderWeb(
+                            order.category,
+                            order.description,
+                            order.userId,
+                            order.status,
+                            order.otp,
+                            order.orderId,
+                            order.min_range,
+                            order.max_range,
+                            order.final_price,
+                            order.deliveryCharge,
+                            order.userLocation,
+                            order.expiryDate,
+                            order.expiryTime,
+                            order.acceptedBy,
+                            client,
+                            time,
+                            deliverer);
                     root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    orderweb = new OrderWeb(category, description, userId, "PENDING", otp, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
-                            final_price, 0, userLocation,
-                            expiryDate, expiryTime, acceptedBy, client, time, deliverer);
+                    root.child("web").child("totalOrders").setValue(OrderNumber);
 
                     root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 }

@@ -1,7 +1,7 @@
 package com.xdev.deliverytn.models;
 
 public class Client {
-    private String email, mobile, name, photo, uid;
+    public String email, mobile, name, photo, uid;
 
     public Client(String email, String mobile, String name, String photo, String uid) {
         this.email = email;

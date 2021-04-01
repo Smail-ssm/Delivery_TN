@@ -101,6 +101,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
     private OrderData order;
     private Integer balance;
 
+
     public static Double getDistanceBetween(LatLng latLon1, LatLng latLon2) {
         if (latLon1 == null || latLon2 == null)
             return null;
@@ -254,12 +255,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                 yesButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-
-
-//                        Toast.makeText(DelivererOrderDetailActivity.this, "LOcation latlng=" +
-//                                        myorder.userLocation.Lat +
-//                                        myorder.userLocation.Lon,
-//                                Toast.LENGTH_SHORT).show();
                         alertDialog.dismiss();
                         userId = user.getUid();
                         ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)); //NON-NLS //NON-NLS
@@ -358,7 +353,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                     }
                                 }
                             };
-                            // Deducts max_int+deliveryCharge money from orderer's wallet when order accepted
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

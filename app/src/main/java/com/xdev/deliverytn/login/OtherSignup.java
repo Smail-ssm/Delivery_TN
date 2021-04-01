@@ -32,6 +32,10 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
+import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -46,18 +50,22 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.StorageReference;
 import com.onesignal.OSPermissionSubscriptionState;
 import com.onesignal.OneSignal;
 import com.pkmmte.view.CircularImageView;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.models.UserDetails;
 
@@ -65,15 +73,16 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.Locale;
 
+import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
+
 import static com.xdev.deliverytn.R.string.Enter8digitnumber;
 import static com.xdev.deliverytn.R.string.cin8;
 import static com.xdev.deliverytn.R.string.entremobile;
 import static com.xdev.deliverytn.R.string.entrpass;
-import static com.xdev.deliverytn.R.string.faildreg;
+import static com.xdev.deliverytn.R.string.faildtologin;
+import static com.xdev.deliverytn.R.string.loggedsucc;
 import static com.xdev.deliverytn.R.string.passworddntmatch;
-import static com.xdev.deliverytn.R.string.passwordshort;
-import static com.xdev.deliverytn.R.string.succesregistr;
-import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
+
 
 public class OtherSignup extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
@@ -95,11 +104,20 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
     DatePickerDialog datepicker;
     AlertDialog.Builder builder;
     StorageReference storageReference;
+    private static final int RC_SIGN_IN = 101;
     private EditText inputName, inputMobile, inputAltMobile, inputEmail;
     private Button btnSignIn, btnSaveDetails;
     private ProgressBar progressBar;
     private FirebaseAuth auth;
     private EditText name;
+    public static GoogleApiClient mGoogleApiClient;
+    public static String user_email, user_name, userId;
+    FirebaseUser user;
+    GoogleSignInClient mGoogleSignInClient;
+    SignInButton signInButton;
+    CircularProgressButton btnLogin;
+    FirebaseUser currentuser;
+    GoogleSignInAccount currentAccount;
     private EditText mobile;
     private EditText email;
     private EditText password;
@@ -109,7 +127,8 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
     private CircularImageView verso;
     private TextView textView3;
     private EditText first;
-    private EditText last;
+    private EditText inputPassword;
+    private DatabaseReference root, database_users;
     private RadioButton male;
     private Spinner gov;
     private EditText address;
@@ -122,6 +141,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
     private ImageView ivImage;
     private ImageView imageView;
     private Button datn;
+    private EditText last;
 
     @SuppressLint("CutPasteId")
     @Override
@@ -195,6 +215,8 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
         Intent i = getIntent();
         String google_name = i.getStringExtra("username");
+        currentAccount = i.getParcelableExtra("account");
+        currentuser = i.getParcelableExtra("currentuser");
         String[] google_names = google_name.split(" ");
 //
         String google_email = i.getStringExtra("email");
@@ -230,7 +252,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
             public void onClick(View v) {
                 Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                 auth.signOut();
-                Intent intent = new Intent(OtherSignup.this, LoginActivity.class);
+                Intent intent = new Intent(OtherSignup.this, OtherSignup.class);
                 startActivity(intent);
                 finish();
             }
@@ -279,12 +301,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                         return;
                     }
 
-//                    if (TextUtils.isEmpty(Email)) {
-//                        Toast.makeText(getApplicationContext(), emailem, Toast.LENGTH_SHORT).show();
-//                        email.requestFocus();
-//                        return;
-//                    }
-
 
                     if (TextUtils.isEmpty(Password) || TextUtils.isEmpty(Confirmpassword)) {
                         Toast.makeText(getApplicationContext(), entrpass, Toast.LENGTH_SHORT).show();
@@ -304,80 +320,144 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                     }
                     progressBar.setVisibility(View.VISIBLE);
                     //create com.thedeliveryapp.thedeliveryapp.user.user
-                    auth.createUserWithEmailAndPassword(Email, Password)
-                            .addOnCompleteListener(OtherSignup.this, new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-                                        Toast.makeText(OtherSignup.this, succesregistr, Toast.LENGTH_SHORT).show();
-                                    } else {
-                                        Toast.makeText(OtherSignup.this, faildreg, Toast.LENGTH_SHORT).show();
-                                    }
 
-                                    progressBar.setVisibility(View.GONE);
-                                    // If sign in fails, display a message to the com.thedeliveryapp.thedeliveryapp.user.user. If sign in succeeds
-                                    // the auth state listener will be notified and logic to handle the
-                                    // signed in com.thedeliveryapp.thedeliveryapp.user.user can be handled in the listener.
-                                    if (!task.isSuccessful()) {
-                                        String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+                    auth.updateCurrentUser(currentuser).addOnCompleteListener(OtherSignup.this, task -> {
+                        if (!task.isSuccessful()) {
+                            String errorCode = ((FirebaseAuthException) task.getException()).getErrorCode();
+                            switch (errorCode) {
 
-                                        switch (errorCode) {
+                                case "ERROR_INVALID_EMAIL":
+                                    email.requestFocus();
+                                    Toast.makeText(OtherSignup.this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show();
+                                    break;
 
-                                            case "ERROR_INVALID_EMAIL":
-                                                email.requestFocus();
-                                                Toast.makeText(OtherSignup.this, R.string.emailtyperror, Toast.LENGTH_SHORT).show();
-                                                break;
+                                case "ERROR_EMAIL_ALREADY_IN_USE":
+                                    email.requestFocus();
+                                    Toast.makeText(OtherSignup.this, "The email address is already in use by another account.", Toast.LENGTH_SHORT).show();
+                                    break;
 
-                                            case "ERROR_EMAIL_ALREADY_IN_USE":
-                                                email.requestFocus();
-                                                Toast.makeText(OtherSignup.this, R.string.emailused, Toast.LENGTH_SHORT).show();
-                                                break;
+                                case "ERROR_WEAK_PASSWORD":
+                                    password.requestFocus();
+                                    Toast.makeText(OtherSignup.this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                                    break;
+                            }
+                            Toast.makeText(OtherSignup.this, "Registration Failed!", Toast.LENGTH_SHORT).show();
+                        } else { // task success
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            // Get auth credentials from the user for re-authentication
+                            AuthCredential credential = GoogleAuthProvider.getCredential(currentAccount.getIdToken(), null); // Current Login Credentials \\
+                            // Prompt the user to re-provide their sign-in credentials
+                            currentuser.reauthenticate(credential)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
 
-                                            case "ERROR_WEAK_PASSWORD":
-                                                password.requestFocus();
-                                                Toast.makeText(OtherSignup.this, passwordshort, Toast.LENGTH_SHORT).show();
-                                                break;
+                                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                            user.updatePassword(password.getText().toString())
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            if (task.isSuccessful()) {
+                                                                UserDetails u = new UserDetails();
+                                                                u.setMobile(mobile.getText().toString());
+                                                                u.setCin(cin);
+                                                                u.setEmail(email.getText().toString());
+                                                                u.setWallet(1000);
+                                                                u.setAddress(address.getText().toString());
+                                                                u.setBirth((String) datn.getText());
+                                                                u.setCinPhoto("noPhoto");
+                                                                u.setCity(gov.getSelectedItem().toString());
+                                                                u.setFirst(first.getText().toString());
+                                                                u.setGender(gender);
+                                                                u.setLast(last.getText().toString());
+                                                                u.setZip(cp.getText().toString());
+                                                                u.setRole("null");
+                                                                u.setRate(0);
+                                                                u.setProfile("nophoto");
+                                                                u.setRate(0);
+                                                                u.setUsertype("");
+                                                                u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
+                                                                update_userdetails_database(u);
+                                                                if (!currentuser.isEmailVerified()) {
+                                                                    FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
+                                                                    startActivity(new Intent(OtherSignup.this, VerifyEmailScreen.class));
+                                                                } else {
+                                                                    startActivity(new Intent(OtherSignup.this, MainActivity.class));
+                                                                }
+
+                                                                Toast.makeText(OtherSignup.this, "Successfully Registered.", Toast.LENGTH_SHORT).show();
+                                                            }
+                                                        }
+                                                    });
                                         }
-                                    } else {
+                                    });
+                        }
 
-                                        UserDetails u = new UserDetails();
-                                        u.setMobile(mobile.getText().toString());
-                                        u.setCin(cin);
-                                        u.setEmail(email.getText().toString());
-                                        u.setWallet(1000);
-                                        u.setAddress(address.getText().toString());
-                                        u.setBirth((String) datn.getText());
-                                        u.setCinPhoto("noPhoto");
-                                        u.setCity(gov.getSelectedItem().toString());
-                                        u.setFirst(first.getText().toString());
-                                        u.setGender(gender);
-                                        u.setLast(last.getText().toString());
-                                        u.setZip(cp.getText().toString());
-                                        u.setRole("null");
-                                        u.setRate(0);
-                                        u.setProfile("nophoto");
-                                        u.setRate(0);
-                                        u.setUsertype("");
-                                        u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
-                                        update_userdetails_database(u);
-                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                        if (!user.isEmailVerified()) {
-                                            FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                                            Intent i = new Intent(OtherSignup.this, VerifyEmailScreen.class);
-                                            i.putExtra("email", u.getEmail());
-                                            startActivity(i);
-                                        } else {
-                                        startActivity(new Intent(OtherSignup.this, MainActivity.class));
-                                        }
-                                        finish();
-                                    }
-                                }
-                            });
+                        progressBar.setVisibility(View.GONE);
+
+                    });
+
                 }
             }
         });
 
 
+    }
+
+    private void firebaseAuthWithGoogle(GoogleSignInAccount account) {
+        AuthCredential credential = GoogleAuthProvider.getCredential(account.getIdToken(), null);
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            userId = user.getUid();
+                            root = FirebaseDatabase.getInstance().getReference();
+                            database_users = root.child("deliveryApp").child("users");
+                            database_users.keepSynced(true);
+                            database_users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (!dataSnapshot.hasChild(userId)) {
+                                        Intent intent = new Intent(OtherSignup.this, OtherSignup.class);
+                                        intent.putExtra("username", user_name);
+                                        intent.putExtra("email", user_email);
+                                        intent.putExtra("account", account);
+
+                                        startActivity(intent);
+
+                                    } else {
+                                        btnLogin.revertAnimation();
+
+                                        Intent intent = new Intent(OtherSignup.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                    progressBar.setVisibility(View.GONE);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+                            Toast.makeText(OtherSignup.this, loggedsucc, Toast.LENGTH_SHORT).show();
+                        } else {
+                            progressBar.setVisibility(View.GONE);
+                            // If sign in fails, display a message to the user.
+                            if (!ConnectivityReceiver.isConnected()) {
+                                showSnack(false);
+                            } else {
+                                Toast.makeText(OtherSignup.this, faildtologin, Toast.LENGTH_SHORT).show();
+                            }
+                            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+                        }
+
+                        // ...
+                    }
+                });
     }
 
 
@@ -402,7 +482,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
         }
     }
-
 
 
     void getLatAndLong() {
@@ -464,7 +543,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         super.onBackPressed();
         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
         auth.signOut();
-        Intent intent = new Intent(OtherSignup.this, LoginActivity.class);
+        Intent intent = new Intent(OtherSignup.this, OtherSignup.class);
         startActivity(intent);
         finish();
     }
@@ -474,14 +553,12 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
     void update_userdetails_database(UserDetails ud) {
         OSPermissionSubscriptionState status = OneSignal.getPermissionSubscriptionState();
         String playerId = status.getSubscriptionStatus().getUserId();
-//        UserDetails Details = new UserDetails(ud.getMobile(), ud.getCin(), ud.getEmail(), ud.getWallet(), playerId, ud.getAddress(), ud.getBirth(), ud.getRecto(),  ud.getCin(), ud.getFirst(), ud.getGender(), ud.getLast(), ud.getRole(), ud.getZip());
         DatabaseReference root = FirebaseDatabase.getInstance().getReference();
         ud.setPlayerId(playerId);
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        String userId = user.getUid();
-        ud.setUid(userId);
-        root.child("deliveryApp").child("users").child(userId).setValue(ud);
-        root.child("web").child("users").child(userId).setValue(ud);
+
+        ud.setUid(currentuser.getUid());
+        root.child("deliveryApp").child("users").child(currentuser.getUid()).setValue(ud);
+        root.child("web").child("users").child(currentuser.getUid()).setValue(ud);
 
 
     }
@@ -524,23 +601,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 //
 //    }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (animationDrawable != null && !animationDrawable.isRunning())
-            animationDrawable.start();
-        progressBar.setVisibility(View.GONE);
-        CheckConnectivityMain.getInstance().setConnectivityListener(OtherSignup.this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
-        auth.signOut();
-        if (animationDrawable != null && animationDrawable.isRunning())
-            animationDrawable.stop();
-    }
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {

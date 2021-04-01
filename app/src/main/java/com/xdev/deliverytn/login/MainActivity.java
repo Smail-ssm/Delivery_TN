@@ -17,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -151,7 +152,14 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userId = user.getUid();
+        if (user == null) {
+            Toast.makeText(mContext, "Current account is disabled login again to fix the problem ", Toast.LENGTH_SHORT).show();
+            new Intent(MainActivity.this, LoginActivity.class);
+            finish();
+        } else {
+            userId = user.getUid();
+        }
+
         setting.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -790,8 +798,8 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     }
 
     void animation() {
-        /*LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-        View view = inflater.inflate(R.layout.activity_login,null);*/
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.activity_login, null);
         LinearLayout linearLayout = findViewById(R.id.mainLinearLayout);
         animationDrawable = (AnimationDrawable) linearLayout.getBackground();
         animationDrawable.setEnterFadeDuration(500);

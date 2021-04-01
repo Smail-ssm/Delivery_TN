@@ -267,6 +267,9 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                         Intent intent = new Intent(LoginActivity.this, OtherSignup.class);
                                         intent.putExtra("username", user_name);
                                         intent.putExtra("email", user_email);
+                                        intent.putExtra("account", account);
+                                        intent.putExtra("currentuser", user);
+
                                         startActivity(intent);
 
                                     } else {

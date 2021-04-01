@@ -61,6 +61,9 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.Enter8digitnumber;
+import static com.xdev.deliverytn.R.string.faildreg;
+import static com.xdev.deliverytn.R.string.passwordshort;
+import static com.xdev.deliverytn.R.string.succesregistr;
 
 public class SignupActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_CHECK_SETTINGS = 20;
@@ -232,9 +235,9 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                 @Override
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
-                                        Toast.makeText(SignupActivity.this, "Successfully Registered.", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignupActivity.this, succesregistr, Toast.LENGTH_SHORT).show();
                                     } else {
-                                        Toast.makeText(SignupActivity.this, "Registration Failed!", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(SignupActivity.this, faildreg, Toast.LENGTH_SHORT).show();
                                     }
 
                                     progressBar.setVisibility(View.GONE);
@@ -248,20 +251,21 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
 
                                             case "ERROR_INVALID_EMAIL":
                                                 email.requestFocus();
-                                                Toast.makeText(SignupActivity.this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignupActivity.this, R.string.emailtyperror, Toast.LENGTH_SHORT).show();
                                                 break;
 
                                             case "ERROR_EMAIL_ALREADY_IN_USE":
                                                 email.requestFocus();
-                                                Toast.makeText(SignupActivity.this, "The email address is already in use by another account.", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignupActivity.this, R.string.emailused, Toast.LENGTH_SHORT).show();
                                                 break;
 
                                             case "ERROR_WEAK_PASSWORD":
                                                 password.requestFocus();
-                                                Toast.makeText(SignupActivity.this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(SignupActivity.this, passwordshort, Toast.LENGTH_SHORT).show();
                                                 break;
                                         }
                                     } else {
+
                                         UserDetails u = new UserDetails();
                                         u.setMobile(mobile.getText().toString());
                                         u.setCin(cin);
@@ -285,7 +289,9 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                                         if (!user.isEmailVerified()) {
                                             FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                                            startActivity(new Intent(SignupActivity.this, VerifyEmailScreen.class));
+                                            Intent i = new Intent(SignupActivity.this, VerifyEmailScreen.class);
+                                            i.putExtra("email", u.getEmail());
+                                            startActivity(i);
                                         } else {
                                             startActivity(new Intent(SignupActivity.this, MainActivity.class));
                                         }
@@ -293,6 +299,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                     }
                                 }
                             });
+
                 }
             }
         });
@@ -311,11 +318,6 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
             }
             String add = "";
             add = add + adddress.getLocality() + "," + adddress.getSubLocality(); //City
-
-            //add = add + "\n" + address.getSubThoroughfare();
-            //keepchecking location
-            // address.getLocality()+","+address.getSubLocality()+","+address.getThoroughfare()
-//            Toast.makeText(SignupActivity.this, add, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -364,9 +366,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                 mFusedLocationClient.requestLocationUpdates
                         (getLocationRequest(), mLocationCallback,
                                 null /* Looper */);
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
+
             }
         });
 
@@ -395,7 +395,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
         if (havelocation) {
 //                    refreshadds();
             Toast.makeText(SignupActivity.this, adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare(), Toast.LENGTH_SHORT).show();
-            address.setText(adddress.getLocality() + "," + adddress.getSubLocality() + "," + adddress.getThoroughfare());
+            address.setText(String.format("%s,%s,%s", adddress.getLocality(), adddress.getSubLocality(), adddress.getThoroughfare()));
             cp.setText(adddress.getPostalCode());
         } else {
             getLatAndLong();

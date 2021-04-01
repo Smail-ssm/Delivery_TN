@@ -13,8 +13,16 @@ public class OrderData implements Parcelable {
             return new OrderData[size];
         }
     };
-    public String category, description, userId, status, otp;
-    public int orderId, min_range, max_range, final_price, deliveryCharge;
+    public String category,
+            description,
+            userId,
+            status,
+            otp;
+    public int orderId,
+            min_range,
+            max_range,
+            final_price,
+            deliveryCharge;
     public double earnings;
     public UserLocation userLocation = new UserLocation();
     public ExpiryDate expiryDate = new ExpiryDate();

@@ -128,9 +128,10 @@ public class Profile extends AppCompatActivity {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String photoUrl = dataSnapshot.getValue(String.class);
                         try {
-                            Picasso.get()
-                                    .load(photoUrl)
-                                    .into(profilei);
+                            if (photoUrl.equals("nophoto"))
+                                Picasso.get().load(R.drawable.smiley).into(profilei);
+                            else
+                                Picasso.get().load(photoUrl).into(profilei);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -186,9 +187,6 @@ public class Profile extends AppCompatActivity {
             currentLocation.setImageDrawable(drawable);
         }
     }
-
-
-
 
 
     @Override

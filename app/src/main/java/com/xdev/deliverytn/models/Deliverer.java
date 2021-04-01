@@ -1,7 +1,7 @@
 package com.xdev.deliverytn.models;
 
 public class Deliverer {
-    private String email, mobile, name, photo, uid;
+    String email, mobile, name, photo, uid;
 
     public Deliverer() {
 

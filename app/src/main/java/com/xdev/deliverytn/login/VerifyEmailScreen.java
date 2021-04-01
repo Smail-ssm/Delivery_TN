@@ -80,8 +80,8 @@ public class VerifyEmailScreen extends AppCompatActivity {
         btn_refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                if (user != null) {
+                auth.getCurrentUser().reload();
+                if (user == null) {
                     FirebaseAuth.getInstance().getCurrentUser()
                             .reload()
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
