@@ -11,24 +11,21 @@
             android:id="@+id/use_as_deliverer"
             android:icon="@drawable/ic_deliverer_new"
             android:title="View as Deliverer"
-            tools:ignore="HardcodedText" />
+        />
 
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_baseline_mood_24"
-            android:title="View Profile"
-            tools:ignore="HardcodedText" />
+            android:title="View Profile" />
 
         <item
             android:id="@+id/chat"
             android:icon="@drawable/ic_baseline_message_24"
-            android:title="Chat"
-            tools:ignore="HardcodedText" />
+            android:title="Chat" />
     </group>
 
     <item
-        android:title="Filters"
-        tools:ignore="HardcodedText">
+        android:title="Filters">
 
         <menu>
 
@@ -66,8 +63,7 @@
     </item>
 
     <item
-        android:title="Account Settings"
-        tools:ignore="HardcodedText">
+        android:title="Account Settings">
 
         <menu>
 

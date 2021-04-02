@@ -73,7 +73,7 @@
                             android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Get informed:"
+                            android:text="@string/get_informed"
                             android:textColor="@color/black"
                             android:textSize="18sp" />
 
@@ -107,7 +107,7 @@
                             android:layout_weight="1"
                             android:background="#00FFFFFF"
                             android:drawableLeft="@drawable/ic_baseline_done_24"
-                            android:text="verify" />
+                            android:text="@string/verify" />
 
                         <Button
                             android:id="@+id/settings"
@@ -119,7 +119,7 @@
                             android:layout_weight="1"
                             android:background="#00303F9F"
                             android:drawableLeft="@drawable/ic_baseline_settings_24"
-                            android:text="Settings" />
+                            android:text="@string/settgs" />
 
                         <Button
                             android:id="@+id/btnlogout"
@@ -130,7 +130,7 @@
                             android:layout_marginTop="16dp"
                             android:background="#00303F9F"
                             android:drawableLeft="@drawable/ic_menu_signout"
-                            android:text="Log out" />
+                            android:text="@string/log_out" />
 
                     </LinearLayout>
 
@@ -236,7 +236,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
-                        android:text="Shopper"
+                        android:text="@string/shopper"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="15sp"
@@ -276,7 +276,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:gravity="center_horizontal"
-                        android:text="Deliverer"
+                        android:text="@string/deliverer"
                         android:textAlignment="center"
                         android:textColor="@android:color/black"
                         android:textSize="15sp"

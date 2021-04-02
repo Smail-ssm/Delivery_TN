@@ -1,10 +1,10 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name">Bin ydik</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
     <string name="auth_failed">Authentication failed, check your email and password or sign up</string>
-    <string name="title_activity_profile" translatable="false">Firebase</string>
+    <string name="title_activity_profile" tools:ignore="MissingTranslation">Firebase</string>
     <string name="title_activity_login">Sign in</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
@@ -20,13 +20,8 @@
     <string name="user_name">Name</string>
     <string name="user_mobile">Mobile</string>
     <string name="user_alt_mobile">Alternate Mobile No.(optional)</string>
-
     <string name="title_item_detail">Item Detail</string>
     <string name="my_orders">My orders</string>
-    <string name="navigation_drawer_open" translatable="false">Open navigation drawer</string>
-    <string name="navigation_drawer_close" translatable="false">Close navigation drawer</string>
-    <string name="nav_header_desc" translatable="false">Navigation header</string>
-
 
     <string name="price_range">Estimated Price Range</string>
     <string name="btn_user_location">Set Your Location</string>
@@ -93,14 +88,14 @@
     <string name="Confirmpass">Confirm password</string>
     <string name="filedloadingmsgs">Failed to load messages.</string>
     <string name="newmsgs">New Message</string>
-    <string name="commndnumber">\"Command N° \"</string>
+    <string name="commndnumber">Command N° </string>
     <string name="nochatrooms">no rooms</string>
     <string name="chatrooms">Chat rooms</string>
     <string name="coodConnectedTOinternet">Good! Connected to Internet</string>
     <string name="pasdinternet">Sorry! Not connected to internet</string>
-    <string name="prixactuel">\"Actual price of order : \"</string>
-    <string name="coutdelaivraison">\"Delivery charge : \"</string>
-    <string name="totalapaye">\"Total to pay : \"</string>
+    <string name="prixactuel">Actual price of order : </string>
+    <string name="coutdelaivraison">Delivery charge : </string>
+    <string name="totalapaye">Total to pay : </string>
     <string name="areyousure">Are you sure?</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
@@ -148,7 +143,7 @@
     <string name="selectpic">Select Picture</string>
     <string name="rate">Rate</string>
     <string name="login">login</string>
-    <string name="emailsentto">\"Verification email sent to : \"</string>
+    <string name="emailsentto">Verification email sent to : </string>
     <string name="faildtosend">Failed to send verification email!</string>
     <string name="completverification">Please complete email verification first!</string>
     <string name="suuclogout">You have been successfully logged out.</string>
@@ -167,7 +162,7 @@
     <string name="info">Info</string>
     <string name="notification">Notification</string>
     <string name="uploading">uploading...</string>
-    <string name="donecin">\"Done ☺ CIN \"</string>
+    <string name="donecin">Done ☺ CIN </string>
     <string name="errorwhileuploading">error while uploading</string>
     <string name="nofilesemcted">NO file is selected</string>
     <string name="deletedoldpic">deleted old pic</string>
@@ -184,6 +179,9 @@
     <string name="faildreg">Registration Failed!</string>
     <string name="passworddntmatch">password don\'t match !</string>
     <string name="FR" translatable="false">FR</string>
+    <string name="settgs">settings</string>
+    <string name="navigation_drawer_open">navigation_drawer_open</string>
+    <string name="navigation_drawer_close">navigation_drawer_close</string>
 
 
 </resources>

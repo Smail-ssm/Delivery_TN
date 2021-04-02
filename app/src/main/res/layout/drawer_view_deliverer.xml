@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--suppress AndroidElementNotAllowed -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="navigation_view" android:layout_height="wrap_content"
@@ -8,22 +9,18 @@
         <item
             android:id="@+id/use_as_user"
             android:icon="@drawable/ic_orderer_new"
-            android:title="View as Orderer"
-            tools:ignore="HardcodedText" />
+            android:title="View as Orderer" />
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_baseline_mood_24"
-            android:title="View Profile"
-            tools:ignore="HardcodedText" />
+            android:title="View Profile" />
         <item
             android:id="@+id/chatroom"
             android:icon="@drawable/ic_baseline_message_24"
-            android:title="Chat rooms"
-            tools:ignore="HardcodedText" />
+            android:title="Chat rooms" />
     </group>
 
-    <item android:title="Filters"
-        tools:ignore="HardcodedText">
+    <item android:title="Filters">
         <menu>
             <item
                 android:id="@+id/all_orders_deliverer"
@@ -44,8 +41,7 @@
         </menu>
     </item>
 
-    <item android:title="Account Settings"
-        tools:ignore="HardcodedText">
+    <item android:title="Account Settings">
         <menu>
             <item
                 android:id="@+id/info"

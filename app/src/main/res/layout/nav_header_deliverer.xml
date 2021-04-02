@@ -55,7 +55,7 @@
                         android:id="@+id/locationIcon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:contentDescription="@string/nav_header_desc"
+                        android:contentDescription="nav_header_desc"
                         android:paddingRight="5dp"
                         app:srcCompat="@drawable/ic_location" />
 
@@ -77,7 +77,7 @@
                         android:id="@+id/walletIcon"
                         android:layout_width="30dp"
                         android:layout_height="30dp"
-                        android:contentDescription="@string/nav_header_desc"
+                        android:contentDescription="nav_header_desc"
                         android:paddingRight="5dp"
                         app:srcCompat="@drawable/ic_wallet" />
 
