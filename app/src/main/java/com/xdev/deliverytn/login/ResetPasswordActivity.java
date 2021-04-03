@@ -20,6 +20,9 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 
+import static com.xdev.deliverytn.R.string.aza;
+import static com.xdev.deliverytn.R.string.zz;
+
 public class ResetPasswordActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     AnimationDrawable animationDrawable;
@@ -58,7 +61,7 @@ public class ResetPasswordActivity extends AppCompatActivity implements Connecti
                     String email = inputEmail.getText().toString().trim();
 
                     if (TextUtils.isEmpty(email)) {
-                        Toast.makeText(getApplication(), "Enter your registered email id", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplication(), zz, Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -66,9 +69,9 @@ public class ResetPasswordActivity extends AppCompatActivity implements Connecti
                     auth.sendPasswordResetEmail(email)
                             .addOnCompleteListener(task -> {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(ResetPasswordActivity.this, "We have sent you instructions to reset your password!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ResetPasswordActivity.this, aza, Toast.LENGTH_SHORT).show();
                                 } else {
-                                    Toast.makeText(ResetPasswordActivity.this, "Failed to send reset email!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(ResetPasswordActivity.this, R.string.azaa, Toast.LENGTH_SHORT).show();
                                 }
 
                                 progressBar.setVisibility(View.GONE);

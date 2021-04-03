@@ -61,6 +61,8 @@ import java.util.Calendar;
 import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.Enter8digitnumber;
+import static com.xdev.deliverytn.R.string.aaa;
+import static com.xdev.deliverytn.R.string.azazz;
 import static com.xdev.deliverytn.R.string.faildreg;
 import static com.xdev.deliverytn.R.string.passwordshort;
 import static com.xdev.deliverytn.R.string.succesregistr;
@@ -212,12 +214,12 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                     }
 
                     if (TextUtils.isEmpty(Password) || TextUtils.isEmpty(Confirmpassword)) {
-                        Toast.makeText(getApplicationContext(), "Enter password!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), aaa, Toast.LENGTH_SHORT).show();
                         password.requestFocus();
                         return;
                     }
                     if (password.equals(Confirmpass)) {
-                        Toast.makeText(getApplicationContext(), "password don't match !", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), azazz, Toast.LENGTH_SHORT).show();
                         password.requestFocus();
                         return;
                     }

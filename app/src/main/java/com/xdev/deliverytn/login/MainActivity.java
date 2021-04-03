@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
@@ -142,12 +141,11 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         checkConnection();
         requestLocationPermissions();
         requestcamera();
-        final String[] checkedItem = new String[1];
         profilepic = findViewById(R.id.profile_image);
         getinfo = findViewById(R.id.getinfo);
         getinfo.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, com.xdev.deliverytn.FirebaseNotifications.inbox.class)));
         Button logOutButton = findViewById(R.id.btnlogout);
-        Button setting = findViewById(R.id.settings);
+//        Button setting = findViewById(R.id.settings);
         auth = FirebaseAuth.getInstance();
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
@@ -160,51 +158,51 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             userId = user.getUid();
         }
 
-        setting.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                // setup the alert builder
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("Choose an animal");
-                String[] items = {"Francais", "ENglais", "تونسي"};
-
-// cow
-                builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                        checkedItem[0] = items[which];
-                        switch (which) {
-                            case 0:
-                                Toast.makeText(MainActivity.this, "FR", Toast.LENGTH_LONG).show();
-                                checkedItem[0] = "FR";
-                                break;
-                            case 1:
-                                Toast.makeText(MainActivity.this, "EN", Toast.LENGTH_LONG).show();
-                                checkedItem[0] = "EN";
-                                break;
-                            case 2:
-                                Toast.makeText(MainActivity.this, "TN", Toast.LENGTH_LONG).show();
-                                checkedItem[0] = "ar";
-                                break;
-
-                        }
-
-                    }
-                });
-                builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        restart(MainActivity.this, checkedItem[0]);
-
-                    }
-                });
-                builder.setNegativeButton("Cancel", null);
-                AlertDialog dialog = builder.create();
-                dialog.show();
-            }
-        });
+//        setting.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                // setup the alert builder
+//                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+//
+//                String[] items = {"Francais", "Englais", "عربية"};
+//
+//// cow
+//                builder.setSingleChoiceItems(items, 0, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//
+//                        checkedItem[0] = items[which];
+//                        switch (which) {
+//                            case 0:
+//                                Toast.makeText(MainActivity.this, "FR", Toast.LENGTH_LONG).show();
+//                                checkedItem[0] = "FR";
+//                                break;
+//                            case 1:
+//                                Toast.makeText(MainActivity.this, "EN", Toast.LENGTH_LONG).show();
+//                                checkedItem[0] = "EN";
+//                                break;
+//                            case 2:
+//                                Toast.makeText(MainActivity.this, "TN", Toast.LENGTH_LONG).show();
+//                                checkedItem[0] = "ar";
+//                                break;
+//
+//                        }
+//
+//                    }
+//                });
+//                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int which) {
+//                        restart(MainActivity.this, checkedItem[0]);
+//
+//                    }
+//                });
+//                builder.setNegativeButton(R.string.cancel, null);
+//                AlertDialog dialog = builder.create();
+//                dialog.show();
+//            }
+//        });
         TextView notifNmbr = findViewById(R.id.notifNmbr);
         root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);
@@ -221,7 +219,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     showSnacks(getString(R.string.enattentverification));
                 } else {
 //
-                    recto.setText("verified");
+                    recto.setText(R.string.verified);
                     recto.setBackgroundColor(Color.TRANSPARENT);
 
                     recto.setOnClickListener(new View.OnClickListener() {
@@ -681,7 +679,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             int color;
             color = Color.WHITE;
             snackbar = Snackbar
-                    .make(findViewById(android.R.id.content), "uploading...", Snackbar.LENGTH_INDEFINITE);
+                    .make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_INDEFINITE);
 
             View sbView = snackbar.getView();
             TextView textView = sbView.findViewById(R.id.snackbar_text);
@@ -704,7 +702,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         Uri downloadUri = task.getResult();
                         update_user_profile(downloadUri);
                         snackbar.dismiss();
-                        showSnacks("Done ☺ profile ");
+                        showSnacks(getString(R.string.Doneprofile));
 
 
                         Picasso.get()
@@ -713,13 +711,13 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
 
                     } else {
-                        showSnacks("error while uploading");
+                        showSnacks(getString(R.string.erroruploading));
                     }
                 }
             });
             // [END upload_get_download_url]
         } else {
-            Toast.makeText(this, "NO file is selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.nofilesemcted, Toast.LENGTH_SHORT).show();
         }
 
     }

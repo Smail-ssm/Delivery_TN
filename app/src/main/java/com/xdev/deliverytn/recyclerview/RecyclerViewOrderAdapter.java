@@ -102,9 +102,9 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
             TextDrawable drawable = TextDrawable.builder().buildRound(status, Color.parseColor(getColor(status)));
             holder.imageView.setImageDrawable(drawable);
             //primary color
-            drawable = TextDrawable.builder().buildRoundRect("TND" + price, Color.parseColor("#5D4037"), 20);
+            drawable = TextDrawable.builder().buildRoundRect(R.string.tnd + price, Color.parseColor("#5D4037"), 20);
             holder.displayPrice.setImageDrawable(drawable);
-            drawable = TextDrawable.builder().beginConfig().textColor(Color.WHITE).endConfig().buildRound("TND" + charge, Color.BLACK);
+            drawable = TextDrawable.builder().beginConfig().textColor(Color.WHITE).endConfig().buildRound(R.string.tnd + charge, Color.BLACK);
             holder.displayCharge.setImageDrawable(drawable);
 
 

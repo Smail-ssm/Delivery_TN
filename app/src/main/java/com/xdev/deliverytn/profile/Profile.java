@@ -290,13 +290,13 @@ public class Profile extends AppCompatActivity {
                                 .load(downloadUri).into(profilei);
 
                     } else {
-                        showSnacks("error while uploading");
+                        showSnacks(String.valueOf(R.string.erroruploading));
                     }
                 }
             });
             // [END upload_get_download_url]
         } else {
-            Toast.makeText(this, "NO file is selected", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.nofilesemcted, Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -312,10 +312,5 @@ public class Profile extends AppCompatActivity {
         TextView textView = sbView.findViewById(R.id.snackbar_text);
         textView.setTextColor(color);
         snackbar.show();
-    }
-
-    void update_user_profile(Uri test) {
-
-//        profileexsists = true;
     }
 }

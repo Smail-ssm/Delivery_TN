@@ -160,7 +160,7 @@ public class Otp_screen extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder1 = new AlertDialog.Builder(Otp_screen.this);
-                builder1.setMessage("Write your message here.");
+                builder1.setMessage(R.string.pp);
                 builder1.setCancelable(true);
 
                 builder1.setPositiveButton(
@@ -225,14 +225,14 @@ public class Otp_screen extends AppCompatActivity {
 
                                     }
                                 });
-                                builder.setPositiveButton("done", new DialogInterface.OnClickListener() {
+                                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                                     @Override
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.cancel();
                                     }
                                 }).
 
-                                        setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                                        setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                                             @Override
                                             public void onClick(DialogInterface dialog, int which) {
                                             }
@@ -251,7 +251,7 @@ public class Otp_screen extends AppCompatActivity {
                                 root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("paimentMethod").setValue("Cash");
                             }
                         });
-                builder1.setNeutralButton("Cancle", new DialogInterface.OnClickListener() {
+                builder1.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         dialog.cancel();

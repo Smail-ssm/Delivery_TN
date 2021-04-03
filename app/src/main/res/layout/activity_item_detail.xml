@@ -97,7 +97,7 @@
                 android:layout_marginBottom="20dp"
                             android:background="@drawable/button_background"
                 android:padding="5dp"
-                android:text="@string/otp"
+                android:text="@otp"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 

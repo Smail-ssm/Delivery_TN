@@ -136,7 +136,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         requestLocationPermissions();
 
         Toolbar toolbar = findViewById(R.id.my_toolbar);
-        toolbar.setTitle("New Order");
+        toolbar.setTitle(R.string.NewOrder);
         setSupportActionBar(toolbar);
 
         ActionBar ab = getSupportActionBar();
@@ -184,21 +184,21 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             @Override
             public void onClick(View v) {
                 List<String> mcategories = new ArrayList<String>();
-                mcategories.add("Food");
-                mcategories.add("Medicine");
-                mcategories.add("Household");
-                mcategories.add("Electronics");
-                mcategories.add("Toiletries");
-                mcategories.add("Books");
-                mcategories.add("Clothing");
-                mcategories.add("Shoes");
-                mcategories.add("Sports");
-                mcategories.add("Games");
-                mcategories.add("Others");
+                mcategories.add(getString(R.string.food));
+                mcategories.add(getString(R.string.medecine));
+                mcategories.add(getString(R.string.houshold));
+                mcategories.add(getString(R.string.Electronics));
+                mcategories.add(getString(R.string.Toiletries));
+                mcategories.add(getString(R.string.Books));
+                mcategories.add(getString(R.string.Clothing));
+                mcategories.add(getString(R.string.Shoes));
+                mcategories.add(getString(R.string.Sports));
+                mcategories.add(getString(R.string.Games));
+                mcategories.add(getString(R.string.Others));
                 //Create sequence of items
                 final CharSequence[] Categories = mcategories.toArray(new String[mcategories.size()]);
                 AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(OrderForm.this);
-                dialogBuilder.setTitle("Choose Category");
+                dialogBuilder.setTitle(R.string.ChooseCategory);
                 dialogBuilder.setItems(Categories, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         String selectedText = Categories[item].toString();  //Selected item in listview
@@ -295,8 +295,8 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 } else {
 //                    calc = new DeliveryChargeCalculater(Integer.parseInt(order_max_range));
                     delivery_charge.setText("-");
-//                    price.setText("TND " + calc.max_price);
-                    total_charge.setText("Totale charge will update when order is accepted");
+                    price.setText(R.string.tnd + max_int_range.getText().toString());
+                    total_charge.setText(R.string.updat);
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
@@ -344,7 +344,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        System.out.println("Inside onRequestPermissionsResult");
         //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQUEST_LOCATION_PERMISSION:
@@ -352,7 +351,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 // otherwise, show a Toast
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    System.out.println("onRequestPermissionsResult ki if condition ke andar");
                     setGpsOn();
                 } else {
                     Toast.makeText(OrderForm.this, "Location permission Denied", Toast.LENGTH_LONG).show();
@@ -370,7 +368,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     }
 
     void setGpsOn() {
-        System.out.println("Inside setGpsOn");
         LocationRequest mLocationRequest = getLocationRequest();
 
         LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
@@ -382,37 +379,25 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                System.out.println("task ke OnSuccess mai hoon");
+
                 if (ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
                         PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
+
                     return;
                 }
                 mFusedLocationClient.requestLocationUpdates
                         (getLocationRequest(), mLocationCallback,
                                 null /* Looper */);
-                // All location settings are satisfied. The client can initialize
-                // location requests here.
-                // ...
+
             }
         });
 
         task.addOnFailureListener(this, new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                System.out.println("task ke onFailure mai hoon");
                 if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
+
                     try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         resolvable.startResolutionForResult(OrderForm.this,
                                 REQUEST_CHECK_SETTINGS);
@@ -460,7 +445,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             }
         }
         if (requestCode == REQUEST_CHECK_SETTINGS) {
-            System.out.println("onActivityResult ke if mai hoon");
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 // TODO: Consider calling
                 //    ActivityCompat#requestPermissions
@@ -492,60 +476,12 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         return super.dispatchTouchEvent(event);
     }
 
-    /*
-    @Override
-    public void onPointerCaptureChanged(boolean hasCapture) {
-
-    }*/
-
-/*
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-
-    public static int getImageId(String category) {
-        if(category.equals("None"))
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Food") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Medicine") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Household") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Electronics") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Toiletries") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Books") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Clothing") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Shoes") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Sports") )
-            return R.drawable.ic_action_movie;
-        else if(category.equals("Games") )
-            return R.drawable.ic_action_movie;
-        else
-            return R.drawable.ic_action_movie;
-    }*/
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
-        // final String order_description = description.getText().toString();
-        //final String order_category = category.getText().toString();
-        //final String order_min_range = min_int_range.getText().toString();
-        //final String order_max_range = max_int_range.getText().toString();
-        //final String order_delivery_charge = delivery_charge.getText().toString();
+
         if (id == android.R.id.home) {
 
         }

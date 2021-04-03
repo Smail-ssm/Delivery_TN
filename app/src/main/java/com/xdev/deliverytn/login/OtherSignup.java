@@ -77,11 +77,16 @@ import br.com.simplepass.loadingbutton.customViews.CircularProgressButton;
 
 import static com.xdev.deliverytn.R.string.Enter8digitnumber;
 import static com.xdev.deliverytn.R.string.cin8;
+import static com.xdev.deliverytn.R.string.ee;
+import static com.xdev.deliverytn.R.string.eeee;
+import static com.xdev.deliverytn.R.string.eeeeé;
 import static com.xdev.deliverytn.R.string.entremobile;
 import static com.xdev.deliverytn.R.string.entrpass;
+import static com.xdev.deliverytn.R.string.erreemal;
 import static com.xdev.deliverytn.R.string.faildtologin;
 import static com.xdev.deliverytn.R.string.loggedsucc;
 import static com.xdev.deliverytn.R.string.passworddntmatch;
+import static com.xdev.deliverytn.R.string.zza;
 
 
 public class OtherSignup extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
@@ -328,20 +333,20 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
 
                                 case "ERROR_INVALID_EMAIL":
                                     email.requestFocus();
-                                    Toast.makeText(OtherSignup.this, "The email address is badly formatted.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(OtherSignup.this, erreemal, Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "ERROR_EMAIL_ALREADY_IN_USE":
                                     email.requestFocus();
-                                    Toast.makeText(OtherSignup.this, "The email address is already in use by another account.", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(OtherSignup.this, ee, Toast.LENGTH_SHORT).show();
                                     break;
 
                                 case "ERROR_WEAK_PASSWORD":
                                     password.requestFocus();
-                                    Toast.makeText(OtherSignup.this, "Password too short, enter minimum 6 characters!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(OtherSignup.this, eeee, Toast.LENGTH_SHORT).show();
                                     break;
                             }
-                            Toast.makeText(OtherSignup.this, "Registration Failed!", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(OtherSignup.this, eeeeé, Toast.LENGTH_SHORT).show();
                         } else { // task success
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
                             // Get auth credentials from the user for re-authentication
@@ -385,7 +390,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                                                     startActivity(new Intent(OtherSignup.this, MainActivity.class));
                                                                 }
 
-                                                                Toast.makeText(OtherSignup.this, "Successfully Registered.", Toast.LENGTH_SHORT).show();
+                                                                Toast.makeText(OtherSignup.this, zza, Toast.LENGTH_SHORT).show();
                                                             }
                                                         }
                                                     });
@@ -470,6 +475,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
     }
 
 
+    @SuppressLint("SetTextI18n")
     private void getaddress() {
 
         if (havelocation) {
@@ -590,16 +596,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
         textView.setTextColor(color);
         snackbar.show();
     }
-
-//    void animation() {
-//        /*LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
-//        View view = inflater.inflate(R.layout.activity_login,null);*/
-//        CoordinatorLayout otherSignup = findViewById(R.id.otherSignup);
-//        animationDrawable = (AnimationDrawable) otherSignup.getBackground();
-//        animationDrawable.setEnterFadeDuration(5000);
-//        animationDrawable.setExitFadeDuration(5000);
-//
-//    }
 
 
     @Override

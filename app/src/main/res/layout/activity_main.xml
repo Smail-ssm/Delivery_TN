@@ -109,17 +109,17 @@
                             android:drawableLeft="@drawable/ic_baseline_done_24"
                             android:text="@string/verify" />
 
-                        <Button
-                            android:id="@+id/settings"
-                            android:layout_width="wrap_content"
-                            android:layout_height="32dp"
-                            android:layout_margin="5dp"
+                        <!--                        <Button-->
+                        <!--                            android:id="@+id/settings"-->
+                        <!--                            android:layout_width="wrap_content"-->
+                        <!--                            android:layout_height="32dp"-->
+                        <!--                            android:layout_margin="5dp"-->
 
-                            android:layout_marginTop="16dp"
-                            android:layout_weight="1"
-                            android:background="#00303F9F"
-                            android:drawableLeft="@drawable/ic_baseline_settings_24"
-                            android:text="@string/settgs" />
+                        <!--                            android:layout_marginTop="16dp"-->
+                        <!--                            android:layout_weight="1"-->
+                        <!--                            android:background="#00303F9F"-->
+                        <!--                            android:drawableLeft="@drawable/ic_baseline_settings_24"-->
+                        <!--                            android:text="@string/settgs" />-->
 
                         <Button
                             android:id="@+id/btnlogout"
