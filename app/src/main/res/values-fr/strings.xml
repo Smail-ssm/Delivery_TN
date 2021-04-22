@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns0="http://schemas.android.com/tools">
-    <string name="app_name">Bin ydik</string>
+    <string name="app_name">Bin Idik</string>
     <string name="action_sign_in_short">Enregistrement</string>
     <string name="email">Email</string>
     <string name="minimum_password">Mot de passe trop court, entrez au moins 6 caractéres !</string>

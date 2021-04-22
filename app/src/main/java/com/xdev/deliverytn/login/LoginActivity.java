@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -17,6 +18,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
+import com.facebook.AccessToken;
+import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -31,6 +38,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
@@ -65,6 +73,10 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private DatabaseReference root, database_users;
+    private static final String TAG = "FacebookLogin";
+    private static final int RC_SIGN_IN_FB = 12345;
+    private View fbLogin;
+    private CallbackManager mCallbackManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -109,7 +121,37 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
         btnLogin = findViewById(R.id.btn_login);
         Button btnReset = findViewById(R.id.btn_reset_password);
         signInButton = findViewById(R.id.mygooglebutton);
+        //////////////////////////////////////////////////
+        //facebook login
 
+        // Initialize Facebook Login button
+        mCallbackManager = CallbackManager.Factory.create();
+
+        LoginButton loginButton = findViewById(R.id.fblogin_button);
+
+        loginButton.setReadPermissions("email", "public_profile");
+        loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                Log.d(TAG, "facebook:onSuccess:" + loginResult);
+                handleFacebookAccessToken(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+                Log.d(TAG, "facebook:onCancel");
+            }
+
+
+            @Override
+            public void onError(FacebookException error) {
+
+            }
+
+        });
+
+
+//----------------
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -194,6 +236,61 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
         });
     }
 
+    private void handleFacebookAccessToken(AccessToken token) {
+        Log.d(TAG, "handleFacebookAccessToken:" + token);
+
+        AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
+
+        auth.signInWithCredential(credential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            userId = user.getUid();
+                            root = FirebaseDatabase.getInstance().getReference();
+                            database_users = root.child("deliveryApp").child("users");
+                            database_users.keepSynced(true);
+                            database_users.addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    if (!dataSnapshot.hasChild(userId)) {
+                                        Intent intent = new Intent(LoginActivity.this, OtherSignup.class);
+                                        intent.putExtra("username", user_name);
+                                        intent.putExtra("email", user_email);
+                                        intent.putExtra("fb", token);
+                                        intent.putExtra("currentuser", user);
+
+                                        startActivity(intent);
+
+                                    } else {
+                                        btnLogin.revertAnimation();
+
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                    }
+                                    progressBar.setVisibility(View.GONE);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+
+                                }
+                            });
+
+                            Toast.makeText(LoginActivity.this, "Authentication Succeeded.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            // If sign-in fails, a message will display to the user.
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            Toast.makeText(LoginActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -218,6 +315,8 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                 // ...
             }
         }
+        mCallbackManager.onActivityResult(requestCode, resultCode, data);
+
     }
 
     private void checkConnection() {

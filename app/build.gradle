@@ -71,7 +71,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
     implementation'com.pkmmte.view:circularimageview:1.1'
-
+    implementation 'com.facebook.android:facebook-android-sdk:[5,6)'
     implementation 'com.onesignal:OneSignal:3.15.4'
     implementation 'com.hanks:htextview-base:0.1.6'
     implementation 'com.hanks:htextview-rainbow:0.1.6'

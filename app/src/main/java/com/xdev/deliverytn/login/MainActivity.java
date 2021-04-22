@@ -33,6 +33,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
 
+import com.facebook.AccessToken;
+import com.facebook.login.LoginManager;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -359,6 +361,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         FirebaseAuth auth = FirebaseAuth.getInstance();
                         Auth.GoogleSignInApi.signOut(mGoogleApiClient);
                         auth.signOut();
+                        if (AccessToken.getCurrentAccessToken() != null) {
+                            LoginManager.getInstance().logOut();
+                            Toast.makeText(MainActivity.this, "Loged out from facebook", Toast.LENGTH_SHORT).show();
+                        }
                         Intent loginIntent = new Intent(MainActivity.this, LoginActivity.class);
                         startActivity(loginIntent);
                         finish();
