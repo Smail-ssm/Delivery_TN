@@ -102,7 +102,9 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         }
         Intent intent = getIntent();
         myOrder = intent.getParcelableExtra("MyOrder");
-        fetchDelivererdetail();
+        if (myOrder.acceptedBy.delivererID != null) {
+            fetchDelivererdetail();
+        }
         CollapsingToolbarLayout appBarLayout = findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(myOrder.category);

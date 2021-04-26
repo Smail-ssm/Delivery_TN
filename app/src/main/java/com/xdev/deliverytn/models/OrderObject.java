@@ -9,6 +9,15 @@ public class OrderObject {
     public ExpiryDate expiryDate = new ExpiryDate();
     public ExpiryTime expiryTime = new ExpiryTime();
     public AcceptedBy acceptedBy = new AcceptedBy();
+    deliverylocation delivlocation = new deliverylocation();
+
+    public deliverylocation getDelivlocation() {
+        return delivlocation;
+    }
+
+    public void setDelivlocation(deliverylocation delivlocation) {
+        this.delivlocation = delivlocation;
+    }
 
     public OrderObject() {
         //For DataSnapshot.getValue()

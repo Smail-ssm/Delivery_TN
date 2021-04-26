@@ -70,6 +70,7 @@ import com.xdev.deliverytn.models.OrderWeb;
 import com.xdev.deliverytn.models.Time;
 import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.models.UserLocation;
+import com.xdev.deliverytn.models.deliverylocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.IOException;
@@ -82,9 +83,7 @@ import java.util.Locale;
 import static com.xdev.deliverytn.R.string.locationValidation;
 
 
-public class OrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener
-//        , PaytmPaymentTransactionCallback
-{
+public class OrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     public static final int REQUEST_LOCATION_PERMISSION = 10;
     public static final int REQUEST_CHECK_SETTINGS = 20;
@@ -92,12 +91,12 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private final int final_price = -1;
     private final DeliveryChargeCalculater calc = new DeliveryChargeCalculater();
     TextView category, delivery_charge, price, total_charge;
-    Button date_picker, time_picker, user_location;
+    Button date_picker, time_picker, user_location, deliverylocationbtn;
     Calendar calendar;
-    EditText description, min_int_range,
-            max_int_range;
+    EditText description, min_int_range, max_int_range;
     int flag;
     UserLocation userLocation = null;
+    deliverylocation deliverylocation = null;
     ExpiryTime expiryTime = null;
     ExpiryDate expiryDate = null;
     AcceptedBy acceptedBy = null;
@@ -107,6 +106,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     Client client = null;
     Deliverer deliverer = new Deliverer();
     int PLACE_PICKER_REQUEST = 1;
+    int DELIVERY_PICKER_REQUEST = 2;
     UserDetails cu;
     private BottomSheetBehavior mBottomSheetBehavior;
     private FusedLocationProviderClient mFusedLocationClient;
@@ -119,33 +119,25 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
-
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_form);
-
         checkConnection();
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         requestLocationPermissions();
-
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         toolbar.setTitle(R.string.NewOrder);
         setSupportActionBar(toolbar);
-
         ActionBar ab = getSupportActionBar();
         ab.setDisplayHomeAsUpEnabled(true);
-
         acceptedBy = new AcceptedBy("-", "-", "-", "-", "-");
         otp = "";
-
-
         progressBar = findViewById(R.id.progressBar);
         category = findViewById(R.id.btn_category);
         date_picker = findViewById(R.id.btn_date_picker);
@@ -155,11 +147,10 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         min_int_range = findViewById(R.id.min_int);
         max_int_range = findViewById(R.id.max_int);
         user_location = findViewById(R.id.user_location);
+        deliverylocationbtn = findViewById(R.id.deliverylocation);
         delivery_charge = findViewById(R.id.delivery_charge);
         price = findViewById(R.id.max_price);
         total_charge = findViewById(R.id.total_amount);
-
-
         max_int_range.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
                 String S = s.toString();
@@ -172,7 +163,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
             }
 
             public void onTextChanged(CharSequence s, int start, int before, int count) {
@@ -257,6 +247,22 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
                     try {
                         startActivityForResult(builder.build(OrderForm.this), PLACE_PICKER_REQUEST);
+
+                    } catch (Exception e) {
+                        Log.e("location error", e.getMessage());
+                    }
+                }
+            }
+        });
+        deliverylocationbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ConnectivityReceiver.isConnected()) {
+                    showSnack(false);
+                } else {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(OrderForm.this), DELIVERY_PICKER_REQUEST);
 
                     } catch (Exception e) {
                         Log.e("location error", e.getMessage());
@@ -443,6 +449,43 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 //String toastMsg = String.format("Place: %s", place.getName());
                 //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
             }
+
+
+        }
+        if (requestCode == DELIVERY_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(OrderForm.this, data);
+                place.getLatLng();
+                Geocoder geocoder;
+                List<Address> addresses = null;
+                geocoder = new Geocoder(this, Locale.getDefault());
+                LatLng latLng = place.getLatLng();
+                clientLocation = latLng;
+                try {
+                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String addr = addresses.get(0).getAddressLine(0);
+                String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+                if (addr.isEmpty()) {
+                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
+                } else {
+                    LatLng latit = place.getLatLng();
+                    deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
+                    deliverylocationbtn.setText(addr);
+                }
+
+                //String toastMsg = String.format("Place: %s", place.getName());
+                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
+            }
+
+
         }
         if (requestCode == REQUEST_CHECK_SETTINGS) {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -580,8 +623,9 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     OrderNumber = 1;
                     order_id = OrderNumber;
 
-                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range),
-                            userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price);
+                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range), "",
+                            userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price, deliverylocation
+                    );
                     orderweb = new OrderWeb(
                             order.category,
                             order.description,
@@ -612,6 +656,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             order_id,
                             Integer.parseInt(order_max_range),
                             Integer.parseInt(order_min_range),
+                            "",
                             userLocation,
                             expiryDate,
                             expiryTime,
@@ -620,7 +665,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             acceptedBy,
                             userId,
                             otp,
-                            final_price);
+                            final_price, deliverylocation);
 
                     orderweb = new OrderWeb(
                             order.category,

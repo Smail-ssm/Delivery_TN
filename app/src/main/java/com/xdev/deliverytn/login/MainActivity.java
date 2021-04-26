@@ -63,6 +63,7 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
+import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.user.UserViewActivity;
 
@@ -103,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     String name;
     Snackbar snackbar;
     ImageView profilepic;
+    CardView clientcard, delivererCard;
     int notif;
     private ProgressBar progressBar;
     private FirebaseAuth.AuthStateListener authListener;
@@ -135,10 +137,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView username = findViewById(R.id.username);
-        storage = FirebaseStorage.getInstance();
-        storageReference = storage.getReference();
-        root = FirebaseDatabase.getInstance().getReference();
-        user = FirebaseAuth.getInstance().getCurrentUser();
+
         animation();
         checkConnection();
         requestLocationPermissions();
@@ -159,7 +158,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         } else {
             userId = user.getUid();
         }
-
+        storage = FirebaseStorage.getInstance();
+        storageReference = storage.getReference();
+        root = FirebaseDatabase.getInstance().getReference();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 //        setting.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
@@ -205,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 //                dialog.show();
 //            }
 //        });
+
         TextView notifNmbr = findViewById(R.id.notifNmbr);
         root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);
@@ -212,8 +215,18 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 name = dataSnapshot.child("first").getValue(String.class) + " , " + dataSnapshot.child("last").getValue(String.class);
-                showSnacks(getString(R.string.welcom) + name);
-                username.setText(getString(R.string.welcom) + name);
+                showSnacks(getString(R.string.welcom) + " " + name);
+                username.setText(getString(R.string.welcom) + " " + name);
+                String usertypo = dataSnapshot.child("usertype").getValue(String.class);
+                if (!(usertypo.isEmpty())) {
+                    if (usertypo.equalsIgnoreCase("deliverer")) {
+                        findViewById(R.id.ordererCard).setVisibility(View.GONE);
+                    }
+                    if (dataSnapshot.child("usertype").getValue(String.class).equalsIgnoreCase("orderer")) {
+                        findViewById(R.id.delivererCard).setVisibility(View.GONE);
+                    }
+                } else return;
+
 
                 if (dataSnapshot.child("cinPhoto").getValue(String.class).equalsIgnoreCase("nophoto")) {
                     recto.setText(R.string.verifie);
@@ -243,15 +256,9 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             TextView t = builder1.findViewById(R.id.text_dialog);
                             ImageView a = builder1.findViewById(R.id.a);
                             builder1.setOnShowListener(dialogInterface -> {
-                                Picasso
-                                        .get()
-                                        .load(dataSnapshot.child("cinPhoto").getValue(String.class))
-                                        .into(a);
-
-
+                                Picasso.get().load(dataSnapshot.child("cinPhoto").getValue(String.class)).into(a);
                                 btn1.setVisibility(View.GONE);
                                 t.setVisibility(View.GONE);
-
                                 btn2.setOnClickListener(new View.OnClickListener() {
                                     @Override
                                     public void onClick(View v) {
@@ -264,8 +271,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                                         builder1.dismiss();
                                     }
                                 });
-
-
                             });
                             builder1.show();
                             return false;
@@ -279,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             public void onCancelled(DatabaseError databaseError) {
             }
         });
-//        totalnotif =;
+
         FirebaseDatabase.getInstance().getReference().child("deliveryApp").child("totalNotifications").keepSynced(true);
         FirebaseDatabase.getInstance().getReference().child("deliveryApp").child("totalNotifications").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -378,10 +383,40 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
         });
         authListener = firebaseAuth -> {
-            FirebaseUser user1 = firebaseAuth.getCurrentUser();
-            if (user1 == null) {
+            FirebaseUser usera = FirebaseAuth.getInstance().getCurrentUser();
+            if (usera == null) {
                 startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                finish();
+            } else {
+
+                DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
+                forUserData.keepSynced(true);
+                forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        UserDetails userDetails = dataSnapshot.getValue(UserDetails.class);
+                        String type = userDetails.usertype;
+                        if (!(type.isEmpty())) {
+                            if (type.equalsIgnoreCase("deliverer")) {
+                                findViewById(R.id.delivererCard).setVisibility(View.VISIBLE);
+                                findViewById(R.id.ordererCard).setVisibility(View.GONE);
+                            }
+                            if (dataSnapshot.child("usertype").getValue(String.class).equalsIgnoreCase("orderer")) {
+                                findViewById(R.id.ordererCard).setVisibility(View.VISIBLE);
+                                findViewById(R.id.delivererCard).setVisibility(View.GONE);
+                            }
+                        } else {
+                            findViewById(R.id.ordererCard).setVisibility(View.VISIBLE);
+                            findViewById(R.id.delivererCard).setVisibility(View.VISIBLE);
+
+
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                });
             }
         };
         recto.setOnClickListener(v -> {
@@ -625,9 +660,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             UploadTask uploadTask = sRef.putFile(filePath);
             int color;
             color = Color.WHITE;
-            snackbar = Snackbar
-                    .make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_INDEFINITE);
-
+            snackbar = Snackbar.make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_INDEFINITE);
             View sbView = snackbar.getView();
             TextView textView = sbView.findViewById(R.id.snackbar_text);
             textView.setTextColor(color);
@@ -709,11 +742,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         update_user_profile(downloadUri);
                         snackbar.dismiss();
                         showSnacks(getString(R.string.Doneprofile));
-
-
-                        Picasso.get()
-                                .load(downloadUri)
-                                .into(profilepic);
+                        Picasso.get().load(downloadUri).into(profilepic);
 
 
                     } else {
@@ -721,7 +750,6 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                     }
                 }
             });
-            // [END upload_get_download_url]
         } else {
             Toast.makeText(this, R.string.nofilesemcted, Toast.LENGTH_SHORT).show();
         }
@@ -778,15 +806,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     }
 
     private void showSnacks(String msg) {
-        int color;
-        color = Color.WHITE;
-        Snackbar snackbar = Snackbar
-                .make(findViewById(android.R.id.content), msg, Snackbar.LENGTH_LONG);
 
-        View sbView = snackbar.getView();
-        TextView textView = sbView.findViewById(R.id.snackbar_text);
-        textView.setTextColor(color);
-        snackbar.show();
     }
 
     private void showSnackUploading(String msg) {

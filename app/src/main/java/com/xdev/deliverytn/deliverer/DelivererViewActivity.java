@@ -48,6 +48,7 @@ import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -61,6 +62,7 @@ import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.FirebaseNotifications.inbox;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.SettingsActivity;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.login.LoginActivity;
@@ -68,6 +70,7 @@ import com.xdev.deliverytn.models.ExpiryDate;
 import com.xdev.deliverytn.models.ExpiryTime;
 import com.xdev.deliverytn.models.OrderData;
 import com.xdev.deliverytn.models.UserDetails;
+import com.xdev.deliverytn.payments;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.recyclerview.OrderViewHolder;
 import com.xdev.deliverytn.recyclerview.RecyclerViewOrderAdapter;
@@ -88,12 +91,12 @@ import static com.xdev.deliverytn.models.usertype.usertype;
 
 
 public class DelivererViewActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
-
     public static final int REQUEST_LOCATION_PERMISSION = 10;
     public static final int REQUEST_CHECK_SETTINGS = 20;
     public static RecyclerViewOrderAdapter adapter;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
     public List<OrderData> orderList;
+    FloatingActionButton fab;
     MenuItem mPreviousMenuItem = null;
     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
     boolean isRefreshing = false;
@@ -103,6 +106,8 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
     TextView textViewUserName;
     TextView textViewEmail;
     boolean pending;
+    ArrayList orderedList = new ArrayList();
+
     boolean active;
     boolean finished;
     boolean havelocation;
@@ -134,7 +139,13 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
         setDefaultFlags();
         setUpSwipeRefresh();
         setUpRecyclerView();
-
+        fab = findViewById(R.id.historyFab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                gethistory();
+            }
+        });
         mLocationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(LocationResult locationResult) {
@@ -314,6 +325,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
                 int id = menuItem.getItemId();
 
+
                 if (id == R.id.sign_out_deliverer) {
                     Toast.makeText(DelivererViewActivity.this, logoutsuccsess, Toast.LENGTH_LONG).show();
                     signOut();
@@ -367,6 +379,10 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
                     startActivity(i);
 
+                } else if (id == R.id.setting) {
+                    startActivity(new Intent(DelivererViewActivity.this, SettingsActivity.class));
+                } else if (id == R.id.payment) {
+                    startActivity(new Intent(DelivererViewActivity.this, payments.class));
                 }
                 // Add code here to update the UI based on the item selected
                 // For example, swap UI fragments here
@@ -436,7 +452,12 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                             mHeaderView = navigationView.getHeaderView(0);
                             TextView currentLocation = mHeaderView.findViewById(R.id.currentLocation);
 //                            TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(, Color.WHITE, 100);
-                            currentLocation.setText(address.getLocality() + " " + address.getSubLocality());
+                            if (address.getLocality() != null) {
+                                currentLocation.setText(address.getLocality());
+                            } else {
+                                currentLocation.setText("can't get current adresss");
+
+                            }
                         }
                     }
 
@@ -514,6 +535,52 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
         CheckConnectivityMain.getInstance().setConnectivityListener(DelivererViewActivity.this);
     }
 
+    void gethistory() {
+        toolbar.setTitle("history");
+        //TODO Add internet connectivity error
+        final ProgressBar progressBar = findViewById(R.id.progressBarUserOrder);
+        progressBar.setVisibility(View.VISIBLE);
+        isRefreshing = true;
+        userId = user.getUid();
+
+        final int size = orderList.size();
+        if (size > 0) {
+            for (int i = 0; i < size; i++) {
+                adapter.remove(0);
+            }
+        }
+
+        final DatabaseReference allorders = root.child("deliveryApp").child("orders");
+        allorders.keepSynced(true);
+        allorders.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                isRefreshing = true;
+                for (DataSnapshot userdata : dataSnapshot.getChildren()) {
+                    for (DataSnapshot orderdata : userdata.getChildren()) {
+                        OrderData order = orderdata.getValue(OrderData.class);
+                        if (order.acceptedBy.delivererID.equals(FirebaseAuth.getInstance().getCurrentUser().getUid())) {
+                            orderedList.add(order);
+                            adapter.insert(0, order);
+
+                        }
+                    }
+                }
+
+                isRefreshing = false;
+                progressBar.setVisibility(View.GONE);
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+
+    }
+
     void setUpRecyclerView() {
 
         recyclerView = findViewById(R.id.item_list);
@@ -585,7 +652,6 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
         allorders.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 isRefreshing = true;
                 Calendar curr = Calendar.getInstance();
                 Calendar exp = Calendar.getInstance();
@@ -594,7 +660,6 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     if (userdata.getKey().equals(userId)) {
                         continue;
                     }
-
                     for (DataSnapshot orderdata : userdata.getChildren()) {
                         OrderData order = orderdata.getValue(OrderData.class);
                         if (order.status.equals("PENDING")) {
@@ -650,6 +715,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
     }
 
+
     @Override
     protected void onPause() {
         super.onPause();
@@ -703,8 +769,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
             color = Color.RED;
         }
 
-        Snackbar snackbar = Snackbar
-                .make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
+        Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
 
         View sbView = snackbar.getView();
         TextView textView = sbView.findViewById(R.id.snackbar_text);

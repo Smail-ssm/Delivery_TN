@@ -1,5 +1,6 @@
 package com.xdev.deliverytn.login;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.AnimationDrawable;
@@ -14,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -59,10 +61,13 @@ import static com.xdev.deliverytn.R.string.entrepass;
 import static com.xdev.deliverytn.R.string.faildtologin;
 import static com.xdev.deliverytn.R.string.loggedsucc;
 import static com.xdev.deliverytn.R.string.pasdinternet;
+import static com.xdev.deliverytn.models.usertype.usertype;
 
 public class LoginActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
     private static final int RC_SIGN_IN = 101;
+    private static final String TAG = "FacebookLogin";
+    private static final int RC_SIGN_IN_FB = 12345;
     public static GoogleApiClient mGoogleApiClient;
     public static String user_email, user_name, userId;
     AnimationDrawable animationDrawable;
@@ -73,10 +78,9 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
     private FirebaseAuth auth;
     private ProgressBar progressBar;
     private DatabaseReference root, database_users;
-    private static final String TAG = "FacebookLogin";
-    private static final int RC_SIGN_IN_FB = 12345;
     private View fbLogin;
     private CallbackManager mCallbackManager;
+    String usertypa = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,15 +92,64 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
         auth = FirebaseAuth.getInstance();
 
         if (auth.getCurrentUser() != null) {
+            root = FirebaseDatabase.getInstance().getReference();
             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user.isEmailVerified()) {
-                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                startActivity(intent);
-            } else {
-                Intent intent = new Intent(LoginActivity.this, VerifyEmailScreen.class);
-                startActivity(intent);
-            }
-            finish();
+            DatabaseReference userinfo = root.child("deliveryApp").child("users").child(user.getUid());
+            userinfo.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    usertypa = snapshot.child("usertype").getValue(String.class);
+                    if (usertypa == "") {
+                        AlertDialog.Builder builder;
+                        builder = new AlertDialog.Builder(LoginActivity.this);
+
+                        //Uncomment the below code to Set the message and title from the strings.xml file
+//        builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+                        //Setting message manually and performing action on button click
+                        builder.setMessage("Are you a client or a driver ?")
+                                .setCancelable(false)
+                                .setPositiveButton("Client", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        usertype(root, "orderer");
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                })
+                                .setNegativeButton("Driver", (dialog, id) -> {
+                                    usertype(root, "deliverer");
+                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                    startActivity(intent);
+                                    finish();
+                                })
+                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }
+                                });
+                        //Creating dialog box
+                        AlertDialog alert = builder.create();
+                        //Setting the title manually
+                        alert.setTitle("User type");
+                        alert.setCanceledOnTouchOutside(false);
+                        alert.show();
+                    } else {
+                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
         }
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -122,9 +175,7 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
         Button btnReset = findViewById(R.id.btn_reset_password);
         signInButton = findViewById(R.id.mygooglebutton);
         //////////////////////////////////////////////////
-        //facebook login
 
-        // Initialize Facebook Login button
         mCallbackManager = CallbackManager.Factory.create();
 
         LoginButton loginButton = findViewById(R.id.fblogin_button);
@@ -150,8 +201,9 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
         });
 
+        // Initialize Facebook Login button
 
-//----------------
+
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,7 +262,8 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                     if (!task.isSuccessful()) {
                                         // there was an error
                                         if (password.length() < 6) {
-                                            inputPassword.setError(getString(R.string.minimum_password));                                            btnLogin.revertAnimation();
+                                            inputPassword.setError(getString(R.string.minimum_password));
+                                            btnLogin.revertAnimation();
 
                                         } else {
                                             Toast.makeText(LoginActivity.this, getString(R.string.auth_failed), Toast.LENGTH_LONG).show();
@@ -218,15 +271,41 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
                                         }
                                     } else {
-                                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                        if (user.isEmailVerified()) {
-                                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                            startActivity(intent);
-                                        } else {
-                                            Intent intent = new Intent(LoginActivity.this, VerifyEmailScreen.class);
-                                            startActivity(intent);
-                                        }
-                                        finish();
+                                        AlertDialog.Builder builder;
+                                        builder = new AlertDialog.Builder(LoginActivity.this);
+
+                                        //Uncomment the below code to Set the message and title from the strings.xml file
+//        builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+                                        //Setting message manually and performing action on button click
+                                        builder.setMessage("Are you a client or a driver ?")
+                                                .setCancelable(false)
+                                                .setPositiveButton("Client", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        usertype(root, "orderer");
+                                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                })
+                                                .setNegativeButton("Driver", (dialog, id) -> {
+                                                    usertype(root, "deliverer");
+                                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                })
+                                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.cancel();
+
+                                                    }
+                                                });
+                                        //Creating dialog box
+                                        AlertDialog alert = builder.create();
+                                        //Setting the title manually
+                                        alert.setTitle("User type");
+                                        alert.setCanceledOnTouchOutside(false);
+                                        alert.show();
                                         btnLogin.revertAnimation();
                                     }
                                 }
@@ -234,6 +313,37 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                 }
             }
         });
+    }
+
+    private void choseusertype() {
+        AlertDialog.Builder builder;
+        builder = new AlertDialog.Builder(this);
+
+        //Uncomment the below code to Set the message and title from the strings.xml file
+//        builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+        //Setting message manually and performing action on button click
+        builder.setMessage("Are you a client or a driver ?")
+                .setCancelable(false)
+                .setPositiveButton("Client", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        usertype(root, "orderer");
+                    }
+                })
+                .setNegativeButton("Driver", (dialog, id) -> {
+                    usertype(root, "deliverer");
+                })
+                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+
+                    }
+                });
+        //Creating dialog box
+        AlertDialog alert = builder.create();
+        //Setting the title manually
+        alert.setTitle("User type");
+        alert.show();
     }
 
     private void handleFacebookAccessToken(AccessToken token) {
@@ -267,8 +377,41 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                     } else {
                                         btnLogin.revertAnimation();
 
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
+                                        AlertDialog.Builder builder;
+                                        builder = new AlertDialog.Builder(LoginActivity.this);
+
+                                        //Uncomment the below code to Set the message and title from the strings.xml file
+//        builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+                                        //Setting message manually and performing action on button click
+                                        builder.setMessage("Are you a client or a driver ?")
+                                                .setCancelable(false)
+                                                .setPositiveButton("Client", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        usertype(root, "orderer");
+                                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                })
+                                                .setNegativeButton("Driver", (dialog, id) -> {
+                                                    usertype(root, "deliverer");
+                                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                })
+                                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        dialog.cancel();
+
+                                                    }
+                                                });
+                                        //Creating dialog box
+                                        AlertDialog alert = builder.create();
+                                        //Setting the title manually
+                                        alert.setTitle("User type");
+                                        alert.setCanceledOnTouchOutside(false);
+                                        alert.show();
                                     }
                                     progressBar.setVisibility(View.GONE);
                                     finish();
@@ -374,11 +517,47 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                     } else {
                                         btnLogin.revertAnimation();
 
-                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                                        startActivity(intent);
+                                        AlertDialog.Builder builder;
+                                        builder = new AlertDialog.Builder(LoginActivity.this);
+
+                                        //Uncomment the below code to Set the message and title from the strings.xml file
+//        builder.setMessage(R.string.dialog_message) .setTitle(R.string.dialog_title);
+
+                                        //Setting message manually and performing action on button click
+                                        builder.setMessage("Are you a client or a driver ?")
+                                                .setCancelable(false)
+                                                .setPositiveButton("Client", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        usertype(root, "orderer");
+                                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }
+                                                })
+                                                .setNegativeButton("Driver", (dialog, id) -> {
+                                                    usertype(root, "deliverer");
+                                                    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                    startActivity(intent);
+                                                    finish();
+                                                })
+                                                .setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+                                                    public void onClick(DialogInterface dialog, int id) {
+                                                        usertype(root, "");
+                                                        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                        dialog.cancel();
+
+                                                    }
+                                                });
+                                        //Creating dialog box
+                                        AlertDialog alert = builder.create();
+                                        //Setting the title manually
+                                        alert.setTitle("User type");
+                                        alert.setCanceledOnTouchOutside(false);
+                                        alert.show();
                                     }
                                     progressBar.setVisibility(View.GONE);
-                                    finish();
                                 }
 
                                 @Override

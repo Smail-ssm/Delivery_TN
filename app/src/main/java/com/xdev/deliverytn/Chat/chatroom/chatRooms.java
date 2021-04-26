@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,19 +41,16 @@ public class chatRooms extends AppCompatActivity {
         swipe = findViewById(R.id.swipechat);
         setUpToolBarAndActionBar();
         getrooms();
-        chatlist.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            public void onItemClick(AdapterView<?> arg0, View v, int position, long arg3) {
-                chatrrom chatrrom = chatrooms.get(position);
-                Intent intent = new Intent(chatRooms.this, ChatMain.class);
-                intent.putExtra("DeliverId", //NON-NLS
-                        chatrrom.getDeliverId());
-                intent.putExtra("OrdererId", //NON-NLS
-                        chatrrom.getOrdererId());
-                intent.putExtra("RoomId", //NON-NLS
-                        chatrrom.getRoomId());
-                startActivity(intent);
-            }
+        chatlist.setOnItemClickListener((arg0, v, position, arg3) -> {
+            chatrrom chatrrom = chatrooms.get(position);
+            Intent intent = new Intent(chatRooms.this, ChatMain.class);
+            intent.putExtra("DeliverId", //NON-NLS
+                    chatrrom.getDeliverId());
+            intent.putExtra("OrdererId", //NON-NLS
+                    chatrrom.getOrdererId());
+            intent.putExtra("RoomId", //NON-NLS
+                    chatrrom.getRoomId());
+            startActivity(intent);
         });
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -78,8 +74,8 @@ public class chatRooms extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
                     for (DataSnapshot npsnapshot : dataSnapshot.getChildren()) {
-                        chatrrom l = npsnapshot.
-                                getValue(chatrrom.class);
+                        chatrrom l = npsnapshot.getValue(chatrrom.class);
+                        findViewById(R.id.txt).setVisibility(View.GONE);
 
                         if (FirebaseAuth.getInstance().getUid().equals(l.ordererId) || FirebaseAuth.getInstance().getUid().equals(l.deliverId)) {
                             chats.add(getString(R.string.commndnumber) + l.getRoomId());
@@ -87,6 +83,7 @@ public class chatRooms extends AppCompatActivity {
 
                         } else {
                             showsnacks(getString(R.string.nochatrooms));
+                            findViewById(R.id.txt).setVisibility(View.VISIBLE);
                         }
                     }
                     arrayAdapter = new ArrayAdapter<String>(chatRooms.this, android.R.layout.simple_list_item_1, chats);

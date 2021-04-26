@@ -17,7 +17,8 @@ public class OrderData implements Parcelable {
             description,
             userId,
             status,
-            otp;
+            otp,
+            facture;
     public int orderId,
             min_range,
             max_range,
@@ -28,6 +29,8 @@ public class OrderData implements Parcelable {
     public ExpiryDate expiryDate = new ExpiryDate();
     public ExpiryTime expiryTime = new ExpiryTime();
     public AcceptedBy acceptedBy = new AcceptedBy();
+    public deliverylocation deliverylocation = new deliverylocation();
+
 
     public OrderData() {
         //For DataSnapshot.getValue()
@@ -43,13 +46,16 @@ public class OrderData implements Parcelable {
         status = in.readString();
         deliveryCharge = in.readInt();
         userId = in.readString();
+        facture = in.readString();
 
         userLocation.Name = in.readString();
         userLocation.Location = in.readString();
         userLocation.PhoneNumber = in.readString();
         userLocation.Lat = in.readDouble();
         userLocation.Lon = in.readDouble();
+
         earnings = in.readDouble();
+
         userLocation.addr = in.readString();
         userLocation.city = in.readString();
         userLocation.state = in.readString();
@@ -74,16 +80,28 @@ public class OrderData implements Parcelable {
         otp = in.readString();
 
         final_price = in.readInt();
+
+        deliverylocation.Namel = in.readString();
+        deliverylocation.Locationl = in.readString();
+        deliverylocation.PhoneNumberl = in.readString();
+        deliverylocation.Latl = in.readDouble();
+        deliverylocation.Lonl = in.readDouble();
+        deliverylocation.addrl = in.readString();
+        deliverylocation.cityl = in.readString();
+        deliverylocation.statel = in.readString();
+        deliverylocation.countryl = in.readString();
+        deliverylocation.postalCodel = in.readString();
     }
 
-    public OrderData(String category, String description, int orderId, int max_range, int min_range,
+    public OrderData(String category, String description, int orderId, int max_range, int min_range, String facture,
                      UserLocation location, ExpiryDate expiryDate, ExpiryTime expiryTime, String status,
-                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price) {
+                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price, com.xdev.deliverytn.models.deliverylocation deliverylocation) {
         this.category = category;
         this.description = description;
         this.orderId = orderId;
         this.min_range = min_range;
         this.max_range = max_range;
+        this.facture = facture;
         this.userLocation = location;
         this.expiryDate = expiryDate;
         this.expiryTime = expiryTime;
@@ -93,6 +111,7 @@ public class OrderData implements Parcelable {
         this.userId = userId;
         this.otp = otp;
         this.final_price = final_price;
+        this.deliverylocation = deliverylocation;
 
 
     }
@@ -113,6 +132,7 @@ public class OrderData implements Parcelable {
         dest.writeString(status);
         dest.writeInt(deliveryCharge);
         dest.writeString(userId);
+        dest.writeString(facture);
 
         dest.writeString(userLocation.Name);
         dest.writeString(userLocation.Location);
@@ -145,6 +165,16 @@ public class OrderData implements Parcelable {
         dest.writeString(otp);
 
         dest.writeInt(final_price);
+        dest.writeString(deliverylocation.Namel);
+        dest.writeString(deliverylocation.Locationl);
+        dest.writeDouble(deliverylocation.Latl);
+        dest.writeDouble(deliverylocation.Lonl);
+        dest.writeString(deliverylocation.PhoneNumberl);
+        dest.writeString(deliverylocation.addrl);
+        dest.writeString(deliverylocation.cityl);
+        dest.writeString(deliverylocation.statel);
+        dest.writeString(deliverylocation.countryl);
+        dest.writeString(deliverylocation.postalCodel);
     }
 
 }

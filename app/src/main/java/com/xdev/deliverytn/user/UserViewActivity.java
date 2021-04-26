@@ -1,5 +1,6 @@
 package com.xdev.deliverytn.user;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -41,6 +42,7 @@ import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.FirebaseNotifications.inbox;
 import com.xdev.deliverytn.R;
+import com.xdev.deliverytn.SettingsActivity;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
@@ -96,9 +98,16 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
     private DrawerLayout mDrawerLayout;
 
     @Override
+    protected void attachBaseContext(Context newBase) {
+        super.attachBaseContext(SettingsActivity.adjustFontSize(newBase));
+    }
+
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_list);
+        SettingsActivity.adjustFontSize(this);
 
         checkConnection();
 
@@ -219,6 +228,10 @@ public class UserViewActivity extends AppCompatActivity implements ConnectivityR
 
                     startActivity(i);
 
+                } else if (id == R.id.setting) {
+                    startActivity(new Intent(UserViewActivity.this, SettingsActivity.class));
+                } else if (id == R.id.payment) {
+                    startActivity(new Intent(UserViewActivity.this, SettingsActivity.class));
                 }
                 // Add code here to update the UI based on the item selected
                 // For example, swap UI fragments here

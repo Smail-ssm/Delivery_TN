@@ -20,6 +20,36 @@ public class UserDetails {
     private String zip;
     private String uid;
 
+    private String accountstatue;
+
+    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, float rate, float ratenumber, String accountstatue) {
+        this.usertype = usertype;
+        Mobile = mobile;
+        this.cin = cin;
+        this.email = email;
+        this.wallet = wallet;
+        this.playerId = playerId;
+        this.address = address;
+        this.birth = birth;
+        this.cinPhoto = cinPhoto;
+        this.profile = profile;
+        this.city = city;
+        this.first = first;
+        this.displayName = displayName;
+        this.gender = gender;
+        this.last = last;
+        this.role = role;
+        this.zip = zip;
+        this.uid = uid;
+        this.rate = rate;
+        this.ratenumber = ratenumber;
+        this.accountstatue = accountstatue;
+    }
+
+    public String getAccountstatue() {
+        return accountstatue;
+    }
+
     public String getUsertype() {
         return usertype;
     }
@@ -116,27 +146,8 @@ public class UserDetails {
 
     private float ratenumber;
 
-    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, float rate, float ratenumber) {
-        this.usertype = usertype;
-        Mobile = mobile;
-        this.cin = cin;
-        this.email = email;
-        this.wallet = wallet;
-        this.playerId = playerId;
-        this.address = address;
-        this.birth = birth;
-        this.cinPhoto = cinPhoto;
-        this.profile = profile;
-        this.city = city;
-        this.first = first;
-        this.displayName = displayName;
-        this.gender = gender;
-        this.last = last;
-        this.role = role;
-        this.zip = zip;
-        this.uid = uid;
-        this.rate = rate;
-        this.ratenumber = ratenumber;
+    public void setAccountstatue(String accountstatue) {
+        this.accountstatue = accountstatue;
     }
 
     public String getGender() {

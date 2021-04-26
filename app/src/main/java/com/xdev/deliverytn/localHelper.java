@@ -11,6 +11,7 @@ import android.preference.PreferenceManager;
 import java.util.Locale;
 
 public class localHelper {
+
     private static final String SELECTED_LANGUAGE = "Locale.Helper.Selected.Language";
 
     // the method is used to set the language at runtime

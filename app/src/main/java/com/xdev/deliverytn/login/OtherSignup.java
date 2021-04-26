@@ -326,6 +326,8 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                                                     u.setProfile("nophoto");
                                                                     u.setRate(0);
                                                                     u.setUsertype("");
+                                                                    u.setAccountstatue("enabled");
+
                                                                     u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                                                     update_userdetails_database(u);
                                                                     if (!currentuser.isEmailVerified()) {
@@ -398,12 +400,7 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                                                                     u.setUsertype("");
                                                                     u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                                                     update_userdetails_database(u);
-                                                                    if (!currentuser.isEmailVerified()) {
-                                                                        FirebaseAuth.getInstance().getCurrentUser().sendEmailVerification();
-                                                                        startActivity(new Intent(OtherSignup.this, VerifyEmailScreen.class));
-                                                                    } else {
-                                                                        startActivity(new Intent(OtherSignup.this, MainActivity.class));
-                                                                    }
+                                                                    startActivity(new Intent(OtherSignup.this, MainActivity.class));
                                                                     Toast.makeText(OtherSignup.this, zza, Toast.LENGTH_SHORT).show();
                                                                 }
                                                             }

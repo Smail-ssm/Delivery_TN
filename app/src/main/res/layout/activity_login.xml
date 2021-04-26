@@ -10,12 +10,11 @@
 
     <androidx.cardview.widget.CardView
         android:id="@+id/coordinatorLayout"
-        android:layout_width="365dp"
-        android:layout_height="557dp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
         android:fitsSystemWindows="true"
         android:focusableInTouchMode="true"
         app:cardCornerRadius="20dp"
@@ -92,6 +91,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center_horizontal"
                         android:layout_marginTop="30dip"
+                        android:padding="20dp"
                         android:text="@string/login"
                         android:textAllCaps="false"
                         android:textColor="@color/login_btn_text"
@@ -101,26 +101,21 @@
                         app:spinning_bar_padding="6dp"
                         app:spinning_bar_width="4dp" />
 
-
-                    <LinearLayout
+                    <com.google.android.gms.common.SignInButton
+                        android:id="@+id/mygooglebutton"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:layout_marginTop="4px"
+                        android:padding="20dp"
+                        app:initialCornerAngle="27dp" />
 
-                        <com.google.android.gms.common.SignInButton
-                            android:id="@+id/mygooglebutton"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="4px"
-                            app:initialCornerAngle="27dp" />
-
-                        <com.facebook.login.widget.LoginButton
-                            android:id="@+id/fblogin_button"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_horizontal"
-                            app:initialCornerAngle="27dp" />
-                    </LinearLayout>
+                    <com.facebook.login.widget.LoginButton
+                        android:id="@+id/fblogin_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_horizontal"
+                        android:padding="20dp"
+                        app:initialCornerAngle="27dp" />
 
 
                     <Button

@@ -158,7 +158,7 @@
     <string name="info">معلومات</string>
     <string name="notification">الإخطار</string>
     <string name="uploading">تحميل...</string>
-    <string name="donecin">  تم C CIN</string>
+    <string name="donecin">"  تم   CIN"</string>
     <string name="errorwhileuploading">  خطأ أثناء التحميل</string>
     <string name="nofilesemcted">  يتم تحديد أي ملف</string>
     <string name="deletedoldpic">  حذف الموافقة المسبقة عن علم القديمة</string>

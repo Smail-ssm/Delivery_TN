@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -58,6 +59,7 @@ import com.xdev.deliverytn.models.ExpiryDate;
 import com.xdev.deliverytn.models.ExpiryTime;
 import com.xdev.deliverytn.models.OrderData;
 import com.xdev.deliverytn.models.UserLocation;
+import com.xdev.deliverytn.models.deliverylocation;
 import com.xdev.deliverytn.user.UserOrderDetailActivity;
 
 import java.io.IOException;
@@ -69,6 +71,7 @@ import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.canteditacceptedorder;
 import static com.xdev.deliverytn.R.string.coodConnectedTOinternet;
+import static com.xdev.deliverytn.R.string.locationValidation;
 import static com.xdev.deliverytn.R.string.locationpermessiondenied;
 import static com.xdev.deliverytn.R.string.locationpermessiongranted;
 import static com.xdev.deliverytn.R.string.mincantbebiggerthanmax;
@@ -76,35 +79,34 @@ import static com.xdev.deliverytn.R.string.pasdinternet;
 
 public class EditOrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
 
-    private DatabaseReference root, ref1;
-    private String userId, otp;
-    private int OrderNumber;
-    private int value;
+    public static final int REQUEST_LOCATION_PERMISSION = 10;
+    public static final int REQUEST_CHECK_SETTINGS = 20;
+    private static final int DELIVERY_PICKER_REQUEST = 2;
+    public static LatLng clientLocation;
 
-    private FusedLocationProviderClient mFusedLocationClient;
-    private LocationCallback mLocationCallback;
-
+    private final int final_price = -1;
     TextView category, delivery_charge, price, total_charge;
-    Button date_picker, time_picker, user_location;
-
+    Button date_picker, time_picker, user_location, deliverylocationbtn;
     Calendar calendar;
     EditText description, min_int_range, max_int_range;
     OrderData updated_order, myOrder;
     UserLocation userLocation = null;
     ExpiryTime expiryTime = null;
     ExpiryDate expiryDate = null;
-    private DatabaseReference deliveryApp;
-    private int order_id;
-    private final int final_price = -1;
     int flag;
     AcceptedBy acceptedBy = null;
     OrderData order;
-
     int PLACE_PICKER_REQUEST = 1;
-    public static final int REQUEST_LOCATION_PERMISSION = 10;
-    public static final int REQUEST_CHECK_SETTINGS = 20;
-
+    private DatabaseReference root, ref1;
+    private String userId, otp;
+    private int OrderNumber;
+    private int value;
+    private FusedLocationProviderClient mFusedLocationClient;
+    private LocationCallback mLocationCallback;
+    private DatabaseReference deliveryApp;
+    private int order_id;
     private String date, time;
+    private com.xdev.deliverytn.models.deliverylocation deliverylocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -134,6 +136,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         user_location = findViewById(R.id.user_location);
         price = findViewById(R.id.max_price);
         total_charge = findViewById(R.id.total_amount);
+        deliverylocationbtn = findViewById(R.id.deliverylocationa);
 
 
         otp = "";
@@ -172,6 +175,7 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         time_picker.setText(time);
 
         user_location.setText(myOrder.userLocation.Location);
+        deliverylocationbtn.setText(myOrder.deliverylocation.Locationl);
 
         /*
         userLocationName.setText(myOrder.userLocation.Name);
@@ -326,7 +330,22 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         });
 
 */
+        deliverylocationbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!ConnectivityReceiver.isConnected()) {
+                    showSnack(false);
+                } else {
+                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+                    try {
+                        startActivityForResult(builder.build(EditOrderForm.this), DELIVERY_PICKER_REQUEST);
 
+                    } catch (Exception e) {
+                        Log.e("location error", e.getMessage());
+                    }
+                }
+            }
+        });
         btn_proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -392,7 +411,9 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
 
                             if (current_order.status.equals("PENDING")) {
 //                                DeliveryChargeCalculater calc = new DeliveryChargeCalculater(Integer.parseInt(order_max_range));
-                                updated_order = new OrderData(order_category, order_description, OrderNumber, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), userLocation, expiryDate, expiryTime, "PENDING", 0, myOrder.acceptedBy, userId, otp, myOrder.final_price);
+                                updated_order = new OrderData(order_category, order_description, OrderNumber, Integer.parseInt(order_max_range), Integer.parseInt(order_min_range), "",
+                                        userLocation, expiryDate, expiryTime, "PENDING", 0, myOrder.acceptedBy, userId, otp, myOrder.final_price,
+                                        deliverylocation);
                                 root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(updated_order);
                                 Intent intent = new Intent(EditOrderForm.this, UserOrderDetailActivity.class);
                                 intent.putExtra("MyOrder", updated_order);
@@ -540,6 +561,41 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                 //String toastMsg = String.format("Place: %s", place.getName());
                 //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
             }
+        }
+        if (requestCode == DELIVERY_PICKER_REQUEST) {
+            if (resultCode == RESULT_OK) {
+                Place place = PlacePicker.getPlace(EditOrderForm.this, data);
+                place.getLatLng();
+                Geocoder geocoder;
+                List<Address> addresses = null;
+                geocoder = new Geocoder(this, Locale.getDefault());
+                LatLng latLng = place.getLatLng();
+                clientLocation = latLng;
+                try {
+                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                String addr = addresses.get(0).getAddressLine(0);
+                String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+                if (addr.isEmpty()) {
+                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
+                } else {
+                    LatLng latit = place.getLatLng();
+                    deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
+                    deliverylocationbtn.setText(addr);
+                }
+
+                //String toastMsg = String.format("Place: %s", place.getName());
+                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
+            }
+
+
         }
         if (requestCode == REQUEST_CHECK_SETTINGS) {
 

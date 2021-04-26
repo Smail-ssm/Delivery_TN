@@ -286,6 +286,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setProfile("nophoto");
                                         u.setRate(0);
                                         u.setUsertype("");
+                                        u.setAccountstatue("enabled");
                                         u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
                                         update_userdetails_database(u);
                                         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();

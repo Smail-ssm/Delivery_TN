@@ -32,9 +32,12 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".payments" />
+        <activity
+            android:name=".SettingsActivity"
+            android:label="@string/title_activity_settings" />
         <activity android:name=".FirebaseNotifications.inbox" />
         <activity android:name=".Chat.chatroom.chatRooms" />
-
         <activity android:name=".profile.Profile" /> <!-- <activity android:name=".friendlyMessage.ChatMain" /> -->
         <!-- <activity android:name=".deliverer.Path" /> -->
         <activity android:name=".SplashSceen">
@@ -112,14 +115,20 @@
             android:parentActivityName=".user.UserViewActivity" />
         <activity
             android:name=".login.OtherSignup"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+
             android:label="title_other_signup" />
         <activity
             android:name=".order_form.EditOrderForm"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+
             android:parentActivityName=".user.UserOrderDetailActivity" />
         <activity
             android:name=".deliverer.DelivererViewActivity"
             android:label="@string/deliverer_all" />
-        <activity android:name=".deliverer.DelivererOrderDetailActivity" />
+        <activity
+            android:name=".deliverer.DelivererOrderDetailActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <receiver
             android:name=".check_connectivity.ConnectivityReceiver"
@@ -131,7 +140,9 @@
 
         <activity
             android:name=".Chat.chatacti.ChatMain"
+            android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="friendlyMessage main "
+
             android:theme="@style/AppTheme.NoActionBar" />
 
         <provider
@@ -144,16 +155,21 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".deliverer.Otp_screen" />
-        <activity android:name=".deliverer.CompleteOrder" />
-        <activity android:name=".login.VerifyEmailScreen" />
+        <activity
+            android:name=".deliverer.Otp_screen"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".deliverer.CompleteOrder"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
+        <activity
+            android:name=".login.VerifyEmailScreen"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
 
         <service android:name=".FirebaseNotifications.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-
     </application>
 
 </manifest>
