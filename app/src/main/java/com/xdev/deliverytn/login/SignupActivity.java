@@ -322,7 +322,6 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
             String add = "";
             add = add + adddress.getLocality() + "," + adddress.getSubLocality(); //City
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }

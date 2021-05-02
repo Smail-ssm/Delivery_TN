@@ -5,8 +5,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -16,7 +19,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +35,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.models.Chat;
 import com.xdev.deliverytn.models.chatrrom;
+import com.xdev.deliverytn.reclamations.createReclamation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,6 +50,10 @@ public class ChatMain extends AppCompatActivity {
     private static final int Orderer = 1;
 
     String userid;
+    ImageView delevimg, userimg;
+    String OrdererId;
+    String DeliverId;
+    String RoomId;
     private EditText metText;
     private Button mbtSent;
     private DatabaseReference mFirebaseRef;
@@ -52,7 +63,6 @@ public class ChatMain extends AppCompatActivity {
     private String mId;
     private DatabaseReference msgss;
     private LinearLayout chatLayout;
-    ImageView delevimg, userimg;
     private DatabaseReference root;
 
     @Override
@@ -61,9 +71,20 @@ public class ChatMain extends AppCompatActivity {
         setContentView(R.layout.activity_mainchat);
         Intent i = getIntent();
         chatrrom c = new chatrrom();
-        c.setOrdererId(i.getStringExtra("OrdererId")); //NON-NLS
-        c.setDeliverId(i.getStringExtra("DeliverId")); //NON-NLS
-        c.setRoomId(i.getStringExtra("RoomId")); //NON-NLS
+        OrdererId = i.getStringExtra("OrdererId");
+        DeliverId = i.getStringExtra("DeliverId");
+        RoomId = i.getStringExtra("RoomId");
+        c.setOrdererId(OrdererId); //NON-NLS
+        c.setDeliverId(DeliverId); //NON-NLS
+        c.setRoomId(RoomId); //NON-NLS
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        // Sets the Toolbar to act as the ActionBar for this Activity window.
+        // Make sure the toolbar exists in the activity and is not null
+        setSupportActionBar(toolbar);
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        ActionBar actionbar = getSupportActionBar();
+        getSupportActionBar().setTitle("Command N° " + RoomId);
         metText = findViewById(R.id.queryEditText);
         mbtSent = findViewById(R.id.sendBtn);
         mChats = new ArrayList<String>();
@@ -92,6 +113,31 @@ public class ChatMain extends AppCompatActivity {
         });
     }
 
+    // Menu icons are inflated just as they were with actionbar
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.reclamation, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.createRec:
+                Uri uri;
+                Intent i = new Intent(ChatMain.this, createReclamation.class);
+                i.putExtra("OrdererId", OrdererId);
+                i.putExtra("DeliverId", DeliverId);
+                i.putExtra("RoomId   ", RoomId);
+                startActivity(i);
+                return true;
+
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
     void keepitup() {
         ChildEventListener childEventListener = new ChildEventListener() {
             @Override
@@ -104,7 +150,7 @@ public class ChatMain extends AppCompatActivity {
 
             @Override
             public void onChildChanged(DataSnapshot dataSnapshot, String previousChildName) {
-                            }
+            }
 
             @Override
             public void onChildRemoved(DataSnapshot dataSnapshot) {
@@ -151,7 +197,6 @@ public class ChatMain extends AppCompatActivity {
 
 
     }
-
 
 
     public Boolean sendmsg(String msg) {

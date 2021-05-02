@@ -59,7 +59,7 @@
                 android:paddingTop="10dp"
                 android:paddingRight="40dp"
                 android:paddingBottom="10dp"
-                android:text="chose from where to get your order"
+                android:text="@string/chose_from_where_to_get_your_order"
                 android:textAllCaps="false"
                 android:textColor="@android:color/white" />
 
@@ -305,7 +305,7 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
                             android:paddingTop="10dp"
-                            android:text="Price of item :"
+                            android:text="@string/price_of_item"
                             android:textColor="@color/black"
                             android:textSize="15sp" />
 
@@ -378,7 +378,7 @@
                             android:layout_height="wrap_content"
                             android:paddingLeft="10dp"
                             android:paddingTop="10dp"
-                            android:text="Total :"
+                            android:text="@string/total"
                             android:textColor="@color/black"
                             android:textSize="20sp"
                             android:textStyle="bold" />

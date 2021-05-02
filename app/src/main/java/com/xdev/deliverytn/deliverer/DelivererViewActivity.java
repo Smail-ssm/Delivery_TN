@@ -62,7 +62,6 @@ import com.squareup.picasso.Picasso;
 import com.xdev.deliverytn.Chat.chatroom.chatRooms;
 import com.xdev.deliverytn.FirebaseNotifications.inbox;
 import com.xdev.deliverytn.R;
-import com.xdev.deliverytn.SettingsActivity;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.login.LoginActivity;
@@ -380,7 +379,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                     startActivity(i);
 
                 } else if (id == R.id.setting) {
-                    startActivity(new Intent(DelivererViewActivity.this, SettingsActivity.class));
+//                    startActivity(new Intent(DelivererViewActivity.this, SettingsActivity.class));
                 } else if (id == R.id.payment) {
                     startActivity(new Intent(DelivererViewActivity.this, payments.class));
                 }
@@ -671,6 +670,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                                 allorders.child(userdata.getKey()).child(Integer.toString(order.orderId)).child("status").setValue("EXPIRED");
                                 continue;
                             }
+
                         } else if (order.status.equals("CANCELLED"))
                             continue;
                         Address order_adds = null;

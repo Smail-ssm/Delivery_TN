@@ -16,7 +16,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.xdev.deliverytn.Chat.chatacti.ChatMain;
@@ -24,6 +23,8 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.models.chatrrom;
 
 import java.util.ArrayList;
+
+import static com.xdev.deliverytn.R.string.Chat_rooms;
 
 public class chatRooms extends AppCompatActivity {
 
@@ -33,23 +34,23 @@ public class chatRooms extends AppCompatActivity {
     ArrayAdapter<String> arrayAdapter;
     ArrayList<chatrrom> chatrooms = new ArrayList<>();
     SwipeRefreshLayout swipe;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_rooms2);
         chatlist = findViewById(R.id.listchat);
         swipe = findViewById(R.id.swipechat);
-        setUpToolBarAndActionBar();
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle(Chat_rooms);
         getrooms();
         chatlist.setOnItemClickListener((arg0, v, position, arg3) -> {
             chatrrom chatrrom = chatrooms.get(position);
             Intent intent = new Intent(chatRooms.this, ChatMain.class);
-            intent.putExtra("DeliverId", //NON-NLS
-                    chatrrom.getDeliverId());
-            intent.putExtra("OrdererId", //NON-NLS
-                    chatrrom.getOrdererId());
-            intent.putExtra("RoomId", //NON-NLS
-                    chatrrom.getRoomId());
+            intent.putExtra("DeliverId", chatrrom.getDeliverId());
+            intent.putExtra("OrdererId", chatrrom.getOrdererId());
+            intent.putExtra("RoomId", chatrrom.getRoomId());
             startActivity(intent);
         });
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -65,11 +66,7 @@ public class chatRooms extends AppCompatActivity {
 
 
     private void getrooms() {
-
-        final DatabaseReference nm = FirebaseDatabase.getInstance().getReference("deliveryApp") //NON-NLS
-                .child("chatRooms") //NON-NLS
-                .child("roomId"); //NON-NLS
-        nm.addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference("deliveryApp").child("chatRooms").child("roomId").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if (dataSnapshot.exists()) {
@@ -77,13 +74,13 @@ public class chatRooms extends AppCompatActivity {
                         chatrrom l = npsnapshot.getValue(chatrrom.class);
                         findViewById(R.id.txt).setVisibility(View.GONE);
 
-                        if (FirebaseAuth.getInstance().getUid().equals(l.ordererId) || FirebaseAuth.getInstance().getUid().equals(l.deliverId)) {
-                            chats.add(getString(R.string.commndnumber) + l.getRoomId());
-                            chatrooms.add(l);
+                        if (!(FirebaseAuth.getInstance().getUid().equals(l.ordererId))) {
+                            findViewById(R.id.txt).setVisibility(View.VISIBLE);
 
                         } else {
-                            showsnacks(getString(R.string.nochatrooms));
-                            findViewById(R.id.txt).setVisibility(View.VISIBLE);
+
+                            chats.add(getString(R.string.commndnumber) + l.getRoomId());
+                            chatrooms.add(l);
                         }
                     }
                     arrayAdapter = new ArrayAdapter<String>(chatRooms.this, android.R.layout.simple_list_item_1, chats);
@@ -98,14 +95,6 @@ public class chatRooms extends AppCompatActivity {
         });
     }
 
-    void setUpToolBarAndActionBar() {
-
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        toolbar.setTitle(R.string.chatrooms);
-
-    }
-
     private void showsnacks(String msg) {
         int color;
         color = Color.WHITE;
@@ -117,7 +106,6 @@ public class chatRooms extends AppCompatActivity {
         textView.setTextColor(color);
         snackbar.show();
     }
-
 
 
 }

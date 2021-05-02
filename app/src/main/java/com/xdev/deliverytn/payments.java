@@ -186,14 +186,22 @@ public class payments extends AppCompatActivity {
         transfertnumber = findViewById(R.id.transfertnumber);
         sendername = findViewById(R.id.sendername);
         sendersin = findViewById(R.id.sendersin);
+        totalernings = findViewById(R.id.totalernings);
 
-        root.child("deliveryApp").child("users").child(userId).child("first");
-        DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);
+//        root.child("deliveryApp").child("users").child(userId).child("first");
+        DatabaseReference userinfo = root.child("deliveryApp").child("users").child(FirebaseAuth.getInstance().getUid());
         userinfo.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 p = dataSnapshot.getValue(UserDetails.class);
+                if (dataSnapshot.child("topay") != null) {
+                    if ((dataSnapshot.child("topay").getValue(Integer.class)) != 0) {
 
+                        totalToPay.setText((String.valueOf(dataSnapshot.child("topay").getValue(Integer.class))));
+                        totalernings.setText((String.valueOf(dataSnapshot.child("wallet").getValue(Integer.class))));
+
+                    }
+                }
             }
 
             @Override
@@ -206,7 +214,6 @@ public class payments extends AppCompatActivity {
         calendar.setTimeInMillis(time);
 
         //dd=day, MM=month, yyyy=year, hh=hour, mm=minute, ss=second.
-
         String date = DateFormat.format("dd-MM-yyyy-hh-mm-ss", calendar).toString();
         String[] items = date.split("-");
         confirmpayment = findViewById(R.id.confirmpayment);
@@ -349,21 +356,73 @@ public class payments extends AppCompatActivity {
                 return true;
             }
         });
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(payments.this, android.R.layout.select_dialog_singlechoice);
+
+        DatabaseReference allpays = root.child("deliveryApp").child("users").child(mAuth.getCurrentUser().getUid()).child("payments");
+        allpays.keepSynced(true);
+        allpays.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    payment reca = data.getValue(payment.class);
+                    arrayAdapter.add("Payment  of " + DateFormat.format("dd-MM-yyyy hh:mm:ss", reca.getTimeStamp()).toString());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //handle databaseError
+            }
+        });
+        mandat.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numcartedinar.setVisibility(View.INVISIBLE);
+            }
+        });
+        edinar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                numcartedinar.setVisibility(View.VISIBLE);
+            }
+        });
         history.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                AlertDialog.Builder alertDialog = new
-                        AlertDialog.Builder(payments.this);
-                View rowList = getLayoutInflater().inflate(R.layout.row, null);
-                listView = rowList.findViewById(R.id.listView);
-                adapter = new ArrayAdapter<String>(payments.this, android.R.layout.simple_list_item_1, paymentsid);
-                listView.setAdapter(adapter);
-                adapter.notifyDataSetChanged();
-                alertDialog.setView(rowList);
-                AlertDialog dialog = alertDialog.create();
-                dialog.show();
+//                AlertDialog.Builder alertDialog = new
+//                        AlertDialog.Builder(payments.this);
+//                View rowList = getLayoutInflater().inflate(R.layout.row, null);
+//                listView = rowList.findViewById(R.id.listView);
+//                adapter = new ArrayAdapter<String>(payments.this, android.R.layout.simple_list_item_1, paymentsid);
+//                listView.setAdapter(adapter);
+//                adapter.notifyDataSetChanged();
+//                alertDialog.setView(rowList);
+//                AlertDialog dialog = alertDialog.create();
+//                dialog.show();
+
+
+                AlertDialog.Builder builderSingle = new AlertDialog.Builder(payments.this);
+                builderSingle.setTitle("list des payment que vous avez passé");
+
+                builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+                builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                    String strName = arrayAdapter.getItem(which);
+                    String recid = strName + " : ";
+                    AlertDialog.Builder builderInner = new AlertDialog.Builder(payments.this);
+                    builderInner.setMessage(recid);
+                    builderInner.setTitle("Your Selected Item is");
+                    builderInner.setPositiveButton("Ok", (dialog1, which1) -> {
+                        dialog.dismiss();
+                    });
+                    builderInner.show();
+                });
+                builderSingle.show();
             }
         });
+
+
         toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         mDrawerLayout = findViewById(R.id.drawer_layout);
@@ -392,7 +451,6 @@ public class payments extends AppCompatActivity {
                     public void onDrawerSlide(View drawerView, float slideOffset) {
                         // Respond when the drawer's position changes
 
-// todo revise payments and earnings
                         forUserData = root.child("deliveryApp").child("users").child(userId);
                         forUserData.keepSynced(true);
                         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -570,7 +628,6 @@ public class payments extends AppCompatActivity {
                     snackbar.dismiss();
                     showSnacks(getString(R.string.Doneprofile));
                     Picasso.get().load(downloadUri).into(factureimage);
-                    //todo continun adding payment object to firebase put download uri in payment object then upload it to firebase
 
                 } else {
                     showSnacks(getString(R.string.erroruploading));

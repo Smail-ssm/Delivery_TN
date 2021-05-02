@@ -46,18 +46,25 @@ import java.net.URL;
 
 public class Otp_screen extends AppCompatActivity {
 
+    private static DatabaseReference SOCEARNINGS;
     private EditText f1, f2, f3, f4, f5;
     private String otp;
     private String userId;
     private DatabaseReference root, wallet_ref, deliverer_ref;
     private OrderData myOrder;
     private int final_price_int, balance;
+    private DatabaseReference topay_ref;
+    private DatabaseReference socwallet_ref;
+    private String OrdererId;
+    private String DeliverId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp_screen);
         Intent intent = getIntent();
+        OrdererId = intent.getStringExtra("OrdererId");
+        DeliverId = intent.getStringExtra("DeliverId");
         String final_price = intent.getStringExtra("Final Price");
         final_price_int = Integer.parseInt(final_price);
         otp = intent.getStringExtra("OTP");
@@ -68,6 +75,8 @@ public class Otp_screen extends AppCompatActivity {
         f3 = findViewById(R.id.f3);
         f4 = findViewById(R.id.f4);
         f5 = findViewById(R.id.f5);
+        OrdererId = myOrder.userId;
+        DeliverId = myOrder.acceptedBy.delivererID;
         Button btn_mark_delivered = findViewById(R.id.btn_mark_delivered);
         Button payment = findViewById(R.id.paymentmethod);
 
@@ -86,7 +95,6 @@ public class Otp_screen extends AppCompatActivity {
                 }
             }
         });
-
         f2.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
 
@@ -104,7 +112,6 @@ public class Otp_screen extends AppCompatActivity {
                 }
             }
         });
-
         f3.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
 
@@ -122,7 +129,6 @@ public class Otp_screen extends AppCompatActivity {
                 }
             }
         });
-
         f4.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
 
@@ -140,7 +146,6 @@ public class Otp_screen extends AppCompatActivity {
                 }
             }
         });
-
         f5.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
 
@@ -156,188 +161,196 @@ public class Otp_screen extends AppCompatActivity {
                 }
             }
         });
-        payment.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder1 = new AlertDialog.Builder(Otp_screen.this);
-                builder1.setMessage(R.string.pp);
-                builder1.setCancelable(true);
 
-                builder1.setPositiveButton(
-                        "E-dinar smart",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("paimentMethod").setValue("Cash");
-                                Toast.makeText(Otp_screen.this, "Edinar paiment saved ", Toast.LENGTH_SHORT).show();
+        payment.setOnClickListener(v -> {
+            AlertDialog.Builder builder1 = new AlertDialog.Builder(Otp_screen.this);
+            builder1.setMessage(R.string.pp);
+            builder1.setCancelable(true);
+
+            builder1.setPositiveButton(
+                    "E-dinar smart",
+                    (dialog, id) -> {
+                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("paimentMethod").setValue("Cash");
+                        Toast.makeText(Otp_screen.this, "Edinar paiment saved ", Toast.LENGTH_SHORT).show();
+                        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Otp_screen.this);
+                        final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
+                        LayoutInflater inflater = getLayoutInflater();
+                        View dialogLayout = inflater.inflate(R.layout.imgdialog, null);
+                        dialog1.setView(dialogLayout);
+                        dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
+                        dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+
+                            @Override
+                            public void onShow(DialogInterface dialog) {
+
                                 androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Otp_screen.this);
                                 final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
                                 LayoutInflater inflater = getLayoutInflater();
                                 View dialogLayout = inflater.inflate(R.layout.imgdialog, null);
                                 dialog1.setView(dialogLayout);
-                                dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
                                 dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
-
                                     @Override
-                                    public void onShow(DialogInterface dialog) {
+                                    public void onShow(DialogInterface d) {
+                                        ProgressBar p = dialog1.findViewById(R.id.progressimage);
 
-                                        androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Otp_screen.this);
-                                        final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
-                                        LayoutInflater inflater = getLayoutInflater();
-                                        View dialogLayout = inflater.inflate(R.layout.imgdialog, null);
-                                        dialog1.setView(dialogLayout);
-                                        dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
-                                            @Override
-                                            public void onShow(DialogInterface d) {
-                                                ProgressBar p = dialog1.findViewById(R.id.progressimage);
-
-                                                int SDK_INT = Build.VERSION.SDK_INT;
-                                                if (SDK_INT > 8) {
-                                                    URL u = null;
-                                                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                                                            .permitAll().build();
-                                                    StrictMode.setThreadPolicy(policy);
-                                                    ImageView image = dialog1.findViewById(R.id.goProDialogImage);
-                                                    try {
-                                                        u = new URL("https://scx1.b-cdn.net/csz/news/800a/2014/jhbkb.jpg");
-                                                    } catch (MalformedURLException e) {
-                                                        e.printStackTrace();
-                                                    }
-                                                    InputStream content = null;
-                                                    try {
-                                                        content = (InputStream) u.getContent();
-                                                    } catch (IOException e) {
-                                                        e.printStackTrace();
-                                                    }
-
-                                                    Drawable d1 = Drawable.createFromStream(content, "src");
-                                                    image.setImageDrawable(d1);
-                                                    if (content != null) {
-                                                        p.setVisibility(View.GONE);
-                                                    }
-
-                                                }
+                                        int SDK_INT = Build.VERSION.SDK_INT;
+                                        if (SDK_INT > 8) {
+                                            URL u = null;
+                                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                                                    .permitAll().build();
+                                            StrictMode.setThreadPolicy(policy);
+                                            ImageView image = dialog1.findViewById(R.id.goProDialogImage);
+                                            try {
+                                                u = new URL("https://scx1.b-cdn.net/csz/news/800a/2014/jhbkb.jpg");
+                                            } catch (MalformedURLException e) {
+                                                e.printStackTrace();
                                             }
-                                        });
-                                        dialog1.setCancelable(true);
+                                            InputStream content = null;
+                                            try {
+                                                content = (InputStream) u.getContent();
+                                            } catch (IOException e) {
+                                                e.printStackTrace();
+                                            }
 
-                                        dialog1.show();
+                                            Drawable d1 = Drawable.createFromStream(content, "src");
+                                            image.setImageDrawable(d1);
+                                            if (content != null) {
+                                                p.setVisibility(View.GONE);
+                                            }
 
-
+                                        }
                                     }
                                 });
-                                builder.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.cancel();
-                                    }
-                                }).
+                                dialog1.setCancelable(true);
 
-                                        setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                            @Override
-                                            public void onClick(DialogInterface dialog, int which) {
-                                            }
-                                        });
                                 dialog1.show();
 
 
                             }
                         });
+                        builder.setPositiveButton(R.string.ok, (dialog22, which) -> dialog22.cancel()).
 
-                builder1.setNegativeButton(
-                        "Cash",
-                        new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Toast.makeText(Otp_screen.this, "Cash paiment saved", Toast.LENGTH_SHORT).show();
-                                root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("paimentMethod").setValue("Cash");
-                            }
-                        });
-                builder1.setNeutralButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
+                                setNegativeButton(R.string.cancel, (dialog2, which) -> {
+                                });
+                        dialog1.show();
 
-                AlertDialog alert11 = builder1.create();
-                alert11.show();
 
-            }
+                    });
+
+            builder1.setNegativeButton(
+                    "Cash",
+                    (dialog, id) -> {
+                        Toast.makeText(Otp_screen.this, "Cash payment saved", Toast.LENGTH_SHORT).show();
+                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("paimentMethod").setValue("Cash");
+                    });
+            builder1.setNeutralButton(R.string.cancel, (dialog, id) -> dialog.cancel());
+
+            AlertDialog alert11 = builder1.create();
+            alert11.show();
+
         });
-        btn_mark_delivered.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        SOCEARNINGS = root.child("deliveryApp").child("SOCEARNINGS");
+        SOCEARNINGS.keepSynced(true);
+        topay_ref = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID).child("topay"); //NON-NLS //NON-NLS
+        topay_ref.keepSynced(true);
+        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
+        wallet_ref.keepSynced(true);
+        btn_mark_delivered.setOnClickListener(v -> {
+            if (!ConnectivityReceiver.isConnected()) {
+                showSnack(false);
+            } else {
+                String secret = f1.getText().toString() + f2.getText().toString() + f3.getText().toString() + f4.getText().toString() + f5.getText().toString();
+                if (secret.equals(otp)) {
+                    root.child("deliveryApp").addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.hasChild("SOCEARNINGS")) {
+                                root.child("deliveryApp").child("SOCEARNINGS").setValue(0);
+                            }
+                        }
 
-                if (!ConnectivityReceiver.isConnected()) {
-                    showSnack(false);
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("status").setValue("FINISHED");
+
+
+                    wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                            balance = wal_bal;
+                            wallet_ref.setValue(balance + (myOrder.max_range - final_price_int));
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    topay_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                            balance = wal_bal;
+                            topay_ref.setValue(
+                                    balance +
+                                            ((myOrder.deliveryCharge * 30) / 100));
+
+                        }
+
+                        //todo fix null when getting to pay of the deliverer
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+
+                    SOCEARNINGS.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                            SOCEARNINGS.setValue(
+                                    wal_bal +
+                                            ((myOrder.deliveryCharge * 30) / 100));
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                    userId = user.getUid();
+
+                    deliverer_ref = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID).child("wallet");
+                    deliverer_ref.keepSynced(true);
+
+                    deliverer_ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                            Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                            deliverer_ref.setValue(wal_bal + myOrder.deliveryCharge);
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                        }
+                    });
+
+                    Toast.makeText(Otp_screen.this, "Delivery Finished!!", Toast.LENGTH_LONG).show();
+                    setUpDeliveredNotif(myOrder);
+                    Intent intent1 = new Intent(Otp_screen.this, DelivererViewActivity.class);
+                    startActivity(intent1);
+                    finish();
+
                 } else {
-                    String secret = f1.getText().toString() + f2.getText().toString() + f3.getText().toString()
-                            + f4.getText().toString() + f5.getText().toString();
-                    if (secret.equals(otp)) {
-
-                        root.child("deliveryApp").addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                if (!dataSnapshot.hasChild("our_wallet")) {
-                                    root.child("deliveryApp").child("our_wallet").setValue(0);
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("status").setValue("FINISHED");
-
-
-                        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
-                        wallet_ref.keepSynced(true);
-
-                        wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                                balance = wal_bal;
-                                wallet_ref.setValue(balance + (myOrder.max_range - final_price_int));
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                        userId = user.getUid();
-
-                        deliverer_ref = root.child("deliveryApp").child("users").child(userId).child("wallet");
-                        deliverer_ref.keepSynced(true);
-
-                        deliverer_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                                balance = wal_bal;
-                                deliverer_ref.setValue(balance + myOrder.deliveryCharge);
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                            }
-                        });
-
-                        Toast.makeText(Otp_screen.this, "Delivery Finished!!", Toast.LENGTH_LONG).show();
-                        //TODO display a congrats 'you just delivered a order screen'
-                        setUpDeliveredNotif(myOrder);
-                        Intent intent = new Intent(Otp_screen.this, DelivererViewActivity.class);
-                        startActivity(intent);
-                        finish();
-
-                    } else {
-                        Toast.makeText(Otp_screen.this, "Wrong OTP! Enter correct OTP", Toast.LENGTH_LONG).show();
-                    }
+                    Toast.makeText(Otp_screen.this, "Wrong OTP! Enter correct OTP", Toast.LENGTH_LONG).show();
                 }
             }
         });

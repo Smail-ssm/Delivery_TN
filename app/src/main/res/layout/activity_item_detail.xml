@@ -97,7 +97,7 @@
                 android:layout_marginBottom="20dp"
                             android:background="@drawable/button_background"
                 android:padding="5dp"
-                android:text="@otp"
+                android:text="otp"
                 android:textColor="@color/white"
                 android:textSize="18sp" />
 
@@ -553,7 +553,8 @@
                 android:layout_marginEnd="0dp"
                 android:background="@drawable/button_round_main"
                 android:text="@string/rate"
-                android:textColor="#FFFFFF" />
+                android:textColor="#FFFFFF"
+                android:visibility="invisible" />
 
 
         </RelativeLayout>

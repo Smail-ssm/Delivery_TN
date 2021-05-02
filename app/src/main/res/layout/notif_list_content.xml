@@ -34,7 +34,7 @@
                 android:layout_alignTop="@+id/notif_icon"
                 android:layout_marginTop="0dp"
                 android:layout_toRightOf="@id/notif_icon"
-                android:text="Title"
+                android:text="@string/title"
                 android:textColor="@color/cardview_dark_background"
                 android:textSize="20sp"
                 android:textStyle="bold" />
@@ -51,7 +51,7 @@
                 android:layout_marginTop="2dp"
                 android:layout_toRightOf="@id/notif_icon"
                 android:paddingRight="2dp"
-                android:text="Description"
+                android:text="@string/description"
                 android:textColor="@color/cardview_dark_background" />
 
         </RelativeLayout>

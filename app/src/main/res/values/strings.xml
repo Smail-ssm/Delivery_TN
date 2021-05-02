@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Bin Idik</string>
-    <string name="facebook_app_id" translatable="false">763596894193124</string>
-    <string name="fb_login_protocol_scheme" translatable="false">fb763596894193124</string>
-
+    <string name="app_name" translatable="false">Bin Idik</string>
+    <string name="facebook_app_id">917436472133344</string>
+    <string name="fb_login_protocol_scheme">fb917436472133344</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>
@@ -14,10 +13,10 @@
     <string name="btn_login">Login</string>
     <string name="btn_link_to_register">Not a member? Get registered now!</string>
     <string name="btn_link_to_login">Already registered? Log In!</string>
-    <string name="title_activity_reset_password">ResetPasswordActivity</string>
+    <string name="title_activity_reset_password">Reset Password Activity</string>
     <string name="btn_forgot_password">Forgot your password?</string>
     <string name="btn_reset_password">Reset Password</string>
-    <string name="btn_back"><![CDATA[<< Back]]></string>
+    <string name="btn_back">Back</string>
     <string name="lbl_forgot_password">Forgot password?</string>
     <string name="forgot_password_msg">We just need your registered Email Id to sent you password reset instructions.</string>
     <string name="user_name">Name</string>
@@ -27,7 +26,7 @@
     <string name="my_orders">My orders</string>
     <string name="price_range">Estimated Price Range</string>
     <string name="btn_user_location">Set Your Location</string>
-    <string name="category">Category</string>
+    <string name="category" tools:ignore="DuplicateDefinition">Category</string>
     <string name="expiry">Set Expiry of order</string>
     <string name="btn_category">None</string>
     <string name="min_int">Min</string>
@@ -37,7 +36,7 @@
     <string name="dialog_save">Please fill all the details!</string>
     <string name="dialog_ok">OK</string>
     <string name="save_details">Save Details</string>
-    <string name="description">Description</string>
+    <string name="description" tools:ignore="DuplicateDefinition">Description</string>
     <string name="orderId">order ID</string>
     <string name="status">Status</string>
     <string name="deliveryCharge">Delivery Charge (incl. service charge):</string>
@@ -60,16 +59,16 @@
     <string name="btn_accepted_by">Accepted By</string>
     <string name="btn_accept">Accept</string>
     <string name="btn_show_path">Show Path</string>
-    <string name="btn_mark_delivered">"Mark   Delivered"</string>
-    <string name="btn_send_otp">"Send   OTP"</string>
+    <string name="btn_mark_delivered">Mark Delivered</string>
+    <string name="btn_send_otp">Send OTP</string>
     <string name="enter_otp1">Enter OTP (as received from Orderer) :</string>
-    <string name="ask_otp1">"Note:  Ask orderer to open order details for OTP in case of no notification."</string>
-    <string name="btn_complete_order">"Complete  Order"</string>
+    <string name="ask_otp1">Note:  Ask orderer to open order details for OTP in case of no notification.</string>
+    <string name="btn_complete_order">Complete  Order</string>
     <string name="enter_actual_price">Enter actual price of item bought</string>
     <string name="tnd">TND</string>
     <string name="email_verify">Email Verification Required</string>
     <string name="email_sent">An email has been sent to:</string>
-    <string name="follow_instructions">Please follow the instructions in the verification email         to finish creating your theDeliveryApp account.</string>
+    <string name="follow_instructions">Please follow the instructions in the verification email to finish creating your theDeliveryApp account.</string>
     <string name="resend_email">Didn\'t receive an email?</string>
     <string name="btn_resend_email">Resend Verification Email</string>
     <string name="done_verify">Done Verification?</string>
@@ -108,7 +107,7 @@
     <string name="editorder">Edit Order</string>
     <string name="food" tools:ignore="DuplicateDefinition">Food</string>
     <string name="medcin">Medicine</string>
-    <string name="houshold" tools:ignore="DuplicateDefinition">Household</string>
+    <string name="houshold">Household</string>
     <string name="electronic">Electronics</string>
     <string name="toileterie">Toiletries</string>
     <string name="books">Books</string>
@@ -145,7 +144,6 @@
     <string name="emailsentto">Verification email sent to : </string>
     <string name="faildtosend">Failed to send verification email!</string>
     <string name="completverification">Please complete email verification first!</string>
-    <string name="suuclogout">You have been successfully logged out.</string>
     <string name="myorders">My orders</string>
     <string name="cancledorders">Cancelled</string>
     <string name="expiredorders">Expired</string>
@@ -161,7 +159,7 @@
     <string name="info">Info</string>
     <string name="notification">Notification</string>
     <string name="uploading">uploading...</string>
-    <string name="donecin">Done ☺ CIN </string>
+    <string name="donecin">"Done  CIN "</string>
     <string name="errorwhileuploading">error while uploading</string>
     <string name="nofilesemcted">NO file is selected</string>
     <string name="deletedoldpic">deleted old pic</string>
@@ -192,7 +190,6 @@
     <string name="NewOrder">New Order</string>
     <string name="fooda" translatable="false" tools:ignore="DuplicateDefinition">Food</string>
     <string name="medecine">Medicine</string>
-    <string name="housholda" translatable="false" tools:ignore="DuplicateDefinition">Household</string>
     <string name="Electronics">Electronics</string>
     <string name="Toiletries">Toiletries</string>
     <string name="Books">Books</string>
@@ -214,20 +211,59 @@
     <string name="azaa">Failed to send reset email!</string>
     <string name="aaa">Enter password!</string>
     <string name="azazz">password don\'t match !</string>
-    <string name="title_activity_settings">SettingsActivity</string>
-
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
-
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
+    <string name="title_activity_create_reclamation">Create Reclamation</string>
+    <string name="Chat_rooms">Chat rooms</string>
+    <string name="please_set_the_reason_of_reclamation">please set the reason for your reclamation</string>
+    <string name="canNotCancle">Can not cancel , this order is active</string>
+    <string name="reason">Reason</string>
+    <string name="reclamation">Reclamation</string>
+    <string name="cancle">Cancle</string>
+    <string name="reclame">Reclame</string>
+    <string name="order_timed_out">Order timed out</string>
+    <string name="bad_order_state">Bad order state</string>
+    <string name="bad_behaviour_from_client_deliverer">Bad behaviour from client/deliverer</string>
+    <string name="other_reason">Other Reason</string>
+    <string name="orderer_id">Orderer ID</string>
+    <string name="orderer">Orderer</string>
+    <string name="orderer_name">Orderer Name</string>
+    <string name="deliverer_cin">Deliverer CIN</string>
+    <string name="deliverer_id">Deliverer ID</string>
+    <string name="deliverer_info">Deliverer Info</string>
+    <string name="deliverer_name">Deliverer Name</string>
+    <string name="no_chat_rooms">No chat rooms</string>
+    <string name="order_location">Order location:</string>
+    <string name="chose_from_where_to_get_your_order">chose from where to get your order</string>
+    <string name="earnings">Earnings :</string>
+    <string name="username">username</string>
+    <string name="price_of_item">Price of item :</string>
+    <string name="total">Total :</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="male">male</string>
+    <string name="female">female</string>
+    <string name="date_de_naissance">date de naissance</string>
+    <string name="governorat">Governorat</string>
+    <string name="history">History</string>
+    <string name="total_earnings">Total earnings</string>
+    <string name="transfert_number">Transfert Number</string>
+    <string name="sender_name">Sender name</string>
+    <string name="paiment_value">Paiment value</string>
+    <string name="confirm_payment">Confirm payment</string>
+    <string name="total_to_pay">Total to pay</string>
+    <string name="chose_payment_method">Chose payment method</string>
+    <string name="mandat_minute">Mandat minute</string>
+    <string name="transfert_bancaire">transfert bancaire</string>
+    <string name="address">address</string>
+    <string name="code_postal">Code postal</string>
+    <string name="cin">CIN</string>
+    <string name="account_info">Account Info</string>
+    <string name="birthday">Birthday</string>
+    <string name="rated_by">Rated by :</string>
+    <string name="upload">upload</string>
+    <string name="title">Title</string>
+    <string name="create_reclamation">Create Reclamation</string>
+    <string name="topay">"To pay "</string>
+    <string name="enabled">enabled</string>
+    <string name="unlock">Unlock</string>
 </resources>

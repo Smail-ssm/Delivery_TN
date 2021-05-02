@@ -18,6 +18,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
 import android.widget.ImageView;
@@ -63,13 +64,17 @@ import com.xdev.deliverytn.R;
 import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
+import com.xdev.deliverytn.models.ReclamationObject;
 import com.xdev.deliverytn.models.UserDetails;
+import com.xdev.deliverytn.payments;
 import com.xdev.deliverytn.profile.Profile;
+import com.xdev.deliverytn.reclamations.createReclamation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -104,11 +109,14 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
     String name;
     Snackbar snackbar;
     ImageView profilepic;
+    TextView ReclamationList;
     CardView clientcard, delivererCard;
     int notif;
+    ReclamationObject rec;
     private ProgressBar progressBar;
     private FirebaseAuth.AuthStateListener authListener;
     private FirebaseAuth auth;
+    private Button accountStatue;
 
     public static Context getContext() {
         return mContext;
@@ -129,25 +137,25 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
     }
 
-    //todo add icon to call deliverer
-    //todo in app messeging in get informed
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         TextView username = findViewById(R.id.username);
-
+        TextView earningss = findViewById(R.id.earnings);
         animation();
         checkConnection();
         requestLocationPermissions();
         requestcamera();
+        mainGrid = findViewById(R.id.mainGrid);
         profilepic = findViewById(R.id.profile_image);
         getinfo = findViewById(R.id.getinfo);
         getinfo.setOnClickListener(v -> startActivity(new Intent(MainActivity.this, com.xdev.deliverytn.FirebaseNotifications.inbox.class)));
         Button logOutButton = findViewById(R.id.btnlogout);
 //        Button setting = findViewById(R.id.settings);
         auth = FirebaseAuth.getInstance();
+        accountStatue = findViewById(R.id.accountStatue);
         recto = findViewById(R.id.recto);
         root = FirebaseDatabase.getInstance().getReference();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
@@ -157,6 +165,18 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             finish();
         } else {
             userId = user.getUid();
+        }
+        //selected date from calender
+        SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yyyy"); //Date and time
+        Calendar myCalendar = Calendar.getInstance();
+        String currentDate = sdf.format(myCalendar.getTime());
+
+//selcted_day name
+        SimpleDateFormat sdf_ = new SimpleDateFormat("YYYY");
+        String dayofweek = sdf_.format(myCalendar.getTime());
+
+        if (dayofweek.equalsIgnoreCase("Saturday") || dayofweek.equalsIgnoreCase("Sunday") || dayofweek.equalsIgnoreCase("monday")) {
+            earningss.setVisibility(View.VISIBLE);
         }
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -212,18 +232,53 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(userId);
         userinfo.addValueEventListener(new ValueEventListener() {
+            @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 name = dataSnapshot.child("first").getValue(String.class) + " , " + dataSnapshot.child("last").getValue(String.class);
+                if (dataSnapshot.child("accountstatue").getValue(String.class)
+                        .equalsIgnoreCase("enabled")) {
+
+                    findViewById(R.id.alert1).setVisibility(View.INVISIBLE);
+                    findViewById(R.id.alert2).setVisibility(View.INVISIBLE);
+                    accountStatue.setText(R.string.enabled);
+                } else {
+                    mainGrid.setClickable(false);
+                    mainGrid.setBackgroundColor(Color.RED);
+                    mainGrid.setVisibility(View.INVISIBLE);
+                    findViewById(R.id.alert1).setVisibility(View.VISIBLE);
+                    findViewById(R.id.alert2).setVisibility(View.VISIBLE);
+                    accountStatue.setText(R.string.unlock);
+                    accountStatue.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            startActivity(new Intent(MainActivity.this, payments.class));
+                        }
+                    });
+
+                }
                 showSnacks(getString(R.string.welcom) + " " + name);
                 username.setText(getString(R.string.welcom) + " " + name);
                 String usertypo = dataSnapshot.child("usertype").getValue(String.class);
                 if (!(usertypo.isEmpty())) {
                     if (usertypo.equalsIgnoreCase("deliverer")) {
                         findViewById(R.id.ordererCard).setVisibility(View.GONE);
+                        if (dataSnapshot.child("topay") != null) {
+                            if ((dataSnapshot.child("topay").getValue(Integer.class)) == 0) {
+                                earningss.setText("0");
+                                userinfo.child("topay").setValue(0);
+                                return;
+                            } else {
+                                int t = dataSnapshot.child("topay").getValue(Integer.class);
+                                earningss.setText("to pay: " + (t) + " TND.");
+
+                            }
+                        }
+
                     }
                     if (dataSnapshot.child("usertype").getValue(String.class).equalsIgnoreCase("orderer")) {
                         findViewById(R.id.delivererCard).setVisibility(View.GONE);
+                        earningss.setVisibility(View.GONE);
                     }
                 } else return;
 
@@ -298,7 +353,51 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 // Failed to read value
             }
         });
+        ArrayAdapter<String> arrayAdapter = new ArrayAdapter<String>(MainActivity.this, android.R.layout.select_dialog_singlechoice);
 
+        DatabaseReference allrec = root.child("deliveryApp").child("reclamations");
+        allrec.keepSynced(true);
+        allrec.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot data : dataSnapshot.getChildren()) {
+                    ReclamationObject reca = data.getValue(ReclamationObject.class);
+                    SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                    String dateString = formatter.format(new Date(Long.parseLong(reca.getTimestamp())));
+                    arrayAdapter.add("Order number " + reca.getRecId() + " at " + dateString);
+                    ReclamationList.setText("Reclamation: " + arrayAdapter.getCount());
+                }
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                //handle databaseError
+            }
+        });
+
+        ReclamationList = findViewById(R.id.ReclamationList);
+        ReclamationList.setOnClickListener(v -> {
+            AlertDialog.Builder builderSingle = new AlertDialog.Builder(MainActivity.this);
+            builderSingle.setTitle("list des reclamation que vous avez passé");
+
+            builderSingle.setNegativeButton("cancel", (dialog, which) -> dialog.dismiss());
+
+            builderSingle.setAdapter(arrayAdapter, (dialog, which) -> {
+                String strName = arrayAdapter.getItem(which);
+                String recid = strName + " : ";
+                AlertDialog.Builder builderInner = new AlertDialog.Builder(MainActivity.this);
+                builderInner.setMessage(recid);
+                builderInner.setTitle("Your Selected Item is");
+                builderInner.setPositiveButton("Ok", (dialog1, which1) -> {
+                    Intent i = new Intent(MainActivity.this, createReclamation.class);
+                    i.putExtra("reclamationID", which);
+                    startActivity(i);
+                });
+                builderInner.show();
+            });
+            builderSingle.show();
+        });
         profilepic.setOnClickListener(v -> {
             Intent i = new Intent(MainActivity.this, Profile.class);
             startActivity(i);
@@ -599,32 +698,22 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                         //cin
                         if ((requestCode == CAMERA_REQUEST)) {
                             if (isCin) {
-                                // if (!(data == null || data.getData() == null)) {
                                 uploadCin(photoURI);
-//                                a.setImageURI(data.getData());
                                 isCin = false;
                                 builder1.dismiss();
-
-                                // }
                             }
                             if (isProfile) {
-                                //   if (!(data == null || data.getData() == null)) {
                                 uploadProfile(photoURI);
-//                                a.setImageURI(photoURI);
                                 isProfile = false;
                                 builder1.dismiss();
-                                // }
                             }
-
                         }
                         if (requestCode == PICK_IMAGE_REQUEST) {
                             if (isCin) {
                                 uploadCin(data.getData());
 //                                a.setImageURI(photoURI);
                                 isCin = false;
-
                                 builder1.dismiss();
-
                             }
                             if (isProfile) {
                                 uploadProfile(data.getData());

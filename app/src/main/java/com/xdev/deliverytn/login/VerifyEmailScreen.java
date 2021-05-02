@@ -18,7 +18,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.xdev.deliverytn.R;
 
-import static com.xdev.deliverytn.R.string.suuclogout;
 
 public class VerifyEmailScreen extends AppCompatActivity {
 
@@ -103,7 +102,7 @@ public class VerifyEmailScreen extends AppCompatActivity {
         btn_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(VerifyEmailScreen.this, suuclogout, Toast.LENGTH_LONG).show();
+                Toast.makeText(VerifyEmailScreen.this, "logout succefull", Toast.LENGTH_LONG).show();
                 signOut();
             }
         });

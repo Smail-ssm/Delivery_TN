@@ -2,7 +2,6 @@ package com.xdev.deliverytn.user;
 
 
 import android.Manifest;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -12,7 +11,6 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -212,72 +210,72 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         });
         userDetails.getRate();
         Button rankBtn = findViewById(R.id.ratebutton);
-        rankBtn.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Dialog rankDialog = new Dialog(UserOrderDetailActivity.this, R.style.FullHeightDialog);
-                rankDialog.setContentView(R.layout.rank_dialog);
-                rankDialog.setCancelable(true);
-                RatingBar ratingBar = rankDialog.findViewById(R.id.ratingbar);
-                DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
-                ratingRef.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
-                            ratingBar.setRating(rating);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-                Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
-
-                DatabaseReference rate = ratingRef.child("rate");
-
-                rate.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
-                            ratingBar.setRating(rating);
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                    }
-                });
-                DatabaseReference rate_number = ratingRef.child("rate_number");
-
-                ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
-                    @Override
-                    public void onRatingChanged(
-                            RatingBar ratingBar,
-                            float rating,
-                            boolean fromUser) {
-                        rate_number.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                if (snapshot != null && snapshot.getValue() != null) {
-                                    float ratenumber = Float.parseFloat(snapshot.getValue().toString());
-                                    if (fromUser)
-                                        rate_number.setValue(String.valueOf(ratenumber + 1));
-                                }
-                            }
-
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
-
-                    }
-                });
-                rankDialog.show();
-            }
-        });
+//        rankBtn.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                Dialog rankDialog = new Dialog(UserOrderDetailActivity.this, R.style.FullHeightDialog);
+//                rankDialog.setContentView(R.layout.rank_dialog);
+//                rankDialog.setCancelable(true);
+//                RatingBar ratingBar = rankDialog.findViewById(R.id.ratingbar);
+//                DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
+//                ratingRef.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+//                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
+//                            ratingBar.setRating(rating);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                });
+//                Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
+//
+//                DatabaseReference rate = ratingRef.child("rate");
+//
+//                rate.addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(DataSnapshot dataSnapshot) {
+//                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
+//                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
+//                            ratingBar.setRating(rating);
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(DatabaseError databaseError) {
+//                    }
+//                });
+//                DatabaseReference rate_number = ratingRef.child("rate_number");
+//
+//                ratingBar.setOnRatingBarChangeListener(new RatingBar.OnRatingBarChangeListener() {
+//                    @Override
+//                    public void onRatingChanged(
+//                            RatingBar ratingBar,
+//                            float rating,
+//                            boolean fromUser) {
+//                        rate_number.addValueEventListener(new ValueEventListener() {
+//                            @Override
+//                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                                if (snapshot != null && snapshot.getValue() != null) {
+//                                    float ratenumber = Float.parseFloat(snapshot.getValue().toString());
+//                                    if (fromUser)
+//                                        rate_number.setValue(String.valueOf(ratenumber + 1));
+//                                }
+//                            }
+//
+//                            @Override
+//                            public void onCancelled(@NonNull DatabaseError error) {
+//
+//                            }
+//                        });
+//
+//                    }
+//                });
+//                rankDialog.show();
+//            }
+//        });
         category.setText(myOrder.category);
         description.setText(myOrder.description);
         status.setText((myOrder.status));
@@ -324,7 +322,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             }
 
             if (myOrder.expiryTime.hour < 12) {
-                time += " AM";
+                time += " AM"; //NON-NLS
             } else {
                 time += " PM";
             }

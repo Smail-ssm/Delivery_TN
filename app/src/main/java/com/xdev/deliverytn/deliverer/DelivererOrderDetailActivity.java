@@ -1,10 +1,10 @@
 package com.xdev.deliverytn.deliverer;
 
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -32,7 +32,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -85,10 +84,8 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
 
 public class DelivererOrderDetailActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, LocationListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -111,7 +108,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
     FloatingActionButton factureadd;
     File imageFilePath;
     AlertDialog.Builder builder;
-    Boolean isCin = false, isProfile = false;
+    Boolean isbilled = false;
     AnimationDrawable animationDrawable;
     Button recto;
     LinearLayout getinfo;
@@ -127,7 +124,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
     CardView clientcard, delivererCard;
     int notif;
     LocationManager mLocationManager;
-    private DatabaseReference WALET;
+    private DatabaseReference socwallet_ref;
+    private DatabaseReference UserWALET;
     private LinearLayout userName_h;
     private TextView userName;
     private TextView userPhoneNumber;
@@ -151,6 +149,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
     private Integer balance;
     private OrderData selectedOrder;
     private boolean exsist;
+    private int roundedTopay;
+    private DatabaseReference topay_ref;
+    private int finaldeliverycharge;
 
     @Override
     public boolean onSupportNavigateUp() {
@@ -207,37 +208,38 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         btn_complete_order = findViewById(R.id.btn_complete_order);
         factureadd = findViewById(R.id.factureadd);
         factureadd.setOnClickListener(v -> {
-            isProfile = true;
-            builder = new AlertDialog.Builder(DelivererOrderDetailActivity.this);
-            builder.setMessage(R.string.choisireimageSource)
-                    .setCancelable(true)
-                    .setPositiveButton(R.string.camera, (dialog, id) -> {
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                                requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-                            } else {
+            if (!isbilled) {
+                builder = new AlertDialog.Builder(DelivererOrderDetailActivity.this);
+                builder.setMessage(R.string.choisireimageSource)
+                        .setCancelable(true)
+                        .setPositiveButton(R.string.camera, (dialog, id) -> {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                if (checkSelfPermission(Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
+                                    requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
+                                } else {
 
-                                Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                                try {
-                                    imageFilePath = createImageFile();
-                                } catch (IOException e) {
-                                    e.printStackTrace();
+                                    Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                                    try {
+                                        imageFilePath = createImageFile();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
+                                    photoURI = FileProvider.getUriForFile(DelivererOrderDetailActivity.this, "com.xdev.pfe.utils.fileprovider", imageFilePath);
+                                    cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+
+                                    startActivityForResult(cameraIntent, CAMERA_REQUEST);
                                 }
-                                photoURI = FileProvider.getUriForFile(DelivererOrderDetailActivity.this, "com.xdev.pfe.utils.fileprovider", imageFilePath);
-                                cameraIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-
-                                startActivityForResult(cameraIntent, CAMERA_REQUEST);
                             }
-                        }
-                    })
-                    .setNegativeButton(R.string.gallery, (dialog, id) -> chooseImage());
-            //Creating dialog box
-            AlertDialog alert = builder.create();
-            //Setting the title manually
-            alert.setTitle(getString(R.string.addprofilepic));
-            alert.show();
-        });
+                        })
+                        .setNegativeButton(R.string.gallery, (dialog, id) -> chooseImage());
+                //Creating dialog box
+                AlertDialog alert = builder.create();
+                //Setting the title manually
+                alert.setTitle("ajouter une facture");
+                alert.show();
+            }
 
+        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -248,8 +250,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         myOrder = intent.getParcelableExtra("MyOrder"); //NON-NLS
         myOrderId = Integer.parseInt(intent.getStringExtra("orderid")); //NON-NLS
         myUserId = intent.getStringExtra("userid"); //NON-NLS
-//        fetchorder(myOrderId, myUserId);
-//todo test facture image upload
+
         CollapsingToolbarLayout appBarLayout = findViewById(R.id.toolbar_layout);
         if (appBarLayout != null) {
             appBarLayout.setTitle(myOrder.category);
@@ -304,7 +305,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) { //NON-NLS
-
             }
         });
         userLocationName.setText(myOrder.userLocation.Name);
@@ -352,8 +352,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                 .setPositiveButton(R.string.yes, null)
                 .setNegativeButton(R.string.no, null)
                 .create();
-
-
         alertDialog.setOnShowListener(new DialogInterface.OnShowListener() {
             @Override
             public void onShow(DialogInterface dialogInterface) {
@@ -362,11 +360,45 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                 yesButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
+
+
                         alertDialog.dismiss();
                         userId = user.getUid();
+                        ///////////////////////////////
                         ref1 = root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)); //NON-NLS //NON-NLS
-                        ref2 = ref1.child("acceptedBy"); //NON-NLS
 
+                        root.child("deliveryApp").child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                for (DataSnapshot userdata : dataSnapshot.getChildren()) {
+                                    for (DataSnapshot orderdata : userdata.getChildren()) {
+                                        OrderData order = orderdata.getValue(OrderData.class);
+                                        if (order.orderId == myOrderId) {
+                                            selectedOrder = order;
+                                            l1 = new LatLng(selectedOrder.deliverylocation.Latl, selectedOrder.deliverylocation.Lonl);
+                                            l2 = new LatLng(selectedOrder.userLocation.Lat, selectedOrder.userLocation.Lon);
+                                            float deliveryCH = (Deliverychargemethod(l1, l2));
+                                            String doubleAsString = String.valueOf(deliveryCH);
+                                            int indexOfDecimal = doubleAsString.indexOf(".");
+                                            System.out.println("Double Number: " + deliveryCH);
+                                            System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
+                                            System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
+                                            if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
+                                                finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal))) + 1;
+                                            } else {
+                                                finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        /////////////////////////////////
+                        ref2 = ref1.child("acceptedBy"); //NON-NLS
                         ref2.keepSynced(true);
                         wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet"); //NON-NLS //NON-NLS
                         wallet_ref.keepSynced(true);
@@ -390,143 +422,18 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             }); //NON-NLS
                             ref1.child("status").setValue("ACTIVE"); //NON-NLS
                             btn_accept.setText("Reject");
-                            factureplaceholder.setVisibility(View.VISIBLE);
                             myOrder.status = "ACTIVE";
                             status.setText((myOrder.status));
-
-                            allorders = root.child("deliveryApp").child("orders").child(myOrder.userId).child(String.valueOf(myOrder.orderId));
-                            allorders.keepSynced(true);
-                            allorders.addListenerForSingleValueEvent(new ValueEventListener() {
-                                @Override
-                                public void onDataChange(DataSnapshot snapshot) {
-                                    order = snapshot.getValue(OrderData.class);
-                                    if (order.orderId == myOrderId) {
-                                        myorder = new OrderObject();
-                                        myorder.acceptedBy = order.acceptedBy;
-                                        myorder.userLocation = order.userLocation;
-                                        myorder.expiryDate = order.expiryDate;
-                                        myorder.expiryTime = order.expiryTime;
-                                    }
-                                }
-
-                                @Override
-                                public void onCancelled(@NonNull DatabaseError error) {
-
-                                }
-
-                            }); //NON-NLS
-                            refrooms = root.child("deliveryApp").child("chatRooms").child("roomId"); //NON-NLS
-                            WALET = root.child("deliveryApp").child("SocEarnings"); //NON-NLS
-                            // chat room creation
-                            refroomsA = refrooms.child(String.valueOf(myOrder.orderId));
-                            chatrrom c = new chatrrom();
-                            c.setRoomId(String.valueOf(myOrder.orderId));
-                            c.setDeliverId(user.getUid());
-                            c.setOrdererId(myOrder.userId);
-                            refroomsA.setValue(c);
-                            // cha room created
-
-                            mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-                            if (ActivityCompat.checkSelfPermission(DelivererOrderDetailActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(DelivererOrderDetailActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                                // TODO: Consider calling
-                                //    ActivityCompat#requestPermissions
-                                // here to request the missing permissions, and then overriding
-                                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                                //                                          int[] grantResults)
-                                // to handle the case where the user grants the permission. See the documentation
-                                // for ActivityCompat#requestPermissions for more details.
-                                return;
-                            }
-                            delivlocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                            if (delivlocation != null && delivlocation.getTime() > Calendar.getInstance().getTimeInMillis() - 2 * 60 * 1000) {
-                                Geocoder geocoder = new Geocoder(DelivererOrderDetailActivity.this, Locale.getDefault());
-                                try {
-                                    address = geocoder.getFromLocation(delivlocation.getLatitude(), delivlocation.getLongitude(), 1).get(0);
-                                    String add = "";
-            /*
-            add = add + address.getAddressLine(0);
-            add = add + "\n" + address.getCountryName();
-            add = add + "\n" + address.getCountryCode();
-            add = add + "\n" + address.getAdminArea();
-            add = add + "\n" + address.getPostalCode();
-            add = add + "\n" + address.getSubAdminArea();
-            */
-                                    add = add + address.getLocality() + "," + address.getSubLocality(); //City
-
-                                    //add = add + "\n" + address.getSubThoroughfare();
-                                    Toast.makeText(DelivererOrderDetailActivity.this, add, Toast.LENGTH_LONG).show();
-                                } catch (IOException e) {
-                                    // TODO Auto-generated catch block //NON-NLS
-                                    e.printStackTrace();
-                                }
-                                root.child("deliveryApp").child("orders").addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        for (DataSnapshot userdata : dataSnapshot.getChildren()) {
-                                            for (DataSnapshot orderdata : userdata.getChildren()) {
-                                                OrderData order = orderdata.getValue(OrderData.class);
-                                                if (order.orderId == myOrderId) {
-                                                    selectedOrder = order;
-                                                    l1 = new LatLng(delivlocation.getLatitude(), delivlocation.getLongitude());
-                                                    l2 = new LatLng(selectedOrder.userLocation.Lat, selectedOrder.userLocation.Lon);
-                                                    root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("deliveryCharge").setValue(Math.round(
-                                                            getDistanceBetween(
-                                                                    l1,
-                                                                    l2) * 0.001)); //NON-NLS
-                                                    updateOrderPrice(myOrder.max_range + myOrder.deliveryCharge);
-                                                    myOrder.earnings = ((((int) Math.round(getDistanceBetween(l1, l2) * 0.001)) * 70) / 100);
-                                                    updateWalet((((int) Math.round(getDistanceBetween(l1, l2) * 0.001)) * 30) / 100);
-
-                                                }
-                                            }
-                                        }
-                                    }
-
-
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
-
-                                    }
-                                });
-
-                            } else {
-                                mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, DelivererOrderDetailActivity.this);
-                            }
-
-
-                            //////////////////////
-
-//                            LatLng ordererlocation = new LatLng(myOrder.userLocation.Lat, myOrder.userLocation.Lon);
-                            Toast.makeText(DelivererOrderDetailActivity.this, "Room of order N°" + myOrder.orderId + " created ", Toast.LENGTH_SHORT).show(); //NON-NLS
-//                            getLatAndLong();
-//                            mFusedLocationClient = LocationServices.getFusedLocationProviderClient(DelivererOrderDetailActivity.this);
-//                            mLocationCallback = new LocationCallback() {
-//                                @RequiresApi(api = Build.VERSION_CODES.N)
-//                                @Override
-//                                public void onLocationResult(LocationResult locationResult) {
-//                                    Location location = locationResult.getLastLocation();
-//                                    if (location != null) {
-//
-//                                        latitude = location.getLatitude();
-//                                        longitude = location.getLongitude();
-//                                        //Toast.makeText(DelivererOrderDetailActivity.this, "Latitude = " + latitude + "\nLongitude = " + longitude, Toast.LENGTH_SHORT).show();
-//                                        getAddressFromLatAndLong(latitude, longitude);
-//                                        l1 = new LatLng(location.getLatitude(), location.getLongitude());
-//
-//                                        // Logic to handle location object
-//                                    } else {
-//                                        Toast.makeText(DelivererOrderDetailActivity.this, R.string.locationhasenullvalue, Toast.LENGTH_SHORT).show();
-//                                    }
-//                                }
-//                            };
+                            factureplaceholder.setVisibility(View.VISIBLE);
+                            // Deducts max_int+deliveryCharge money from orderer's wallet when order accepted
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Integer wal_bal = dataSnapshot.getValue(Integer.class);
                                     balance = wal_bal;
-                                    wallet_ref.setValue(balance - (myOrder.max_range + myOrder.deliveryCharge));
-
+                                    wallet_ref.setValue(balance -
+                                            (myOrder.max_range +
+                                                    finaldeliverycharge));
                                 }
 
                                 @Override
@@ -534,6 +441,39 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
                                 }
                             });
+/*
+//                            allorders = root.child("deliveryApp").child("orders").child(myOrder.userId).child(String.valueOf(myOrder.orderId));
+//                            allorders.keepSynced(true);
+//                            allorders.addListenerForSingleValueEvent(new ValueEventListener() {
+//                                @Override
+//                                public void onDataChange(DataSnapshot snapshot) {
+//                                    order = snapshot.getValue(OrderData.class);
+//                                    if (order.orderId == myOrderId) {
+//                                        myorder = new OrderObject();
+//                                        myorder.acceptedBy = order.acceptedBy;
+//                                        myorder.userLocation = order.userLocation;
+//                                        myorder.expiryDate = order.expiryDate;
+//                                        myorder.expiryTime = order.expiryTime;
+//                                    }
+//                                }
+//
+//                                @Override
+//                                public void onCancelled(@NonNull DatabaseError error) {
+//
+//                                }
+//
+//                            });*/
+
+// chat room
+                            refrooms = root.child("deliveryApp").child("chatRooms").child("roomId"); //NON-NLS
+                            refroomsA = refrooms.child(String.valueOf(myOrder.orderId));
+                            chatrrom c = new chatrrom();
+                            c.setRoomId(String.valueOf(myOrder.orderId));
+                            c.setDeliverId(user.getUid());
+                            c.setOrdererId(myOrder.userId);
+                            refroomsA.setValue(c);
+                            Toast.makeText(DelivererOrderDetailActivity.this, "Room of order N°" + myOrder.orderId + " created ", Toast.LENGTH_SHORT).show(); //NON-NLS
+
                             setUpAcceptNotif(myOrder);
                             btn_complete_order.setEnabled(true);
                             btn_complete_order.setVisibility(View.VISIBLE);
@@ -543,13 +483,11 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             btn_accept.setText("Accept");
                             myOrder.status = "PENDING";
                             status.setText((myOrder.status));
-
                             ref2.child("name").setValue("-"); //NON-NLS //NON-NLS
                             ref2.child("email").setValue("-"); //NON-NLS
                             ref2.child("mobile").setValue("-");
                             ref2.child("alt_mobile").setValue("-");
                             ref2.child("delivererID").setValue("-");
-
                             ref1.child("otp").setValue("");
                             ref1.child("final_price").setValue(-1);
                             // Refunds max_int+deliveryCharge money from orderer's wallet when order accepted
@@ -558,7 +496,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                                     Integer wal_bal = dataSnapshot.getValue(Integer.class);
                                     balance = wal_bal;
-                                    wallet_ref.setValue(balance + (myOrder.max_range + myOrder.deliveryCharge));
+                                    wallet_ref.setValue(balance + (myOrder.max_range + finaldeliverycharge));
                                 }
 
                                 @Override
@@ -566,6 +504,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
                                 }
                             });
+
+
                             setUpRejectNotif(myOrder);
                             btn_complete_order.setEnabled(false);
                             btn_complete_order.setVisibility(View.GONE);
@@ -589,37 +529,43 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
             @Override
             public void onClick(View v) {
-// use this to start and trigger a service
 
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("http://maps.google.com/maps?f=d&daddr=" + myOrder.userLocation.Location)); //NON-NLS //NON-NLS
                 intent.setComponent(new ComponentName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity")); //NON-NLS
                 if (intent.resolveActivity(getPackageManager()) != null) {
                     startActivity(intent);
-////TODO
-////                    continue distance measuring
-//
-//
+
                 }
 
             }
         });
-
-// todo time between 2 orders must be au min 30 min
-// todo accept more if distnce is shorter then the first command
 
         btn_accept.setOnClickListener(v -> {
             alertDialog.show();
         });
 
         btn_complete_order.setOnClickListener(v -> {
-//todo inapp messaging
+
             if (!ConnectivityReceiver.isConnected()) {
                 showSnack(false);
             } else {
-                Intent intent1 = new Intent(DelivererOrderDetailActivity.this, CompleteOrder.class);
-                intent1.putExtra("MyOrder", myOrder);
-                startActivity(intent1);
-                finish();
+                if (isbilled) {
+
+                    Intent intent1 = new Intent(DelivererOrderDetailActivity.this, CompleteOrder.class);
+                    intent1.putExtra("MyOrder", myOrder);
+
+                    startActivity(intent1);
+                    finish();
+                    return;
+                } else {
+                    int color;
+                    color = Color.WHITE;
+                    snackbar = Snackbar.make(findViewById(android.R.id.content), "pleas add bill !! ", Snackbar.LENGTH_SHORT);
+                    View sbView = snackbar.getView();
+                    TextView textView = sbView.findViewById(R.id.snackbar_text);
+                    textView.setTextColor(color);
+                    snackbar.show();
+                }
             }
         });
 
@@ -637,18 +583,15 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     sRef.delete();
                 }
 
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    if (exception instanceof StorageException &&
-                            ((StorageException) exception).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
-                        exsist = false;
-                    }
+            }).addOnFailureListener(exception -> {
+                if (exception instanceof StorageException &&
+                        ((StorageException) exception).getErrorCode() == StorageException.ERROR_OBJECT_NOT_FOUND) {
+                    exsist = false;
                 }
             });
             int color;
             color = Color.WHITE;
-            snackbar = Snackbar.make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_INDEFINITE);
+            snackbar = Snackbar.make(findViewById(android.R.id.content), R.string.uploading, Snackbar.LENGTH_SHORT);
             View sbView = snackbar.getView();
             TextView textView = sbView.findViewById(R.id.snackbar_text);
             textView.setTextColor(color);
@@ -659,7 +602,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     if (!task.isSuccessful()) {
                         throw task.getException();
                     }
-
+                    isbilled = true;
                     return sRef.getDownloadUrl();
                 }
             }).addOnCompleteListener(new OnCompleteListener<Uri>() {
@@ -671,9 +614,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                                 .child(String.valueOf(myOrder.orderId)).child("facture").setValue(String.valueOf(task.getResult()));
                         int color;
                         color = Color.WHITE;
-                        snackbar = Snackbar
-                                .make(findViewById(android.R.id.content), "Bill uploaded ", Snackbar.LENGTH_INDEFINITE);
-
+                        snackbar = Snackbar.make(findViewById(android.R.id.content), "Bill uploaded ", Snackbar.LENGTH_SHORT);
                         View sbView = snackbar.getView();
                         TextView textView = sbView.findViewById(R.id.snackbar_text);
                         textView.setTextColor(color);
@@ -683,7 +624,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                         int color;
                         color = Color.WHITE;
                         snackbar = Snackbar
-                                .make(findViewById(android.R.id.content), R.string.erroruploading, Snackbar.LENGTH_INDEFINITE);
+                                .make(findViewById(android.R.id.content), R.string.erroruploading, Snackbar.LENGTH_SHORT);
 
                         View sbView = snackbar.getView();
                         TextView textView = sbView.findViewById(R.id.snackbar_text);
@@ -700,26 +641,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
 
     }
 
-    private void updateWalet(int i) {
-//        WALET.setValue(i);
-        wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @RequiresApi(api = Build.VERSION_CODES.N)
-            @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                balance = wal_bal;
-                WALET.setValue(Integer.sum(balance, i));
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private File createImageFile() throws IOException {
+    File createImageFile() throws IOException {
         String timeStamp =
                 new SimpleDateFormat("yyyyMMdd_HHmmss",
                         Locale.getDefault()).format(new Date());
@@ -736,7 +658,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         return image;
     }
 
-    private void chooseImage() {
+    void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
@@ -748,18 +670,19 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         try {
             address = geocoder.getFromLocation(lat, lng, 1).get(0);
             String add = "";
-            /*
-            add = add + address.getAddressLine(0);
-            add = add + "\n" + address.getCountryName();
-            add = add + "\n" + address.getCountryCode();
-            add = add + "\n" + address.getAdminArea();
-            add = add + "\n" + address.getPostalCode();
-            add = add + "\n" + address.getSubAdminArea();
-            */
+//
+//            add = add + address.getAddressLine(0);
+//            add = add + "\n" + address.getCountryName();
+//            add = add + "\n" + address.getCountryCode();
+//            add = add + "\n" + address.getAdminArea();
+//            add = add + "\n" + address.getPostalCode();
+//            add = add + "\n" + address.getSubAdminArea();
+
             add = add + address.getLocality() + "," + address.getSubLocality(); //City
 
             //add = add + "\n" + address.getSubThoroughfare();
-            Toast.makeText(DelivererOrderDetailActivity.this, add, Toast.LENGTH_LONG).show();
+//            Toast.makeText(DelivererOrderDetailActivity.this, add, Toast.LENGTH_LONG).show();
+//            Toast.makeText(DelivererOrderDetailActivity.this, add, Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             // TODO Auto-generated catch block //NON-NLS
             e.printStackTrace();
@@ -767,10 +690,6 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         }
     } //NON-NLS
 
-    private void updateOrderPrice(double v) {
-        root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("final_price").setValue(v);
-
-    }
 
     void getLatAndLong() {
         if (ActivityCompat.checkSelfPermission(this,
@@ -820,11 +739,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             @Override
             public void onFailure(@NonNull Exception e) {
                 if (e instanceof ResolvableApiException) {
-                    // Location settings are not satisfied, but this can be fixed
-                    // by showing the user a dialog.
+
                     try {
-                        // Show the dialog by calling startResolutionForResult(),
-                        // and check the result in onActivityResult().
+
                         ResolvableApiException resolvable = (ResolvableApiException) e;
                         resolvable.startResolutionForResult(DelivererOrderDetailActivity.this,
                                 REQUEST_CHECK_SETTINGS); //NON-NLS
@@ -841,7 +758,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK || requestCode == CAMERA_REQUEST && data != null && data.getData() != null) {
 
-
+            isbilled = true;
             Dialog builder1 = new Dialog(this);
             builder1.create();
             builder1.setContentView(R.layout.imgdialo);
@@ -858,58 +775,30 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                     factureplaceholder.setImageURI(data.getData());
                 }
 
-                btn1.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //cin
-                        if ((requestCode == CAMERA_REQUEST)) {
-                            if (isCin) {
-                                // if (!(data == null || data.getData() == null)) {
-                                uploadCin(photoURI);
-//                                a.setImageURI(data.getData());
-                                isCin = false;
-                                builder1.dismiss();
+                btn1.setOnClickListener(v -> {
+                    //cin
+                    if ((requestCode == CAMERA_REQUEST) && isbilled) {
 
-                                // }
-                                //commit to dev
-                            }
-                            if (isProfile) {
-                                //   if (!(data == null || data.getData() == null)) {
-                                uploadCin(photoURI);
-//                                a.setImageURI(photoURI);
-                                isProfile = false;
-                                builder1.dismiss();
-                                // }
-                            }
-
-                        }
-                        if (requestCode == PICK_IMAGE_REQUEST) {
-                            if (isCin) {
-                                uploadCin(data.getData());
-//                                a.setImageURI(photoURI);
-                                isCin = false;
-
-                                builder1.dismiss();
-
-                            }
-                            if (isProfile) {
-                                uploadCin(data.getData());
-//                                a.setImageURI(data.getData());
-                                builder1.dismiss();
-                                isProfile = false;
-
-                            }
-                        }
-
-
-                    }
-                });
-                btn2.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+                        uploadCin(photoURI);
                         builder1.dismiss();
+
+                        // }
+                        //commit to dev
+
+
                     }
+                    if ((requestCode == PICK_IMAGE_REQUEST) && isbilled) {
+
+                        uploadCin(data.getData());
+
+                        builder1.dismiss();
+
+
+                    }
+
+
                 });
+                btn2.setOnClickListener(v -> builder1.dismiss());
 
 
             });
@@ -1037,13 +926,16 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
         CheckConnectivityMain.getInstance().setConnectivityListener(DelivererOrderDetailActivity.this);
     }
 
-    Double getDistanceBetween(LatLng latLon1, LatLng latLon2) {
+    float Deliverychargemethod(LatLng latLon1, LatLng latLon2) {
         if (latLon1 == null || latLon2 == null)
-            return null;
+            return -1;
         float[] result = new float[1];
         Location.distanceBetween(latLon1.latitude, latLon1.longitude,
                 latLon2.latitude, latLon2.longitude, result);
-        return (double) result[0];
+
+
+        return (float) ((result[0]) * 0.0012);
+
     }
 
     @Override

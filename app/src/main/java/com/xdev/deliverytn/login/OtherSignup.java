@@ -143,7 +143,6 @@ public class OtherSignup extends AppCompatActivity implements ConnectivityReceiv
                         // address.getLocality()+","+address.getSubLocality()+","+address.getThoroughfare()
 //            Toast.makeText(getBaseContext(), add, Toast.LENGTH_LONG).show();
                     } catch (IOException e) {
-                        // TODO Auto-generated catch block
                         e.printStackTrace();
                         Toast.makeText(OtherSignup.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }

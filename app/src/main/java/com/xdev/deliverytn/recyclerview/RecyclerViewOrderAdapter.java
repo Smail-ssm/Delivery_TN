@@ -31,6 +31,8 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.xdev.deliverytn.R.string.canNotCancle;
+
 public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHolder> {
 
     private static final int PENDING_REMOVAL_TIMEOUT = 1500; // 3sec
@@ -102,12 +104,12 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
             TextDrawable drawable = TextDrawable.builder().buildRound(status, Color.parseColor(getColor(status)));
             holder.imageView.setImageDrawable(drawable);
             //primary color
-            drawable = TextDrawable.builder().buildRoundRect("TND" + price, Color.parseColor("#5D4037"), 20);
+            drawable = TextDrawable.builder().buildRoundRect("TND:" + price, Color.parseColor("#5D4037"), 20);
             holder.displayPrice.setImageDrawable(drawable);
-            drawable = TextDrawable.builder().beginConfig().textColor(Color.WHITE).endConfig().buildRound("TND" + charge, Color.BLACK);
+            drawable = TextDrawable.builder().buildRoundRect("TND: " + charge, Color.BLACK, 20);
             holder.displayCharge.setImageDrawable(drawable);
 
-//todo work on location dleveiryyyy
+
         }
 
     }
@@ -168,7 +170,7 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
                 if (curr_status.equals("PENDING"))
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(orderId)).child("status").setValue("CANCELLED");
                 else {
-                    Toast.makeText(context, "Can not cancel , this order is active", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, canNotCancle, Toast.LENGTH_LONG).show();
                 }
 
             }

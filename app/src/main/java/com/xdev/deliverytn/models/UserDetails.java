@@ -22,7 +22,7 @@ public class UserDetails {
 
     private String accountstatue;
 
-    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, float rate, float ratenumber, String accountstatue) {
+    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, String accountstatue, float rate, float ratenumber) {
         this.usertype = usertype;
         Mobile = mobile;
         this.cin = cin;
@@ -41,9 +41,9 @@ public class UserDetails {
         this.role = role;
         this.zip = zip;
         this.uid = uid;
+        this.accountstatue = accountstatue;
         this.rate = rate;
         this.ratenumber = ratenumber;
-        this.accountstatue = accountstatue;
     }
 
     public String getAccountstatue() {

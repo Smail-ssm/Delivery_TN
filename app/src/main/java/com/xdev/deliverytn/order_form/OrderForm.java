@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Address;
 import android.location.Geocoder;
+import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -119,11 +120,15 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
+    private int finaldeliverycharge;
+    private LatLng l1, l2;
+
     @Override
     public boolean onSupportNavigateUp() {
         onBackPressed();
         return true;
     }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -285,8 +290,6 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 final String order_category = category.getText().toString();
                 final String order_min_range = min_int_range.getText().toString();
                 final String order_max_range = max_int_range.getText().toString();
-
-
                 if (expiryDate == null || expiryTime == null || userLocation == null || order_description.equals("") || order_category.equals("None") || order_min_range.equals("") || order_max_range.equals("")) {
                     new AlertDialog.Builder(OrderForm.this)
                             .setMessage(getString(R.string.dialog_save))
@@ -300,9 +303,23 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     showSnack(false);
                 } else {
 //                    calc = new DeliveryChargeCalculater(Integer.parseInt(order_max_range));
-                    delivery_charge.setText("-");
-                    price.setText(R.string.tnd + max_int_range.getText().toString());
-                    total_charge.setText(R.string.updat);
+                    l1 = new LatLng(deliverylocation.Latl, deliverylocation.Lonl);
+                    l2 = new LatLng(userLocation.Lat, userLocation.Lon);
+                    float deliveryCH = (Deliverychargemethod(l1, l2));
+                    String doubleAsString = String.valueOf(deliveryCH);
+                    int indexOfDecimal = doubleAsString.indexOf(".");
+                    System.out.println("Double Number: " + deliveryCH);
+                    System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
+                    System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
+                    if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
+                        finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal))) + 1;
+                    } else {
+                        finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
+                    }
+                    String priceo = max_int_range.getText().toString();
+                    delivery_charge.setText("TND " + finaldeliverycharge);
+                    price.setText(R.string.tnd + priceo);
+                    total_charge.setText(max_int_range.getText().toString() + finaldeliverycharge);
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
@@ -614,7 +631,19 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         time = new Time(0, 0, System.currentTimeMillis() / 1000);
         DatabaseReference deliveryApp = root.child("deliveryApp");
         deliveryApp.keepSynced(true);
-
+//        l1 = new LatLng(order.deliverylocation.Latl, order.deliverylocation.Lonl);
+//        l2 = new LatLng(order.userLocation.Lat, order.userLocation.Lon);
+//        float deliveryCH = (Deliverychargemethod(l1, l2));
+//        String doubleAsString = String.valueOf(deliveryCH);
+//        int indexOfDecimal = doubleAsString.indexOf(".");
+//        System.out.println("Double Number: " + deliveryCH);
+//        System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
+//        System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
+//        if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
+//            finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal))) + 1;
+//        } else {
+//            finaldeliverycharge=(Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
+//        }
         deliveryApp.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -622,30 +651,44 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     root.child("deliveryApp").child("totalOrders").setValue(1);
                     OrderNumber = 1;
                     order_id = OrderNumber;
-
-                    order = new OrderData(order_category, order_description, order_id, Integer.parseInt(order_min_range), Integer.parseInt(order_min_range), "",
-                            userLocation, expiryDate, expiryTime, "PENDING", 0, acceptedBy, userId, otp, final_price, deliverylocation
-                    );
-                    orderweb = new OrderWeb(
-                            order.category,
-                            order.description,
-                            order.userId,
-                            order.status,
-                            order.otp,
-                            order.orderId,
-                            order.min_range,
-                            order.max_range,
-                            order.final_price,
-                            order.deliveryCharge,
-                            order.userLocation,
-                            order.expiryDate,
-                            order.expiryTime,
-                            order.acceptedBy,
-                            client,
-                            time,
-                            deliverer);
+                    order = new OrderData(
+                            order_category,
+                            order_description,
+                            order_id,
+                            Integer.parseInt(order_min_range),
+                            Integer.parseInt(order_min_range),
+                            "",
+                            userLocation,
+                            expiryDate,
+                            expiryTime,
+                            "PENDING",
+                            finaldeliverycharge,
+                            acceptedBy,
+                            userId,
+                            otp,
+                            final_price,
+                            deliverylocation);
+                    /*
+//                    orderweb = new OrderWeb(
+//                            order.category,
+//                            order.description,
+//                            order.userId,
+//                            order.status,
+//                            order.otp,
+//                            order.orderId,
+//                            order.min_range,
+//                            order.max_range,
+//                            order.final_price,
+//                            order.deliveryCharge,
+//                            order.userLocation,
+//                            order.expiryDate,
+//                            order.expiryTime,
+//                            order.acceptedBy,
+//                            client,
+//                            time,
+//                            deliverer);
+                    */
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-
                     root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
                 } else {
                     OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
@@ -661,30 +704,30 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                             expiryDate,
                             expiryTime,
                             "PENDING",
-                            0,
+                            finaldeliverycharge,
                             acceptedBy,
                             userId,
                             otp,
                             final_price, deliverylocation);
 
-                    orderweb = new OrderWeb(
-                            order.category,
-                            order.description,
-                            order.userId,
-                            order.status,
-                            order.otp,
-                            order.orderId,
-                            order.min_range,
-                            order.max_range,
-                            order.final_price,
-                            order.deliveryCharge,
-                            order.userLocation,
-                            order.expiryDate,
-                            order.expiryTime,
-                            order.acceptedBy,
-                            client,
-                            time,
-                            deliverer);
+//                    orderweb = new OrderWeb(
+//                            order.category,
+//                            order.description,
+//                            order.userId,
+//                            order.status,
+//                            order.otp,
+//                            order.orderId,
+//                            order.min_range,
+//                            order.max_range,
+//                            order.final_price,
+//                            order.deliveryCharge,
+//                            order.userLocation,
+//                            order.expiryDate,
+//                            order.expiryTime,
+//                            order.acceptedBy,
+//                            client,
+//                            time,
+//                            deliverer);
                     root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
                     root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
                     root.child("web").child("totalOrders").setValue(OrderNumber);
@@ -703,6 +746,18 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
         return true;
 //    Log.d("RESPONSE",inResponse.toString());
+
+    }
+
+    float Deliverychargemethod(LatLng latLon1, LatLng latLon2) {
+        if (latLon1 == null || latLon2 == null)
+            return -1;
+        float[] result = new float[1];
+        Location.distanceBetween(latLon1.latitude, latLon1.longitude,
+                latLon2.latitude, latLon2.longitude, result);
+
+
+        return (float) ((result[0]) * 0.0012);
 
     }
 
