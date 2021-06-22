@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +23,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -53,6 +56,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
     private UserDetails userDetails = new UserDetails();
     private UserDetails delevirerdetails = new UserDetails();
     private DatabaseReference deliveryApp;
+    private RatingBar mRatingBar;
 
     public UserOrderDetailActivity() {
         myOrder = null;
@@ -71,6 +75,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         checkConnection();
+        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
 
         TextView category = findViewById(R.id.category);
         TextView description = findViewById(R.id.description);
@@ -208,28 +213,13 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
                         .show();
             }
         });
-        userDetails.getRate();
-        Button rankBtn = findViewById(R.id.ratebutton);
 //        rankBtn.setOnClickListener(new View.OnClickListener() {
 //            public void onClick(View v) {
 //                Dialog rankDialog = new Dialog(UserOrderDetailActivity.this, R.style.FullHeightDialog);
 //                rankDialog.setContentView(R.layout.rank_dialog);
 //                rankDialog.setCancelable(true);
 //                RatingBar ratingBar = rankDialog.findViewById(R.id.ratingbar);
-//                DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
-//                ratingRef.addValueEventListener(new ValueEventListener() {
-//                    @Override
-//                    public void onDataChange(DataSnapshot dataSnapshot) {
-//                        if (dataSnapshot != null && dataSnapshot.getValue() != null) {
-//                            float rating = Float.parseFloat(dataSnapshot.getValue().toString());
-//                            ratingBar.setRating(rating);
-//                        }
-//                    }
 //
-//                    @Override
-//                    public void onCancelled(DatabaseError databaseError) {
-//                    }
-//                });
 //                Button updateButton = rankDialog.findViewById(R.id.rank_dialog_button);
 //
 //                DatabaseReference rate = ratingRef.child("rate");
@@ -328,7 +318,39 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             }
         }
         expiryTime_Time.setText(time);
+        mRatingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
 
+            DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
+            ratingRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int ratingSum = 0;
+                    float ratingsTotal = 0;
+                    float ratingsAvg = 0;
+//                    for (DataSnapshot child : dataSnapshot.child("rate").getChildren()) {
+                        ratingSum = ratingSum + Integer.valueOf(dataSnapshot.child("rate").getValue().toString());
+                        ratingsTotal++;
+//                    }
+                    if (ratingsTotal != 0) {
+                        ratingsAvg = ratingSum / ratingsTotal;
+                        mRatingBar.setRating(ratingsAvg);
+                        ratingRef.child("rate").setValue(ratingsAvg).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(UserOrderDetailActivity.this, "rate successfull", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                    mRatingBar.setRating(ratingsAvg);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                }
+            });
+
+        });
     }
 
 
@@ -341,6 +363,17 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 delevirerdetails = dataSnapshot.getValue(UserDetails.class);
+                int ratingSum = 0;
+                float ratingsTotal = 0;
+                float ratingsAvg = 0;
+                for (DataSnapshot child : dataSnapshot.child("rating").getChildren()) {
+                    ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
+                    ratingsTotal++;
+                }
+                if (ratingsTotal != 0) {
+                    ratingsAvg = ratingSum / ratingsTotal;
+                    mRatingBar.setRating(ratingsAvg);
+                }
             }
 
             @Override
@@ -359,9 +392,9 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                userDetails = dataSnapshot.getValue(UserDetails.class);
-                userName.setText(userDetails.getLast() + "" + userDetails.getFirst());
-                userPhoneNumber.setText(userDetails.getMobile());
+//                userDetails = dataSnapshot.getValue(UserDetails.class);
+                userName.setText(dataSnapshot.child("last").getValue(String.class) + "" + dataSnapshot.child("first").getValue(String.class));
+                userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));
             }
 
             @Override

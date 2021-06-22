@@ -45,6 +45,8 @@ import com.amulyakhare.textdrawable.TextDrawable;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
@@ -167,6 +169,7 @@ public class payments extends AppCompatActivity {
     private payment payment;
     private EditText paymentvalue;
     private String paymentmethod;
+    private Uri downloadUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -194,14 +197,15 @@ public class payments extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 p = dataSnapshot.getValue(UserDetails.class);
-                if (dataSnapshot.child("topay") != null) {
-                    if ((dataSnapshot.child("topay").getValue(Integer.class)) != 0) {
+                int topay=Integer.parseInt(dataSnapshot.child("topay").getValue(String.class));
 
-                        totalToPay.setText((String.valueOf(dataSnapshot.child("topay").getValue(Integer.class))));
-                        totalernings.setText((String.valueOf(dataSnapshot.child("wallet").getValue(Integer.class))));
+                    if (topay != 0) {
+                        totalToPay.setText((String.valueOf(topay)));
+//                        totalernings.setText((dataSnapshot.child("wallet").getValue(String.class)).toString());
 
                     }
-                }
+                totalernings.setText((dataSnapshot.child("wallet").getValue(String.class)).toString());
+
             }
 
             @Override
@@ -220,51 +224,60 @@ public class payments extends AppCompatActivity {
         confirmpayment.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                curentuserspaimnets = allpaiments.child(mAuth.getCurrentUser().getUid());
-                curentuserspaimnets.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        if (!dataSnapshot.hasChild("paymentNumber")) {
-                            curentuserspaimnets.child("totalpayments").setValue(1);
-                            paymentnumber = 1;
-                            paymentid = paymentnumber;
-                            payment = new payment();
-                            payment.setPayID(paymentid + "_" + p.getUid() + "_" + p.getCin());
-                            payment.setUserID(p.getUid());
-                            payment.setTransfertnumber(transfertnumber.getEditableText().toString());
-                            payment.setPaymentmethod(paymentmethod);
-                            payment.setSendername(p.getFirst() + p.getLast());
-                            payment.setCin(p.getCin());
-                            payment.setPaymentfacture("downloaduri");
-                            payment.setValue(paymentvalue.getEditableText().toString());
-                            payment.setYear(Integer.parseInt(items[2]));
-                            payment.setMonth(Integer.parseInt(items[1]));
-                            payment.setDay(Integer.parseInt(items[0]));
-                            payment.setHour(Integer.parseInt(items[3]));
-                            payment.setMinute(Integer.parseInt(items[4]));
-                            payment.setTimeStamp(time);
-                            root.child("deliveryApp").child("users").child(mAuth.getCurrentUser().getUid()).child("payments").child(Integer.toString(paymentnumber)).setValue(payment);
+                if(downloadUri==null){
+                    Toast.makeText(payments.this, "add bill plz", Toast.LENGTH_SHORT).show();
+                }else{
+                    curentuserspaimnets = allpaiments.child(mAuth.getCurrentUser().getUid());
+                    curentuserspaimnets.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            if (!dataSnapshot.hasChild("paymentNumber")) {
+                                curentuserspaimnets.child("totalpayments").setValue(1);
+                                paymentnumber = 1;
+                                paymentid = paymentnumber;
+                                payment = new payment();
+                                payment.setPayID(paymentid + "_" + p.getUid() + "_" + p.getCin());
+                                payment.setUserID(p.getUid());
+                                payment.setTransfertnumber(transfertnumber.getEditableText().toString());
+                                payment.setPaymentmethod(paymentmethod);
+                                payment.setSendername(p.getFirst() + p.getLast());
+                                payment.setCin(p.getCin());
+                                payment.setPaymentfacture("downloaduri");
+                                payment.setValue(paymentvalue.getEditableText().toString());
+                                payment.setYear(Integer.parseInt(items[2]));
+                                payment.setMonth(Integer.parseInt(items[1]));
+                                payment.setDay(Integer.parseInt(items[0]));
+                                payment.setHour(Integer.parseInt(items[3]));
+                                payment.setMinute(Integer.parseInt(items[4]));
+                                payment.setTimeStamp(time);
+                                root.child("deliveryApp").child("users").child(mAuth.getCurrentUser().getUid()).child("payments").child(Integer.toString(paymentnumber)).setValue(payment).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull  Task<Void> task) {
+                                        showSnacks("upload successfull");
+                                    }
+                                });
+
 
 //                            root.child("web").child("orders").child(Integer.toString(paymentnumber)).setValue(orderweb);
-                        } else {
-                            paymentnumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
-                            paymentnumber++;
-                            paymentid = paymentnumber;
-                            payment = new payment();
-                            payment.setPayID(paymentid + "_" + p.getUid() + "_" + p.getCin());
-                            payment.setUserID(p.getUid());
-                            payment.setTransfertnumber(transfertnumber.getEditableText().toString());
-                            payment.setPaymentmethod(paymentmethod);
-                            payment.setSendername(p.getFirst() + p.getLast());
-                            payment.setCin(p.getCin());
-                            payment.setPaymentfacture("downloaduri");
-                            payment.setValue(paymentvalue.getEditableText().toString());
-                            payment.setYear(Integer.parseInt(items[2]));
-                            payment.setMonth(Integer.parseInt(items[1]));
-                            payment.setDay(Integer.parseInt(items[0]));
-                            payment.setHour(Integer.parseInt(items[3]));
-                            payment.setMinute(Integer.parseInt(items[4]));
-                            payment.setTimeStamp(time);
+                            } else {
+                                paymentnumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
+                                paymentnumber++;
+                                paymentid = paymentnumber;
+                                payment = new payment();
+                                payment.setPayID(paymentid + "_" + p.getUid() + "_" + p.getCin());
+                                payment.setUserID(p.getUid());
+                                payment.setTransfertnumber(transfertnumber.getEditableText().toString());
+                                payment.setPaymentmethod(paymentmethod);
+                                payment.setSendername(p.getFirst() + p.getLast());
+                                payment.setCin(p.getCin());
+                                payment.setPaymentfacture(downloadUri.toString());
+                                payment.setValue(paymentvalue.getEditableText().toString());
+                                payment.setYear(Integer.parseInt(items[2]));
+                                payment.setMonth(Integer.parseInt(items[1]));
+                                payment.setDay(Integer.parseInt(items[0]));
+                                payment.setHour(Integer.parseInt(items[3]));
+                                payment.setMinute(Integer.parseInt(items[4]));
+                                payment.setTimeStamp(time);
 
 //                            orderweb = new OrderWeb(
 //                                    order.category,
@@ -284,21 +297,23 @@ public class payments extends AppCompatActivity {
 //                                    client,
 //                                    time,
 //                                    deliverer);
-                            curentuserspaimnets.child("totalpayments").setValue(paymentnumber);
-                            root.child("deliveryApp").child("users").child(mAuth.getCurrentUser().getUid()).child("payments").child(Integer.toString(paymentnumber)).setValue(payment);
-                            root.child("web").child("totalOrders").setValue(paymentnumber);
+                                curentuserspaimnets.child("totalpayments").setValue(paymentnumber);
+                                root.child("deliveryApp").child("users").child(mAuth.getCurrentUser().getUid()).child("payments").child(Integer.toString(paymentnumber)).setValue(payment).addOnCompleteListener(task -> showSnacks("upload successfull"));
+                                root.child("web").child("totalOrders").setValue(paymentnumber).addOnCompleteListener(task -> showSnacks("upload successfull"));
 
 //                            root.child("web").child("orders").child(Integer.toString(paymentnumber)).setValue(orderweb);
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
 
-                    }
+                        }
 
 
-                });
+                    });
+                }
+                
             }
         });
         totalernings = findViewById(R.id.totalernings);
@@ -461,7 +476,7 @@ public class payments extends AppCompatActivity {
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
                                 imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
-                                int wallet = userDetails.getWallet();
+                                int wallet = Integer.parseInt(userDetails.getWallet());
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
@@ -623,8 +638,8 @@ public class payments extends AppCompatActivity {
                 return sRef.getDownloadUrl();
             }).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Uri downloadUri = task.getResult();
-                    Toast.makeText(payments.this, String.valueOf(downloadUri), Toast.LENGTH_SHORT).show();
+                     downloadUri = task.getResult();
+//                    Toast.makeText(payments.this, String.valueOf(downloadUri), Toast.LENGTH_SHORT).show();
                     snackbar.dismiss();
                     showSnacks(getString(R.string.Doneprofile));
                     Picasso.get().load(downloadUri).into(factureimage);

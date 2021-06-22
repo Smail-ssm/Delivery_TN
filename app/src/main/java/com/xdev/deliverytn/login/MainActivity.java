@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
@@ -137,6 +138,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("UseCompatLoadingForDrawables")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -172,7 +174,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         String currentDate = sdf.format(myCalendar.getTime());
 
 //selcted_day name
-        SimpleDateFormat sdf_ = new SimpleDateFormat("YYYY");
+        SimpleDateFormat sdf_ = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            sdf_ = new SimpleDateFormat("YYYY");
+        }
         String dayofweek = sdf_.format(myCalendar.getTime());
 
         if (dayofweek.equalsIgnoreCase("Saturday") || dayofweek.equalsIgnoreCase("Sunday") || dayofweek.equalsIgnoreCase("monday")) {
@@ -263,16 +268,15 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 if (!(usertypo.isEmpty())) {
                     if (usertypo.equalsIgnoreCase("deliverer")) {
                         findViewById(R.id.ordererCard).setVisibility(View.GONE);
-                        if (dataSnapshot.child("topay") != null) {
-                            if ((dataSnapshot.child("topay").getValue(Integer.class)) == 0) {
+                        if (!(dataSnapshot.child("topay").exists())) {
+                            if ((dataSnapshot.child("topay").getValue(String.class)) == "0") {
                                 earningss.setText("0");
                                 userinfo.child("topay").setValue(0);
-                                return;
-                            } else {
-                                int t = dataSnapshot.child("topay").getValue(Integer.class);
-                                earningss.setText("to pay: " + (t) + " TND.");
-
                             }
+                        }else {
+//                                int t = dataSnapshot.child("topay").getValue(String.class);
+                            earningss.setText("to pay: " + dataSnapshot.child("topay").getValue(String.class) + " TND.");
+
                         }
 
                     }
@@ -491,9 +495,10 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                 forUserData.keepSynced(true);
                 forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        UserDetails userDetails = dataSnapshot.getValue(UserDetails.class);
-                        String type = userDetails.usertype;
+                    public void onDataChange(DataSnapshot
+                                                     dataSnapshot) {
+//                        UserDetails userDetails = dataSnapshot.getValue(UserDetails.class);
+                        String type = dataSnapshot.child("usertype").getValue(String.class);
                         if (!(type.isEmpty())) {
                             if (type.equalsIgnoreCase("deliverer")) {
                                 findViewById(R.id.delivererCard).setVisibility(View.VISIBLE);

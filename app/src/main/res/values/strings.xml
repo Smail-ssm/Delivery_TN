@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
     <string name="app_name" translatable="false">Bin Idik</string>
-    <string name="facebook_app_id">917436472133344</string>
-    <string name="fb_login_protocol_scheme">fb917436472133344</string>
+    <string name="facebook_app_id">1147627782414601</string>
+    <string name="fb_login_protocol_scheme">fb1147627782414601</string>
     <string name="action_sign_in_short">Register</string>
     <string name="email">Email</string>
     <string name="minimum_password">Password too short, enter minimum 6 characters!</string>

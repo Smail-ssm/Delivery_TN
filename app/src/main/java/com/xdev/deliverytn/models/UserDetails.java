@@ -2,10 +2,11 @@ package com.xdev.deliverytn.models;
 
 public class UserDetails {
     public String usertype;
+    String topay;
     private String Mobile;
     private String cin;
     private String email;
-    private int wallet;
+    private String wallet;
     private String playerId;
     private String address;
     private String birth;
@@ -19,11 +20,13 @@ public class UserDetails {
     private String role;
     private String zip;
     private String uid;
-
     private String accountstatue;
+    private String rate;
+    private String ratenumber;
 
-    public UserDetails(String usertype, String mobile, String cin, String email, int wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, String accountstatue, float rate, float ratenumber) {
+    public UserDetails(String usertype, String topay, String mobile, String cin, String email, String wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, String accountstatue, String rate, String ratenumber) {
         this.usertype = usertype;
+        this.topay = topay;
         Mobile = mobile;
         this.cin = cin;
         this.email = email;
@@ -46,15 +49,33 @@ public class UserDetails {
         this.ratenumber = ratenumber;
     }
 
+    public UserDetails() {
+
+    }
+
+    public String getTopay() {
+        return topay;
+    }
+
+    public void setTopay(String topay) {
+        this.topay = topay;
+    }
+
     public String getAccountstatue() {
         return accountstatue;
+    }
+
+    public void setAccountstatue(String accountstatue) {
+        this.accountstatue = accountstatue;
     }
 
     public String getUsertype() {
         return usertype;
     }
 
-    private float rate;
+    public void setUsertype(String usertype) {
+        this.usertype = usertype;
+    }
 
     public String getMobile() {
         return Mobile;
@@ -80,11 +101,11 @@ public class UserDetails {
         this.email = email;
     }
 
-    public int getWallet() {
+    public String getWallet() {
         return wallet;
     }
 
-    public void setWallet(int wallet) {
+    public void setWallet(String wallet) {
         this.wallet = wallet;
     }
 
@@ -144,12 +165,6 @@ public class UserDetails {
         this.first = first;
     }
 
-    private float ratenumber;
-
-    public void setAccountstatue(String accountstatue) {
-        this.accountstatue = accountstatue;
-    }
-
     public String getGender() {
         return gender;
     }
@@ -182,27 +197,19 @@ public class UserDetails {
         this.zip = zip;
     }
 
-    public UserDetails() {
-
-    }
-
-    public void setUsertype(String usertype) {
-        this.usertype = usertype;
-    }
-
-    public float getRate() {
+    public String getRate() {
         return rate;
     }
 
-    public void setRate(float rate) {
+    public void setRate(String rate) {
         this.rate = rate;
     }
 
-    public float getRatenumber() {
+    public String getRatenumber() {
         return ratenumber;
     }
 
-    public void setRatenumber(float ratenumber) {
+    public void setRatenumber(String ratenumber) {
         this.ratenumber = ratenumber;
     }
 

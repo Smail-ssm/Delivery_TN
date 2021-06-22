@@ -425,7 +425,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
                                 imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
-                                int wallet = userDetails.getWallet();
+                                int wallet = Integer.parseInt(userDetails.getWallet());
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);

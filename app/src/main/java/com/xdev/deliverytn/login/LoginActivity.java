@@ -248,7 +248,6 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             FirebaseUser user = auth.getCurrentUser();
-
                             userId = user.getUid();
                             root = FirebaseDatabase.getInstance().getReference();
                             database_users = root.child("deliveryApp").child("users");

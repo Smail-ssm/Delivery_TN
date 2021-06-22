@@ -318,8 +318,8 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     }
                     String priceo = max_int_range.getText().toString();
                     delivery_charge.setText("TND " + finaldeliverycharge);
-                    price.setText(R.string.tnd + priceo);
-                    total_charge.setText(max_int_range.getText().toString() + finaldeliverycharge);
+                    price.setText(priceo);
+                    total_charge.setText(String.valueOf(Integer.parseInt(max_int_range.getText().toString()) + finaldeliverycharge));
                     mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
                 }
             }
@@ -617,7 +617,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 cu = dataSnapshot.getValue(UserDetails.class);
-                client = new Client(cu.getDisplayName(), cu.getMobile(), cu.getEmail(), cu.getProfile(), userId);
+                client = new Client(dataSnapshot.child("displayName").getValue(String.class), dataSnapshot.child("mobile").getValue(String.class), dataSnapshot.child("email").getValue(String.class),dataSnapshot.child("profile").getValue(String.class), userId);
 
             }
 

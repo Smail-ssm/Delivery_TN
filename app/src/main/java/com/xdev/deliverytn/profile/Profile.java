@@ -156,7 +156,7 @@ public class Profile extends AppCompatActivity {
                 birth.setText(userDetails.getBirth());
                 mobile.setText(userDetails.getMobile());
                 rate.setText(String.valueOf(userDetails.getRate()));
-                ratenumber.setText(String.valueOf(userDetails.getRatenumber()));
+                ratenumber.setText(String.valueOf(userDetails.getRate()));
                 addresss.setText(userDetails.getAddress());
 
 

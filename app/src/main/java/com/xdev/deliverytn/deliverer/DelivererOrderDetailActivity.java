@@ -298,9 +298,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
             @SuppressLint("SetTextI18n")
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                userDetails = dataSnapshot.getValue(UserDetails.class);
-                userName.setText(userDetails.getLast() + "" + userDetails.getFirst());
-                userPhoneNumber.setText(userDetails.getMobile());
+//            UserDetails    userDetai = dataSnapshot.child("usertype")(UserDetails.class);
+                userName.setText(dataSnapshot.child("last").getValue(String.class) + "" + dataSnapshot.child("first").getValue(String.class));
+                userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));
             }
 
             @Override
@@ -429,8 +429,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                                    balance = wal_bal;
+                                    float wal_bal = dataSnapshot.getValue(Float.class);
+                                    balance = Integer.parseInt(String.valueOf(wal_bal));
                                     wallet_ref.setValue(balance -
                                             (myOrder.max_range +
                                                     finaldeliverycharge));
@@ -494,8 +494,8 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                                    balance = wal_bal;
+                                    String wal_bal = dataSnapshot.getValue(String.class);
+                                    balance = Integer.parseInt(wal_bal);
                                     wallet_ref.setValue(balance + (myOrder.max_range + finaldeliverycharge));
                                 }
 

@@ -177,12 +177,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:fontFamily="sans-serif-black"
-                        android:lineSpacingExtra="12sp"
-                        android:text="15dt"
+                        android:text=""
                         android:textColor="#FF0000"
                         android:textSize="18sp"
-                        android:textStyle="italic"
-                        android:typeface="monospace"
                         app:layout_constraintStart_toStartOf="@+id/profile_image"
                         app:layout_constraintTop_toBottomOf="@+id/username" />
 
