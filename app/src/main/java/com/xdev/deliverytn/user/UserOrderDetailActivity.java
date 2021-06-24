@@ -48,13 +48,16 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
 
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+    private final UserDetails userDetails = new UserDetails();
+    private final UserDetails delevirerdetails = new UserDetails();
     Button acceptedBy;
+    Button savernk;
     OrderData myOrder;
+    float ratingsAvg = 0;
+    float ratingsTotal;
     private TextView userName;
     private TextView userPhoneNumber;
     private String deliverer_details;
-    private UserDetails userDetails = new UserDetails();
-    private UserDetails delevirerdetails = new UserDetails();
     private DatabaseReference deliveryApp;
     private RatingBar mRatingBar;
 
@@ -75,8 +78,8 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
         checkConnection();
-        mRatingBar = (RatingBar) findViewById(R.id.ratingBar);
-
+        mRatingBar = findViewById(R.id.ratingBar);
+        savernk = findViewById(R.id.savernk);
         TextView category = findViewById(R.id.category);
         TextView description = findViewById(R.id.description);
         TextView orderId = findViewById(R.id.orderId);
@@ -95,7 +98,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         TextView status = findViewById(R.id.status);
         TextView otp_h = findViewById(R.id.otp_h);
         TextView otp = findViewById(R.id.otp);
-
+savernk.setEnabled(false);
         FloatingActionButton fab = findViewById(R.id.fab);
 
         // Show the Up button in the action bar.
@@ -293,7 +296,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             date = myOrder.expiryDate.day + "/" + myOrder.expiryDate.month + "/" + myOrder.expiryDate.year;
         }
         expiryTime_Date.setText(date);
-
+        mRatingBar.setNumStars(5);
 
         String time;
         if (myOrder.expiryTime.hour == -1) {
@@ -318,41 +321,64 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             }
         }
         expiryTime_Time.setText(time);
+        DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
+        DatabaseReference ratingnumber = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
+        ratingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                mRatingBar.setRating(Float.parseFloat(dataSnapshot.child("rate").getValue().toString()));
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+            }
+        });
         mRatingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-
-            DatabaseReference ratingRef = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID);
-            ratingRef.addValueEventListener(new ValueEventListener() {
+            savernk.setEnabled(true);
+            Toast.makeText(this, "Click the button to save your rank ", Toast.LENGTH_SHORT).show();
+            savernk.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    int ratingSum = 0;
-                    float ratingsTotal = 0;
-                    float ratingsAvg = 0;
-//                    for (DataSnapshot child : dataSnapshot.child("rate").getChildren()) {
-                        ratingSum = ratingSum + Integer.valueOf(dataSnapshot.child("rate").getValue().toString());
-                        ratingsTotal++;
-//                    }
-                    if (ratingsTotal != 0) {
-                        ratingsAvg = ratingSum / ratingsTotal;
-                        mRatingBar.setRating(ratingsAvg);
-                        ratingRef.child("rate").setValue(ratingsAvg).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                Toast.makeText(UserOrderDetailActivity.this, "rate successfull", Toast.LENGTH_SHORT).show();
+                public void onClick(View v) {
+                    ratingnumber.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            ratingsTotal = Float.parseFloat(dataSnapshot.child("ratenumber").getValue().toString());
+                            ratingnumber.child("ratenumber").setValue(String.valueOf((ratingsTotal++)));
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    ratingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            float ratingSum = 0;
+
+                            ratingSum = rating + Float.parseFloat(dataSnapshot.child("rate").getValue().toString());
+                            ratingsTotal++;
+                            if (ratingsTotal != 0) {
+                                ratingsAvg = ratingSum / ratingsTotal;
                             }
-                        });
-                    }
-                    mRatingBar.setRating(ratingsAvg);
+                            mRatingBar.setRating(ratingsAvg);
+                        }
 
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                        }
+                    });
+                    ratingRef.child("rate").setValue(String.valueOf(ratingsAvg)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            Toast.makeText(UserOrderDetailActivity.this, "rate successfully", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 }
             });
 
+
         });
     }
-
 
 
     void fetchDelivererdetail() {
@@ -362,18 +388,8 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                delevirerdetails = dataSnapshot.getValue(UserDetails.class);
-                int ratingSum = 0;
-                float ratingsTotal = 0;
-                float ratingsAvg = 0;
-                for (DataSnapshot child : dataSnapshot.child("rating").getChildren()) {
-                    ratingSum = ratingSum + Integer.valueOf(child.getValue().toString());
-                    ratingsTotal++;
-                }
-                if (ratingsTotal != 0) {
-                    ratingsAvg = ratingSum / ratingsTotal;
-                    mRatingBar.setRating(ratingsAvg);
-                }
+//                delevirerdetails = dataSnapshot.getValue(UserDetails.class);
+
             }
 
             @Override
@@ -393,7 +409,7 @@ public class UserOrderDetailActivity extends AppCompatActivity implements Connec
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 //                userDetails = dataSnapshot.getValue(UserDetails.class);
-                userName.setText(dataSnapshot.child("last").getValue(String.class) + "" + dataSnapshot.child("first").getValue(String.class));
+                userName.setText(dataSnapshot.child("last").getValue(String.class) + " " + dataSnapshot.child("first").getValue(String.class));
                 userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));
             }
 

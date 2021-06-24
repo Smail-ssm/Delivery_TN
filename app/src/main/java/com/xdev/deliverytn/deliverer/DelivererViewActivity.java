@@ -420,17 +420,19 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                userDetails = dataSnapshot.getValue(UserDetails.class);
                                 mHeaderView = navigationView.getHeaderView(0);
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
-                                textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
                                 imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
-                                int wallet = Integer.parseInt(userDetails.getWallet());
+                                textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
+//                                int wallet = Integer.parseInt(dataSnapshot.child("wallet").getValue(Long.class) );
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
-                                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
+                                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(String.valueOf(dataSnapshot.child("wallet").getValue(Long.class)), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
-                                textViewUserName.setText(userDetails.getFirst() + " " + userDetails.getLast());
-                                textViewEmail.setText(userDetails.getEmail());
+
+//                                userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));
+                                textViewUserName.setText(dataSnapshot.child("last").getValue(String.class) + "" + dataSnapshot.child("first").getValue(String.class));
+                                textViewEmail.setText(dataSnapshot.child("email").getValue(String.class) );
+//                                String photoUrl = dataSnapshot.child("profile").getValue(String.class) ;
 //                                String photoUrl = userDetails.getCinPhoto();
                                 try {
                                     Picasso.get()
