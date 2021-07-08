@@ -66,7 +66,6 @@ import com.xdev.deliverytn.check_connectivity.CheckConnectivityMain;
 import com.xdev.deliverytn.check_connectivity.ConnectivityReceiver;
 import com.xdev.deliverytn.deliverer.DelivererViewActivity;
 import com.xdev.deliverytn.models.ReclamationObject;
-import com.xdev.deliverytn.models.UserDetails;
 import com.xdev.deliverytn.payments;
 import com.xdev.deliverytn.profile.Profile;
 import com.xdev.deliverytn.reclamations.createReclamation;
@@ -181,7 +180,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         String dayofweek = sdf_.format(myCalendar.getTime());
 
         if (dayofweek.equalsIgnoreCase("Saturday") || dayofweek.equalsIgnoreCase("Sunday") || dayofweek.equalsIgnoreCase("monday")) {
-            earningss.setVisibility(View.VISIBLE);
+        earningss.setVisibility(View.VISIBLE);
         }
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();
@@ -241,8 +240,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 name = dataSnapshot.child("first").getValue(String.class) + " , " + dataSnapshot.child("last").getValue(String.class);
-                if (dataSnapshot.child("accountstatue").getValue(String.class)
-                        .equalsIgnoreCase("enabled")) {
+                if (dataSnapshot.child("accountstatue").getValue(String.class).equalsIgnoreCase("enabled")) {
 
                     findViewById(R.id.alert1).setVisibility(View.INVISIBLE);
                     findViewById(R.id.alert2).setVisibility(View.INVISIBLE);
@@ -273,12 +271,26 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                                 earningss.setText("0");
                                 userinfo.child("topay").setValue(0);
                             }
-                        }else {
-//                                int t = dataSnapshot.child("topay").getValue(String.class);
+                        } else {
+
                             earningss.setText("to pay: " + dataSnapshot.child("topay").getValue(String.class) + " TND.");
 
                         }
 
+                    }
+                    if (Integer.parseInt((dataSnapshot.child("topay").getValue(String.class))) >= 10) {
+                        mainGrid.setClickable(false);
+                        mainGrid.setBackgroundColor(Color.RED);
+                        mainGrid.setVisibility(View.GONE);
+                        findViewById(R.id.alert1).setVisibility(View.VISIBLE);
+                        findViewById(R.id.alert2).setVisibility(View.VISIBLE);
+                        accountStatue.setText(R.string.unlock);
+                        accountStatue.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(MainActivity.this, payments.class));
+                            }
+                        });
                     }
                     if (dataSnapshot.child("usertype").getValue(String.class).equalsIgnoreCase("orderer")) {
                         findViewById(R.id.delivererCard).setVisibility(View.GONE);

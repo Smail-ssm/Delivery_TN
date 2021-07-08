@@ -321,10 +321,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                 }
                 mPreviousMenuItem = menuItem;// close drawer when item is tapped
                 mDrawerLayout.closeDrawers();
-
                 int id = menuItem.getItemId();
-
-
                 if (id == R.id.sign_out_deliverer) {
                     Toast.makeText(DelivererViewActivity.this, logoutsuccsess, Toast.LENGTH_LONG).show();
                     signOut();
