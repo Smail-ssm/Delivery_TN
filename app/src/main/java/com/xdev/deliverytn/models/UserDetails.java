@@ -2,11 +2,11 @@ package com.xdev.deliverytn.models;
 
 public class UserDetails {
     public String usertype;
-    String topay;
+    float topay;
     private String Mobile;
     private String cin;
     private String email;
-    private String wallet;
+    private float wallet;
     private String playerId;
     private String address;
     private String birth;
@@ -24,49 +24,9 @@ public class UserDetails {
     private String rate;
     private String ratenumber;
 
-    public UserDetails(String usertype, String topay, String mobile, String cin, String email, String wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, String accountstatue, String rate, String ratenumber) {
-        this.usertype = usertype;
-        this.topay = topay;
-        Mobile = mobile;
-        this.cin = cin;
-        this.email = email;
-        this.wallet = wallet;
-        this.playerId = playerId;
-        this.address = address;
-        this.birth = birth;
-        this.cinPhoto = cinPhoto;
-        this.profile = profile;
-        this.city = city;
-        this.first = first;
-        this.displayName = displayName;
-        this.gender = gender;
-        this.last = last;
-        this.role = role;
-        this.zip = zip;
-        this.uid = uid;
-        this.accountstatue = accountstatue;
-        this.rate = rate;
-        this.ratenumber = ratenumber;
-    }
 
     public UserDetails() {
 
-    }
-
-    public String getTopay() {
-        return topay;
-    }
-
-    public void setTopay(String topay) {
-        this.topay = topay;
-    }
-
-    public String getAccountstatue() {
-        return accountstatue;
-    }
-
-    public void setAccountstatue(String accountstatue) {
-        this.accountstatue = accountstatue;
     }
 
     public String getUsertype() {
@@ -75,6 +35,14 @@ public class UserDetails {
 
     public void setUsertype(String usertype) {
         this.usertype = usertype;
+    }
+
+    public float getTopay() {
+        return topay;
+    }
+
+    public void setTopay(float topay) {
+        this.topay = topay;
     }
 
     public String getMobile() {
@@ -101,11 +69,11 @@ public class UserDetails {
         this.email = email;
     }
 
-    public String getWallet() {
+    public float getWallet() {
         return wallet;
     }
 
-    public void setWallet(String wallet) {
+    public void setWallet(float wallet) {
         this.wallet = wallet;
     }
 
@@ -165,6 +133,14 @@ public class UserDetails {
         this.first = first;
     }
 
+    public String getDisplayName() {
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
     public String getGender() {
         return gender;
     }
@@ -197,6 +173,22 @@ public class UserDetails {
         this.zip = zip;
     }
 
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getAccountstatue() {
+        return accountstatue;
+    }
+
+    public void setAccountstatue(String accountstatue) {
+        this.accountstatue = accountstatue;
+    }
+
     public String getRate() {
         return rate;
     }
@@ -213,20 +205,28 @@ public class UserDetails {
         this.ratenumber = ratenumber;
     }
 
-    public String getDisplayName() {
-        return displayName;
-    }
-
-    public void setDisplayName(String displayName) {
+    public UserDetails(String usertype, float topay, String mobile, String cin, String email, float wallet, String playerId, String address, String birth, String cinPhoto, String profile, String city, String first, String displayName, String gender, String last, String role, String zip, String uid, String accountstatue, String rate, String ratenumber) {
+        this.usertype = usertype;
+        this.topay = topay;
+        Mobile = mobile;
+        this.cin = cin;
+        this.email = email;
+        this.wallet = wallet;
+        this.playerId = playerId;
+        this.address = address;
+        this.birth = birth;
+        this.cinPhoto = cinPhoto;
+        this.profile = profile;
+        this.city = city;
+        this.first = first;
         this.displayName = displayName;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String uid) {
+        this.gender = gender;
+        this.last = last;
+        this.role = role;
+        this.zip = zip;
         this.uid = uid;
+        this.accountstatue = accountstatue;
+        this.rate = rate;
+        this.ratenumber = ratenumber;
     }
-
 }

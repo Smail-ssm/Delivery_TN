@@ -197,14 +197,14 @@ public class payments extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 p = dataSnapshot.getValue(UserDetails.class);
-                int topay=Integer.parseInt(dataSnapshot.child("topay").getValue(String.class));
+                Float topay=dataSnapshot.child("topay").getValue(Float.class);
 
                     if (topay != 0) {
                         totalToPay.setText((String.valueOf(topay)));
 //                        totalernings.setText((dataSnapshot.child("wallet").getValue(String.class)).toString());
 
                     }
-                totalernings.setText((dataSnapshot.child("wallet").getValue(String.class)).toString());
+                totalernings.setText(String.valueOf(dataSnapshot.child("wallet").getValue(Float.class)));
 
             }
 
@@ -476,7 +476,7 @@ public class payments extends AppCompatActivity {
                                 textViewUserName = mHeaderView.findViewById(R.id.headerUserName);
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
                                 imageViewUserImage = mHeaderView.findViewById(R.id.imageViewUserImage);
-                                int wallet = Integer.parseInt(userDetails.getWallet());
+                                int wallet = Integer.parseInt(String.valueOf(userDetails.getWallet()));
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
                                 TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
@@ -505,7 +505,7 @@ public class payments extends AppCompatActivity {
                             if (address != null) {
                                 currentLocation.setText(address.getLocality());
                             } else {
-                                currentLocation.setText("can't get current adresss");
+                                currentLocation.setText("can't get current adress");
                             }
                         }
                     }

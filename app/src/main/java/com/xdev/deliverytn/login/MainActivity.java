@@ -273,12 +273,12 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
                             }
                         } else {
 
-                            earningss.setText("to pay: " + dataSnapshot.child("topay").getValue(String.class) + " TND.");
+                            earningss.setText("to pay :" + dataSnapshot.child("topay").getValue(Float.class) + " TND.");
 
                         }
 
                     }
-                    if (Integer.parseInt((dataSnapshot.child("topay").getValue(String.class))) >= 10) {
+                    if ((dataSnapshot.child("topay").getValue(Float.class)) >= 10) {
                         mainGrid.setClickable(false);
                         mainGrid.setBackgroundColor(Color.RED);
                         mainGrid.setVisibility(View.GONE);

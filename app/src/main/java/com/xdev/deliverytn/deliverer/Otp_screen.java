@@ -296,9 +296,7 @@ public class Otp_screen extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                             Integer wal_bal = dataSnapshot.getValue(Integer.class);
                             balance = wal_bal;
-                            topay_ref.setValue(
-                                    balance +
-                                            ((myOrder.deliveryCharge * 30) / 100));
+                            topay_ref.setValue(balance + ((myOrder.deliveryCharge * 30) / 100));
 
                         }
 
@@ -372,7 +370,6 @@ public class Otp_screen extends AppCompatActivity {
 
         Snackbar snackbar = Snackbar
                 .make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-
         View sbView = snackbar.getView();
         TextView textView = sbView.findViewById(R.id.snackbar_text);
         textView.setTextColor(color);

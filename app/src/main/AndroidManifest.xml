@@ -116,7 +116,7 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:parentActivityName=".user.UserViewActivity" />
         <activity
-            android:name=".login.OtherSignup"
+            android:name=".login.Othersignup"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="title_other_signup" />
         <activity

@@ -423,7 +423,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
                                 textViewEmail = mHeaderView.findViewById(R.id.headerUserEmail);
 //                                int wallet = Integer.parseInt(dataSnapshot.child("wallet").getValue(Long.class) );
                                 ImageView walletBalance = mHeaderView.findViewById(R.id.walletBalance);
-                                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(String.valueOf(dataSnapshot.child("wallet").getValue(Long.class)), Color.WHITE, 100);
+                                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(String.valueOf(dataSnapshot.child("wallet").getValue(Float.class)), Color.WHITE, 100);
                                 walletBalance.setImageDrawable(drawable);
 
 //                                userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));

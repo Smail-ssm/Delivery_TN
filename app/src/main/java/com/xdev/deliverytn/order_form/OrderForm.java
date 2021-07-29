@@ -617,10 +617,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 cu = dataSnapshot.getValue(UserDetails.class);
-                client = new Client(dataSnapshot.child("displayName").getValue(String.class), dataSnapshot.child("mobile").getValue(String.class), dataSnapshot.child("email").getValue(String.class),dataSnapshot.child("profile").getValue(String.class), userId);
-
-            }
-
+                client = new Client(dataSnapshot.child("displayName").getValue(String.class), dataSnapshot.child("mobile").getValue(String.class), dataSnapshot.child("email").getValue(String.class),dataSnapshot.child("profile").getValue(String.class), userId);            }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 

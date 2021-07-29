@@ -429,7 +429,7 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    float wal_bal = dataSnapshot.getValue(Float.class);
+                                    float wal_bal = Float.parseFloat(dataSnapshot.getValue(String.class));
                                     balance = Integer.parseInt(String.valueOf(wal_bal));
                                     wallet_ref.setValue(balance -
                                             (myOrder.max_range +

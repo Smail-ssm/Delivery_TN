@@ -56,7 +56,10 @@ public class chatRooms extends AppCompatActivity {
         swipe.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                arrayAdapter.clear();
+                if (arrayAdapter.getCount()!=0){
+                    arrayAdapter.clear();
+                }
+
                 getrooms();
                 swipe.setRefreshing(false);
             }

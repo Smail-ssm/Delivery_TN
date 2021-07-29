@@ -256,7 +256,7 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (!dataSnapshot.hasChild(userId)) {
-                                        Intent intent = new Intent(LoginActivity.this, OtherSignup.class);
+                                        Intent intent = new Intent(LoginActivity.this, Othersignup.class);
                                         intent.putExtra("username", user_name);
                                         intent.putExtra("email", user_email);
                                         intent.putExtra("fb", token);
@@ -363,22 +363,23 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     if (!dataSnapshot.hasChild(userId)) {
-                                        Intent intent = new Intent(LoginActivity.this, OtherSignup.class);
-                                        intent.putExtra("username", user_name);
-                                        intent.putExtra("email", user_email);
-                                        intent.putExtra("account", account);
-                                        intent.putExtra("currentuser", user);
-
-                                        startActivity(intent);
+                                        Intent i = new Intent(LoginActivity.this, Othersignup.class);
+//                                        Bundle bundle = new Bundle();
+                                        i.putExtra("user", user_name);
+                                        i.putExtra("email", user_email);
+                                        i.putExtra("account", account);
+                                        i.putExtra("currentuser", user);
+                                        startActivity(i);
 
                                     } else {
                                         btnLogin.revertAnimation();
 
                                         Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                        Toast.makeText(LoginActivity.this, loggedsucc, Toast.LENGTH_SHORT).show();
                                         startActivity(intent);
+
                                     }
                                     progressBar.setVisibility(View.GONE);
-                                    finish();
                                 }
 
                                 @Override
@@ -386,7 +387,6 @@ public class LoginActivity extends AppCompatActivity implements ConnectivityRece
 
                                 }
                             });
-                            Toast.makeText(LoginActivity.this, loggedsucc, Toast.LENGTH_SHORT).show();
                         } else {
                             progressBar.setVisibility(View.GONE);
                             // If sign in fails, display a message to the user.

@@ -120,7 +120,8 @@ public class Profile extends AppCompatActivity {
         forUserData.keepSynced(true);
         forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
+            public void onDataChange(DataSnapshot
+                                             dataSnapshot) {
                 userDetails = dataSnapshot.getValue(UserDetails.class);
 //                mHeaderView = navigationView.getHeaderView(0);
                 forUserData.child("profile").addValueEventListener(new ValueEventListener() {
@@ -146,9 +147,9 @@ public class Profile extends AppCompatActivity {
 //                profilei.setImageBitmap(loadImageFromStorage("cin"));
                 textViewUserName = findViewById(R.id.headerUserName);
                 textViewEmail = findViewById(R.id.headerUserEmail);
-                Integer wallet = Integer.valueOf(userDetails.getWallet());
+                float wallet =  userDetails.getWallet();
                 ImageView walletBalance = findViewById(R.id.walletBalance);
-                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Integer.toString(wallet), Color.WHITE, 100);
+                TextDrawable drawable = TextDrawable.builder().beginConfig().textColor(Color.BLACK).bold().endConfig().buildRoundRect(Float.toString(wallet), Color.WHITE, 100);
                 walletBalance.setImageDrawable(drawable);
                 textViewUserName.setText(userDetails.getLast() + "" + userDetails.getFirst());
                 textViewEmail.setText(userDetails.getEmail());

@@ -272,7 +272,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setMobile(mobile.getText().toString());
                                         u.setCin(cin);
                                         u.setEmail(email.getText().toString());
-                                        u.setWallet("1000");
+                                        u.setWallet(1000);
                                         u.setAddress(address.getText().toString());
                                         u.setBirth((String) datn.getText());
                                         u.setCinPhoto("noPhoto");
@@ -284,7 +284,7 @@ public class SignupActivity extends AppCompatActivity implements ConnectivityRec
                                         u.setRole("null");
                                         u.setProfile("nophoto");
                                         u.setRate("0");
-                                        u.setTopay("0");
+                                        u.setTopay(0);
                                         u.setUsertype("");
                                         u.setAccountstatue("enabled");
                                         u.setDisplayName(first.getText().toString() + " " + last.getText().toString());
