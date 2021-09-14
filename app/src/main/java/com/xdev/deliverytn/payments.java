@@ -190,6 +190,7 @@ public class payments extends AppCompatActivity {
         sendername = findViewById(R.id.sendername);
         sendersin = findViewById(R.id.sendersin);
         totalernings = findViewById(R.id.totalernings);
+        totalToPay = findViewById(R.id.totalToPay);
 
 //        root.child("deliveryApp").child("users").child(userId).child("first");
         DatabaseReference userinfo = root.child("deliveryApp").child("users").child(FirebaseAuth.getInstance().getUid());
@@ -202,6 +203,9 @@ public class payments extends AppCompatActivity {
                     if (topay != 0) {
                         totalToPay.setText((String.valueOf(topay)));
 //                        totalernings.setText((dataSnapshot.child("wallet").getValue(String.class)).toString());
+
+                    }else{
+                        totalToPay.setText((String.valueOf(0)));
 
                     }
                 totalernings.setText(String.valueOf(dataSnapshot.child("wallet").getValue(Float.class)));

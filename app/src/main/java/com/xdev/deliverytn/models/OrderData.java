@@ -22,8 +22,8 @@ public class OrderData implements Parcelable {
     public int orderId,
             min_range,
             max_range,
-            final_price,
-            deliveryCharge;
+            final_price;
+      public float     deliveryCharge;
     public double earnings;
     public UserLocation userLocation = new UserLocation();
     public ExpiryDate expiryDate = new ExpiryDate();
@@ -44,7 +44,7 @@ public class OrderData implements Parcelable {
         min_range = in.readInt();
         max_range = in.readInt();
         status = in.readString();
-        deliveryCharge = in.readInt();
+        deliveryCharge = in.readFloat();
         userId = in.readString();
         facture = in.readString();
 
@@ -95,7 +95,7 @@ public class OrderData implements Parcelable {
 
     public OrderData(String category, String description, int orderId, int max_range, int min_range, String facture,
                      UserLocation location, ExpiryDate expiryDate, ExpiryTime expiryTime, String status,
-                     int deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price, com.xdev.deliverytn.models.deliverylocation deliverylocation) {
+                     float deliveryCharge, AcceptedBy acceptedBy, String userId, String otp, int final_price, com.xdev.deliverytn.models.deliverylocation deliverylocation) {
         this.category = category;
         this.description = description;
         this.orderId = orderId;
@@ -130,7 +130,7 @@ public class OrderData implements Parcelable {
         dest.writeInt(min_range);
         dest.writeInt(max_range);
         dest.writeString(status);
-        dest.writeInt(deliveryCharge);
+        dest.writeFloat(deliveryCharge);
         dest.writeString(userId);
         dest.writeString(facture);
 

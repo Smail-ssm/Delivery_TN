@@ -120,7 +120,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
     private int order_id;
     private int value;
     private int userBalance;
-    private int finaldeliverycharge;
+    private float finaldeliverycharge;
     private LatLng l1, l2;
 
     @Override
@@ -312,7 +312,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
                     System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
                     if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
-                        finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal))) + 1;
+                        finaldeliverycharge = (Float.parseFloat(doubleAsString.substring(0, indexOfDecimal))) +(float) 1.2;
                     } else {
                         finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
                     }

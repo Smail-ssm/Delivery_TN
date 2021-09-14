@@ -109,13 +109,13 @@
                         android:padding="20dp"
                         app:initialCornerAngle="27dp" />
 
-                    <com.facebook.login.widget.LoginButton
-                        android:id="@+id/fblogin_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="20dp"
-                        app:initialCornerAngle="27dp" />
+<!--                    <com.facebook.login.widget.LoginButton-->
+<!--                        android:id="@+id/fblogin_button"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_gravity="center_horizontal"-->
+<!--                        android:padding="20dp"-->
+<!--                        app:initialCornerAngle="27dp" />-->
 
 
                     <Button

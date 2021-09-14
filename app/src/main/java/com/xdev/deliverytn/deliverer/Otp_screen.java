@@ -249,12 +249,9 @@ public class Otp_screen extends AppCompatActivity {
             alert11.show();
 
         });
-        SOCEARNINGS = root.child("deliveryApp").child("SOCEARNINGS");
-        SOCEARNINGS.keepSynced(true);
-        topay_ref = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID).child("topay"); //NON-NLS //NON-NLS
-        topay_ref.keepSynced(true);
-        wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
-        wallet_ref.keepSynced(true);
+
+
+
         btn_mark_delivered.setOnClickListener(v -> {
             if (!ConnectivityReceiver.isConnected()) {
                 showSnack(false);
@@ -276,7 +273,8 @@ public class Otp_screen extends AppCompatActivity {
                     });
                     root.child("deliveryApp").child("orders").child(myOrder.userId).child(Integer.toString(myOrder.orderId)).child("status").setValue("FINISHED");
 
-
+                    wallet_ref = root.child("deliveryApp").child("users").child(myOrder.userId).child("wallet");
+                    wallet_ref.keepSynced(true);
                     wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -290,13 +288,20 @@ public class Otp_screen extends AppCompatActivity {
 
                         }
                     });
-
+                    topay_ref = root.child("deliveryApp").child("users").child(myOrder.acceptedBy.delivererID).child("topay"); //NON-NLS //NON-NLS
+                    topay_ref.keepSynced(true);
                     topay_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                            Integer wal_bal = dataSnapshot.getValue(Integer.class);
-                            balance = wal_bal;
-                            topay_ref.setValue(balance + ((myOrder.deliveryCharge * 30) / 100));
+                            if (dataSnapshot.exists()){
+                                Integer wal_bal = dataSnapshot.getValue(Integer.class);
+                                balance = wal_bal;
+                                topay_ref.setValue(balance + ((myOrder.deliveryCharge * 30) / 100));
+                            }else{
+                                topay_ref.setValue(0);
+
+                            }
+
 
                         }
 
@@ -307,7 +312,8 @@ public class Otp_screen extends AppCompatActivity {
                         }
                     });
 
-
+                    SOCEARNINGS = root.child("deliveryApp").child("SOCEARNINGS");
+                    SOCEARNINGS.keepSynced(true);
                     SOCEARNINGS.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

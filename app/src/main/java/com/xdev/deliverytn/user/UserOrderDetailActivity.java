@@ -326,7 +326,10 @@ savernk.setEnabled(false);
         ratingRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                mRatingBar.setRating(Float.parseFloat(dataSnapshot.child("rate").getValue().toString()));
+                if (dataSnapshot.exists()){
+                    mRatingBar.setRating(Float.parseFloat(dataSnapshot.child("rate").getValue().toString()));
+
+                }
             }
 
             @Override
@@ -334,47 +337,58 @@ savernk.setEnabled(false);
             }
         });
         mRatingBar.setOnRatingBarChangeListener((ratingBar, rating, fromUser) -> {
-            savernk.setEnabled(true);
-            Toast.makeText(this, "Click the button to save your rank ", Toast.LENGTH_SHORT).show();
-            savernk.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    ratingnumber.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            ratingsTotal = Float.parseFloat(dataSnapshot.child("ratenumber").getValue().toString());
-                            ratingnumber.child("ratenumber").setValue(String.valueOf((ratingsTotal++)));
-                        }
+            if(ratingnumber.getKey().equals("-")){
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-                    ratingRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            float ratingSum = 0;
+                Toast.makeText(UserOrderDetailActivity.this, "  you can rate after the command is accepted", Toast.LENGTH_SHORT).show();
+            }else{
+                savernk.setEnabled(true);
+                Toast.makeText(this, "Click the button to save your rank ", Toast.LENGTH_SHORT).show();
+                savernk.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ratingnumber.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                if (!(dataSnapshot.child("ratenumber").exists())){
+                                    ratingnumber.child("ratenumber").setValue(String.valueOf((1)));
+                                }else{
+                                    ratingsTotal = Float.parseFloat(dataSnapshot.child("ratenumber").getValue().toString());
+                                    ratingnumber.child("ratenumber").setValue(String.valueOf((ratingsTotal++)));
+                                }
 
-                            ratingSum = rating + Float.parseFloat(dataSnapshot.child("rate").getValue().toString());
-                            ratingsTotal++;
-                            if (ratingsTotal != 0) {
-                                ratingsAvg = ratingSum / ratingsTotal;
                             }
-                            mRatingBar.setRating(ratingsAvg);
-                        }
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                        }
-                    });
-                    ratingRef.child("rate").setValue(String.valueOf(ratingsAvg)).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            Toast.makeText(UserOrderDetailActivity.this, "rate successfully", Toast.LENGTH_SHORT).show();
-                        }
-                    });
-                }
-            });
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        ratingRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                float ratingSum = 0;
+
+                                ratingSum = rating + Float.parseFloat(dataSnapshot.child("rate").getValue().toString());
+                                ratingsTotal++;
+                                if (ratingsTotal != 0) {
+                                    ratingsAvg = ratingSum / ratingsTotal;
+                                }
+                                mRatingBar.setRating(ratingsAvg);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                            }
+                        });
+                        ratingRef.child("rate").setValue(String.valueOf(ratingsAvg)).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Toast.makeText(UserOrderDetailActivity.this, "rate successfully", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    }
+                });
+            }
+
 
 
         });

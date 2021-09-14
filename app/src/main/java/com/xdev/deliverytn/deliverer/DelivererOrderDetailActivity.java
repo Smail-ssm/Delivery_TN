@@ -429,9 +429,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    float wal_bal = Float.parseFloat(dataSnapshot.getValue(String.class));
-                                    balance = Integer.parseInt(String.valueOf(wal_bal));
-                                    wallet_ref.setValue(balance -
+                                    double wal_bal = (double) dataSnapshot.getValue(Float.class);
+//                                    balance = Integer.parseInt(String.valueOf(wal_bal));
+                                    wallet_ref.setValue(wal_bal -
                                             (myOrder.max_range +
                                                     finaldeliverycharge));
                                 }
@@ -494,9 +494,9 @@ public class DelivererOrderDetailActivity extends AppCompatActivity implements C
                             wallet_ref.addListenerForSingleValueEvent(new ValueEventListener() {
                                 @Override
                                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                                    String wal_bal = dataSnapshot.getValue(String.class);
-                                    balance = Integer.parseInt(wal_bal);
-                                    wallet_ref.setValue(balance + (myOrder.max_range + finaldeliverycharge));
+                                    long wal_bal = dataSnapshot.getValue(Long.class);
+//                                    balance = Integer.parseInt(wal_bal);
+                                    wallet_ref.setValue(wal_bal + (myOrder.max_range + finaldeliverycharge));
                                 }
 
                                 @Override

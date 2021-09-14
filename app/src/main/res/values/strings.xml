@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name" translatable="false">Bin Idik</string>
+    <string name="app_name">Bin Idik</string>
     <string name="facebook_app_id">1147627782414601</string>
     <string name="fb_login_protocol_scheme">fb1147627782414601</string>
     <string name="action_sign_in_short">Register</string>
@@ -29,8 +29,8 @@
     <string name="category" tools:ignore="DuplicateDefinition">Category</string>
     <string name="expiry">Set Expiry of order</string>
     <string name="btn_category">None</string>
-    <string name="min_int">Min</string>
-    <string name="max_int">Max</string>
+    <string name="min_int">Minimum</string>
+    <string name="max_int">Maximum</string>
     <string name="main_dialog_date_picker">Date</string>
     <string name="main_dialog_time_picker">Time</string>
     <string name="dialog_save">Please fill all the details!</string>
@@ -39,12 +39,12 @@
     <string name="description" tools:ignore="DuplicateDefinition">Description</string>
     <string name="orderId">order ID</string>
     <string name="status">Status</string>
-    <string name="deliveryCharge">Delivery Charge (incl. service charge):</string>
-    <string name="min_range">Min:</string>
-    <string name="max_range">Max:</string>
+    <string name="deliveryCharge">Delivery Charge (including. service charge):</string>
+    <string name="min_range">Minimum:</string>
+    <string name="max_range">Maximum:</string>
     <string name="userDetails">User Details</string>
     <string name="userName">Name:</string>
-    <string name="userPhoneNumber">Phone No.:</string>
+    <string name="userPhoneNumber">Phone Number.:</string>
     <string name="userLocationName">Place:</string>
     <string name="userLocationLocation">Location:</string>
     <string name="expiryTime">Order Expiry</string>
@@ -86,7 +86,7 @@
     <string name="Confirmpass">Confirm password</string>
     <string name="filedloadingmsgs">Failed to load messages.</string>
     <string name="newmsgs">New Message</string>
-    <string name="commndnumber">Command N° </string>
+    <string name="commndnumber">Command Number° </string>
     <string name="nochatrooms">no rooms</string>
     <string name="chatrooms">Chat rooms</string>
     <string name="coodConnectedTOinternet">Good! Connected to Internet</string>
@@ -188,12 +188,12 @@
     <string name="Doneprofile">"Done ☺ profile "</string>
     <string name="erroruploading">error while uploading</string>
     <string name="NewOrder">New Order</string>
-    <string name="fooda" translatable="false" tools:ignore="DuplicateDefinition">Food</string>
-    <string name="medecine">Medicine</string>
-    <string name="Electronics">Electronics</string>
-    <string name="Toiletries">Toiletries</string>
-    <string name="Books">Books</string>
-    <string name="Clothing">Clothing</string>
+    <string name="fooda" tools:ignore="DuplicateDefinition" translatable="false">Food</string>
+    <string name="medecine" translatable="false">Medicine</string>
+    <string name="Electronics" translatable="false">Electronics</string>
+    <string name="Toiletries" translatable="false">Toiletries</string>
+    <string name="Books" translatable="false">Books</string>
+    <string name="Clothing" translatable="false">Clothing</string>
     <string name="Shoes">Shoes</string>
     <string name="Sports">Sports</string>
     <string name="Games">Games</string>
@@ -211,7 +211,7 @@
     <string name="azaa">Failed to send reset email!</string>
     <string name="aaa">Enter password!</string>
     <string name="azazz">password don\'t match !</string>
-    <string name="title_activity_settings" translatable="false">SettingsActivity</string>
+    <string name="title_activity_settings">SettingsActivity</string>
     <string name="title_activity_create_reclamation">Create Reclamation</string>
     <string name="Chat_rooms">Chat rooms</string>
     <string name="please_set_the_reason_of_reclamation">please set the reason for your reclamation</string>
@@ -263,7 +263,25 @@
     <string name="upload">upload</string>
     <string name="title">Title</string>
     <string name="create_reclamation">Create Reclamation</string>
-    <string name="topay">"To pay "</string>
+    <string name="topay">To pay</string>
     <string name="enabled">enabled</string>
     <string name="unlock">Unlock</string>
+    <string name="settings">Settings</string>
+    <string name="payments">Payments</string>
+    <string name="sign_out">Sign Out</string>
+    <string name="account_settings">Account Settings</string>
+    <string name="finished">Finished</string>
+    <string name="pending">Pending</string>
+    <string name="active">Active</string>
+    <string name="all_orders">All orders</string>
+    <string name="filters">Filters</string>
+    <string name="chat_rooms">Chat rooms</string>
+    <string name="view_as_orderer">View as Orderer</string>
+    <string name="view_as_deliverer">View as Deliverer</string>
+    <string name="chat">Chat</string>
+    <string name="cancelled">Cancelled</string>
+    <string name="expired">Expired</string>
+    <string name="inbox">Inbox</string>
+    <string name="view_profile">View profile</string>
+
 </resources>
