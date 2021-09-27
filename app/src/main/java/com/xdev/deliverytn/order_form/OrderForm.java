@@ -1,6 +1,10 @@
 package com.xdev.deliverytn.order_form;
 
+import static com.xdev.deliverytn.R.string.google_maps_key;
+import static com.xdev.deliverytn.R.string.locationValidation;
+
 import android.Manifest;
+import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
@@ -10,12 +14,10 @@ import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Rect;
 import android.location.Address;
-import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -34,6 +36,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+import com.app.akplacepicker.models.AddressData;
+import com.app.akplacepicker.utilities.Constants;
+import com.app.akplacepicker.utilities.PlacePicker;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -43,8 +48,6 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -74,14 +77,10 @@ import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.models.deliverylocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
-import java.io.IOException;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Locale;
-
-import static com.xdev.deliverytn.R.string.locationValidation;
 
 
 public class OrderForm extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
@@ -180,12 +179,12 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
             public void onClick(View v) {
                 List<String> mcategories = new ArrayList<String>();
                 mcategories.add(getString(R.string.food));
-                mcategories.add(getString(R.string.medecine));
+                mcategories.add(getString(R.string.medcin));
                 mcategories.add(getString(R.string.houshold));
-                mcategories.add(getString(R.string.Electronics));
-                mcategories.add(getString(R.string.Toiletries));
-                mcategories.add(getString(R.string.Books));
-                mcategories.add(getString(R.string.Clothing));
+                mcategories.add(getString(R.string.electronic));
+                mcategories.add(getString(R.string.toileterie));
+                mcategories.add(getString(R.string.books));
+                mcategories.add(getString(R.string.clothing));
                 mcategories.add(getString(R.string.Shoes));
                 mcategories.add(getString(R.string.Sports));
                 mcategories.add(getString(R.string.Games));
@@ -249,13 +248,20 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 if (!ConnectivityReceiver.isConnected()) {
                     showSnack(false);
                 } else {
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(OrderForm.this), PLACE_PICKER_REQUEST);
-
-                    } catch (Exception e) {
-                        Log.e("location error", e.getMessage());
-                    }
+//                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+//                    try {
+//                        startActivityForResult(builder.build(OrderForm.this), PLACE_PICKER_REQUEST);
+//
+//                    } catch (Exception e) {
+//                        Log.e("location error", e.getMessage());
+//                    }
+                    Intent intent = new PlacePicker.IntentBuilder()
+                            .setGoogleMapApiKey(String.valueOf(R.string.google_api_key))
+                            .setMapZoom(19.0f)
+                            .setAddressRequired(true)
+                            .setPrimaryTextColor(R.color.black)
+                            .build(OrderForm.this);
+                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
                 }
             }
         });
@@ -265,13 +271,21 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 if (!ConnectivityReceiver.isConnected()) {
                     showSnack(false);
                 } else {
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(OrderForm.this), DELIVERY_PICKER_REQUEST);
-
-                    } catch (Exception e) {
-                        Log.e("location error", e.getMessage());
-                    }
+//                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+//                    try {
+//                        startActivityForResult(builder.build(OrderForm.this), DELIVERY_PICKER_REQUEST);
+//
+//                    } catch (Exception e) {
+//                        Log.e("location error", e.getMessage());
+//                    }
+                    Intent intent = new PlacePicker.IntentBuilder()
+                            .setGoogleMapApiKey(String.valueOf(google_maps_key))
+//                            .setLatLong(18.520430, 73.856743)
+                            .setMapZoom(19.0f)
+                            .setAddressRequired(true)
+                            .setPrimaryTextColor(R.color.black)
+                            .build(OrderForm.this);
+                    startActivityForResult(intent, DELIVERY_PICKER_REQUEST);
                 }
             }
         });
@@ -281,6 +295,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
         Button btn_proceed = findViewById(R.id.btn_proceed);
         mBottomSheetBehavior.setPeekHeight(0);
         mBottomSheetBehavior.setHideable(true);
+
 
 
         btn_proceed.setOnClickListener(new View.OnClickListener() {
@@ -312,7 +327,7 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
                     System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
                     if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
-                        finaldeliverycharge = (Float.parseFloat(doubleAsString.substring(0, indexOfDecimal))) +(float) 1.2;
+                        finaldeliverycharge = (Float.parseFloat(doubleAsString.substring(0, indexOfDecimal))) + (float) 1.2;
                     } else {
                         finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
                     }
@@ -352,282 +367,261 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 
     }
 
-    void requestLocationPermissions() {
-        if (ActivityCompat.checkSelfPermission(this,
-                Manifest.permission.ACCESS_FINE_LOCATION)
-                != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]
-                            {Manifest.permission.ACCESS_FINE_LOCATION},
-                    REQUEST_LOCATION_PERMISSION);
-        } else {
-            //Toast.makeText(DelivererViewActivity.this, "Location permission granted", Toast.LENGTH_SHORT).show();
-            setGpsOn();
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case REQUEST_LOCATION_PERMISSION:
-                // If the permission is granted, get the location,
-                // otherwise, show a Toast
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    setGpsOn();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == PLACE_PICKER_REQUEST) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
+                AddressData addressData = data.getParcelableExtra(Constants.ADDRESS_INTENT);
+                Toast.makeText(OrderForm.this, data.getParcelableExtra(String.valueOf(addressData.getLatitude()))
+                        , Toast.LENGTH_SHORT).show();  // your code
+                LatLng latLng = new LatLng(addressData.getLatitude(), addressData.getLongitude());
+                List<Address> addresses = addressData.getAddressList();
+                clientLocation = latLng;
+                String addr = addresses.get(0).getAddressLine(0);
+                String city = addresses.get(0).getLocality();
+                String state = addresses.get(0).getAdminArea();
+                String country = addresses.get(0).getCountryName();
+                String postalCode = addresses.get(0).getPostalCode();
+                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+                if (addr.isEmpty()) {
+                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(OrderForm.this, "Location permission Denied", Toast.LENGTH_LONG).show();
+                    LatLng latit = latLng;
+                    userLocation = new UserLocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
+                    user_location.setText(addr);
+
                 }
-                return;
+
+
+            }
         }
-    }
 
-    private LocationRequest getLocationRequest() {
-        LocationRequest locationRequest = new LocationRequest();
-        locationRequest.setInterval(60 * 1000);
-        locationRequest.setFastestInterval(30 * 1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-        return locationRequest;
-    }
+            if (requestCode == DELIVERY_PICKER_REQUEST) {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    AddressData addressData = data.getParcelableExtra(Constants.ADDRESS_INTENT);
+                    Toast.makeText(OrderForm.this, data.getParcelableExtra(String.valueOf(addressData.getLatitude()))
+                            , Toast.LENGTH_SHORT).show();  // your code
+                    LatLng latLng = new LatLng(addressData.getLatitude(), addressData.getLongitude());
+                    List<Address> addresses = addressData.getAddressList();
+                    clientLocation = latLng;
+                    String addr = addresses.get(0).getAddressLine(0);
+                    String city = addresses.get(0).getLocality();
+                    String state = addresses.get(0).getAdminArea();
+                    String country = addresses.get(0).getCountryName();
+                    String postalCode = addresses.get(0).getPostalCode();
+                    String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+                    if (addr.isEmpty()) {
+                        Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
+                    } else {
 
-    void setGpsOn() {
-        LocationRequest mLocationRequest = getLocationRequest();
-
-        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
-                .addLocationRequest(mLocationRequest);
-
-        SettingsClient client = LocationServices.getSettingsClient(this);
-        Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
-
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-
-                if (ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
-                        PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        LatLng latit = latLng;
+                        deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
+                        deliverylocationbtn.setText(addr);
+                    }
+//
+                }
+            }
+            if (requestCode == REQUEST_CHECK_SETTINGS) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                     return;
                 }
                 mFusedLocationClient.requestLocationUpdates
                         (getLocationRequest(), mLocationCallback,
                                 null /* Looper */);
-
             }
-        });
+        }
 
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
+        void requestLocationPermissions () {
+            if (ActivityCompat.checkSelfPermission(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this, new String[]
+                                {Manifest.permission.ACCESS_FINE_LOCATION},
+                        REQUEST_LOCATION_PERMISSION);
+            } else {
+                //Toast.makeText(DelivererViewActivity.this, "Location permission granted", Toast.LENGTH_SHORT).show();
+                setGpsOn();
+            }
+        }
 
-                    try {
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(OrderForm.this,
-                                REQUEST_CHECK_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
+        @Override
+        public void onRequestPermissionsResult ( int requestCode, @NonNull String[] permissions,
+        @NonNull int[] grantResults){
+            //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+            switch (requestCode) {
+                case REQUEST_LOCATION_PERMISSION:
+                    // If the permission is granted, get the location,
+                    // otherwise, show a Toast
+                    if (grantResults.length > 0
+                            && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        setGpsOn();
+                    } else {
+                        Toast.makeText(OrderForm.this, "Location permission Denied", Toast.LENGTH_LONG).show();
+                    }
+                    return;
+            }
+        }
+
+        private LocationRequest getLocationRequest () {
+            LocationRequest locationRequest = new LocationRequest();
+            locationRequest.setInterval(60 * 1000);
+            locationRequest.setFastestInterval(30 * 1000);
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            return locationRequest;
+        }
+
+        void setGpsOn () {
+            LocationRequest mLocationRequest = getLocationRequest();
+
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(mLocationRequest);
+
+            SettingsClient client = LocationServices.getSettingsClient(this);
+            Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
+
+            task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
+                @Override
+                public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
+
+                    if (ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_FINE_LOCATION) !=
+                            PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(OrderForm.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                        return;
+                    }
+                    mFusedLocationClient.requestLocationUpdates
+                            (getLocationRequest(), mLocationCallback,
+                                    null /* Looper */);
+
+                }
+            });
+
+            task.addOnFailureListener(this, new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    if (e instanceof ResolvableApiException) {
+
+                        try {
+                            ResolvableApiException resolvable = (ResolvableApiException) e;
+                            resolvable.startResolutionForResult(OrderForm.this,
+                                    REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException sendEx) {
+                            // Ignore the error.
+                        }
                     }
                 }
-            }
-        });
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(OrderForm.this, data);
-                place.getLatLng();
-                Geocoder geocoder;
-                List<Address> addresses = null;
-                geocoder = new Geocoder(this, Locale.getDefault());
-                LatLng latLng = place.getLatLng();
-                clientLocation = latLng;
-                try {
-                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                String addr = addresses.get(0).getAddressLine(0);
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String postalCode = addresses.get(0).getPostalCode();
-                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-                if (addr.isEmpty()) {
-                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
-                } else {
-                    LatLng latit = place.getLatLng();
-                    userLocation = new UserLocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
-                    user_location.setText(addr);
-                }
-
-                //String toastMsg = String.format("Place: %s", place.getName());
-                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
-            }
-
-
+            });
         }
-        if (requestCode == DELIVERY_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(OrderForm.this, data);
-                place.getLatLng();
-                Geocoder geocoder;
-                List<Address> addresses = null;
-                geocoder = new Geocoder(this, Locale.getDefault());
-                LatLng latLng = place.getLatLng();
-                clientLocation = latLng;
-                try {
-                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
-                String addr = addresses.get(0).getAddressLine(0);
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String postalCode = addresses.get(0).getPostalCode();
-                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-                if (addr.isEmpty()) {
-                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
-                } else {
-                    LatLng latit = place.getLatLng();
-                    deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
-                    deliverylocationbtn.setText(addr);
-                }
 
-                //String toastMsg = String.format("Place: %s", place.getName());
-                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
+        @Override
+        public boolean dispatchTouchEvent (MotionEvent event){
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
+                    Rect outRect = new Rect();
+                    View bottomSheet = findViewById(R.id.confirmation_dialog);
+                    bottomSheet.getGlobalVisibleRect(outRect);
+                    if (!outRect.contains((int) event.getRawX(), (int) event.getRawY()))
+                        mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+                }
+            }
+            return super.dispatchTouchEvent(event);
+        }
+
+
+        @Override
+        public boolean onOptionsItemSelected (MenuItem item){
+
+            int id = item.getItemId();
+
+            if (id == android.R.id.home) {
+
+            }
+            return super.onOptionsItemSelected(item);
+        }
+
+        private void checkConnection () {
+            boolean isConnected = ConnectivityReceiver.isConnected();
+            if (!isConnected)
+                showSnack(isConnected);
+        }
+
+        // Showing the status in Snackbar
+        private void showSnack ( boolean isConnected){
+            String message;
+            int color;
+            if (isConnected) {
+                message = "Good! Connected to Internet";
+                color = Color.WHITE;
+            } else {
+                message = "Sorry! Not connected to internet";
+                color = Color.RED;
             }
 
+            Snackbar snackbar = Snackbar
+                    .make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
 
+            View sbView = snackbar.getView();
+            TextView textView = sbView.findViewById(R.id.snackbar_text);
+            textView.setTextColor(color);
+            snackbar.show();
         }
-        if (requestCode == REQUEST_CHECK_SETTINGS) {
+
+
+        @Override
+        public void onNetworkConnectionChanged ( boolean isConnected){
+            showSnack(isConnected);
+        }
+
+        @Override
+        protected void onResume () {
+            super.onResume();
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
                 return;
             }
             mFusedLocationClient.requestLocationUpdates
                     (getLocationRequest(), mLocationCallback,
                             null /* Looper */);
+            CheckConnectivityMain.getInstance().setConnectivityListener(OrderForm.this);
         }
-    }
 
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent event) {
-        if (event.getAction() == MotionEvent.ACTION_DOWN) {
-            if (mBottomSheetBehavior.getState() == BottomSheetBehavior.STATE_EXPANDED) {
-                Rect outRect = new Rect();
-                View bottomSheet = findViewById(R.id.confirmation_dialog);
-                bottomSheet.getGlobalVisibleRect(outRect);
-                if (!outRect.contains((int) event.getRawX(), (int) event.getRawY()))
-                    mBottomSheetBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
+        @Override
+        protected void onPause () {
+            super.onPause();
+            if (mFusedLocationClient != null) {
+                mFusedLocationClient.removeLocationUpdates(mLocationCallback);
             }
         }
-        return super.dispatchTouchEvent(event);
-    }
 
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+        public Boolean addOrder () {
+            final String order_description = description.getText().toString();
+            final String order_category = category.getText().toString();
+            final String order_min_range = min_int_range.getText().toString();
+            final String order_max_range = max_int_range.getText().toString();
+            flag = 0;
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            userId = user.getUid();
 
-        int id = item.getItemId();
+            DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
+            forUserData.keepSynced(true);
+            forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    cu = dataSnapshot.getValue(UserDetails.class);
+                    client = new Client(dataSnapshot.child("displayName").getValue(String.class), dataSnapshot.child("mobile").getValue(String.class), dataSnapshot.child("email").getValue(String.class), dataSnapshot.child("profile").getValue(String.class), userId);
+                }
 
-        if (id == android.R.id.home) {
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
 
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-    private void checkConnection() {
-        boolean isConnected = ConnectivityReceiver.isConnected();
-        if (!isConnected)
-            showSnack(isConnected);
-    }
-
-    // Showing the status in Snackbar
-    private void showSnack(boolean isConnected) {
-        String message;
-        int color;
-        if (isConnected) {
-            message = "Good! Connected to Internet";
-            color = Color.WHITE;
-        } else {
-            message = "Sorry! Not connected to internet";
-            color = Color.RED;
-        }
-
-        Snackbar snackbar = Snackbar
-                .make(findViewById(android.R.id.content), message, Snackbar.LENGTH_LONG);
-
-        View sbView = snackbar.getView();
-        TextView textView = sbView.findViewById(R.id.snackbar_text);
-        textView.setTextColor(color);
-        snackbar.show();
-    }
-
-
-    @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
-        showSnack(isConnected);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        mFusedLocationClient.requestLocationUpdates
-                (getLocationRequest(), mLocationCallback,
-                        null /* Looper */);
-        CheckConnectivityMain.getInstance().setConnectivityListener(OrderForm.this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mFusedLocationClient != null) {
-            mFusedLocationClient.removeLocationUpdates(mLocationCallback);
-        }
-    }
-
-
-    public Boolean addOrder() {
-        final String order_description = description.getText().toString();
-        final String order_category = category.getText().toString();
-        final String order_min_range = min_int_range.getText().toString();
-        final String order_max_range = max_int_range.getText().toString();
-        flag = 0;
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        userId = user.getUid();
-
-        DatabaseReference forUserData = root.child("deliveryApp").child("users").child(userId);
-        forUserData.keepSynced(true);
-        forUserData.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                cu = dataSnapshot.getValue(UserDetails.class);
-                client = new Client(dataSnapshot.child("displayName").getValue(String.class), dataSnapshot.child("mobile").getValue(String.class), dataSnapshot.child("email").getValue(String.class),dataSnapshot.child("profile").getValue(String.class), userId);            }
-            @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
-
-            }
-        });
-        deliverer = new Deliverer("-", "-", "-", "-", "-");
-        root = FirebaseDatabase.getInstance().getReference();
-        time = new Time(0, 0, System.currentTimeMillis() / 1000);
-        DatabaseReference deliveryApp = root.child("deliveryApp");
-        deliveryApp.keepSynced(true);
+                }
+            });
+            deliverer = new Deliverer("-", "-", "-", "-", "-");
+            root = FirebaseDatabase.getInstance().getReference();
+            time = new Time(0, 0, System.currentTimeMillis() / 1000);
+            DatabaseReference deliveryApp = root.child("deliveryApp");
+            deliveryApp.keepSynced(true);
 //        l1 = new LatLng(order.deliverylocation.Latl, order.deliverylocation.Lonl);
 //        l2 = new LatLng(order.userLocation.Lat, order.userLocation.Lon);
 //        float deliveryCH = (Deliverychargemethod(l1, l2));
@@ -641,30 +635,30 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 //        } else {
 //            finaldeliverycharge=(Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
 //        }
-        deliveryApp.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                if (!dataSnapshot.hasChild("totalOrders")) {
-                    root.child("deliveryApp").child("totalOrders").setValue(1);
-                    OrderNumber = 1;
-                    order_id = OrderNumber;
-                    order = new OrderData(
-                            order_category,
-                            order_description,
-                            order_id,
-                            Integer.parseInt(order_min_range),
-                            Integer.parseInt(order_min_range),
-                            "",
-                            userLocation,
-                            expiryDate,
-                            expiryTime,
-                            "PENDING",
-                            finaldeliverycharge,
-                            acceptedBy,
-                            userId,
-                            otp,
-                            final_price,
-                            deliverylocation);
+            deliveryApp.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    if (!dataSnapshot.hasChild("totalOrders")) {
+                        root.child("deliveryApp").child("totalOrders").setValue(1);
+                        OrderNumber = 1;
+                        order_id = OrderNumber;
+                        order = new OrderData(
+                                order_category,
+                                order_description,
+                                order_id,
+                                Integer.parseInt(order_max_range),
+                                Integer.parseInt(order_min_range),
+                                "",
+                                userLocation,
+                                expiryDate,
+                                expiryTime,
+                                "PENDING",
+                                finaldeliverycharge,
+                                acceptedBy,
+                                userId,
+                                otp,
+                                final_price,
+                                deliverylocation);
                     /*
 //                    orderweb = new OrderWeb(
 //                            order.category,
@@ -685,27 +679,27 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 //                            time,
 //                            deliverer);
                     */
-                    root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
-                } else {
-                    OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
-                    OrderNumber++;
-                    order_id = OrderNumber;
-                    order = new OrderData(order_category,
-                            order_description,
-                            order_id,
-                            Integer.parseInt(order_max_range),
-                            Integer.parseInt(order_min_range),
-                            "",
-                            userLocation,
-                            expiryDate,
-                            expiryTime,
-                            "PENDING",
-                            finaldeliverycharge,
-                            acceptedBy,
-                            userId,
-                            otp,
-                            final_price, deliverylocation);
+                        root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
+                        root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
+                    } else {
+                        OrderNumber = dataSnapshot.child("totalOrders").getValue(Integer.class);
+                        OrderNumber++;
+                        order_id = OrderNumber;
+                        order = new OrderData(order_category,
+                                order_description,
+                                order_id,
+                                Integer.parseInt(order_max_range),
+                                Integer.parseInt(order_min_range),
+                                "",
+                                userLocation,
+                                expiryDate,
+                                expiryTime,
+                                "PENDING",
+                                finaldeliverycharge,
+                                acceptedBy,
+                                userId,
+                                otp,
+                                final_price, deliverylocation);
 
 //                    orderweb = new OrderWeb(
 //                            order.category,
@@ -725,40 +719,40 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
 //                            client,
 //                            time,
 //                            deliverer);
-                    root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
-                    root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
-                    root.child("web").child("totalOrders").setValue(OrderNumber);
+                        root.child("deliveryApp").child("totalOrders").setValue(OrderNumber);
+                        root.child("deliveryApp").child("orders").child(userId).child(Integer.toString(OrderNumber)).setValue(order);
+                        root.child("web").child("totalOrders").setValue(OrderNumber);
 
-                    root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
+                        root.child("web").child("orders").child(Integer.toString(OrderNumber)).setValue(orderweb);
+                    }
+                    UserViewActivity.adapter.insert(0, order);
                 }
-                UserViewActivity.adapter.insert(0, order);
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
 
-            }
-        });
-        finish();
-        Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
-        return true;
+                }
+            });
+            finish();
+            Toast.makeText(getApplicationContext(), " Successful ", Toast.LENGTH_SHORT).show();
+            return true;
 //    Log.d("RESPONSE",inResponse.toString());
 
+        }
+
+        float Deliverychargemethod (LatLng latLon1, LatLng latLon2){
+            if (latLon1 == null || latLon2 == null)
+                return -1;
+            float[] result = new float[1];
+            Location.distanceBetween(latLon1.latitude, latLon1.longitude,
+                    latLon2.latitude, latLon2.longitude, result);
+
+
+            return (float) ((result[0]) * 0.0012);
+
+        }
+
+        private void getcurrentUser (String uid){
+
+        }
     }
-
-    float Deliverychargemethod(LatLng latLon1, LatLng latLon2) {
-        if (latLon1 == null || latLon2 == null)
-            return -1;
-        float[] result = new float[1];
-        Location.distanceBetween(latLon1.latitude, latLon1.longitude,
-                latLon2.latitude, latLon2.longitude, result);
-
-
-        return (float) ((result[0]) * 0.0012);
-
-    }
-
-    private void getcurrentUser(String uid) {
-
-    }
-}

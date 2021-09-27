@@ -110,11 +110,11 @@
     <string name="electronic"> إلكترونيات</string>
     <string name="toileterie"> أدوات النظافة</string>
     <string name="books"> كتب</string>
-<!--    <string name="clothing" tools:ignore="DuplicateDefinition"> ملابس</string>-->
-<!--    <string name="shoes" tools:ignore="DuplicateDefinition"> أحذية</string>-->
-<!--    <string name="sport" tools:ignore="DuplicateDefinition"> رياضات</string>-->
-<!--    <string name="games" tools:ignore="DuplicateDefinition"> ألعاب</string>-->
-<!--    <string name="others" tools:ignore="DuplicateDefinition"> آخرون</string>-->
+    <string name="clothing" tools:ignore="DuplicateDefinition"> ملابس</string>
+    <string name="shoes" tools:ignore="DuplicateDefinition"> أحذية</string>
+    <string name="sport" tools:ignore="DuplicateDefinition"> رياضات</string>
+    <string name="games" tools:ignore="DuplicateDefinition"> ألعاب</string>
+    <string name="others" tools:ignore="DuplicateDefinition"> آخرون</string>
     <string name="choosecategorie"> اختر الفئة</string>
     <string name="mincantbebiggerthanmax"> !لا يمكن أن تكون القيمة الدنيا أكثر من الحد الأقصى للقيمة</string>
     <string name="canteditacceptedorder"> لا يمكن تعديل الأمر المقبول </string>
@@ -132,13 +132,13 @@
     <string name="longclicktoviewimage"> اضغط لفترة طويلة لمشاهدة الصورة</string>
     <string name="choisireimageSource"> اختر مصدر الصورة</string>
     <string name="camera"> كاميرا</string>
-    <string name="gallery"> رواق</string>
+    <string name="gallery">الصور</string>
     <string name="addprofilepic"> إضافة صورة الملف الشخصي</string>
     <string name="logout"> تسجيل خروج ؟</string>
     <string name="addcinpic"> إضافة صورة بطاقة الهوية الوطنية</string>
     <string name="camerapermesiongranted"> تم منح إذن الكاميرا</string>
     <string name="selectpic"> اختر الصورة</string>
-    <string name="rate"> قيم هذا التطبيق</string>
+    <string name="rate">تقييم</string>
     <string name="login"> تسجيل الدخول</string>
     <string name="emailsentto"> :تم إرسال رسالة التحقق إلى </string>
     <string name="faildtosend"> !فشل في إرسال رسالة التحقق</string>
@@ -157,7 +157,7 @@
     <string name="msgcantbeempty"> لا يمكن أن تكون الرسالة فارغة</string>
     <string name="info"> معلومات</string>
     <string name="notification"> إعلام</string>
-    <string name="uploading"> ...تحميل </string>
+    <string name="uploading"> …تحميل </string>
     <string name="donecin">" بطاقة الهوية الوطنية تم "</string>
     <string name="errorwhileuploading"> خطأ أثناء التحميل</string>
     <string name="nofilesemcted"> لم يتم تحديد أي ملف</string>
@@ -187,11 +187,7 @@
     <string name="Doneprofile">"حسابك الشخصي ☺ تم إنشاء "</string>
     <string name="erroruploading"> خطأ أثناء التحميل</string>
     <string name="NewOrder"> طلب جديد</string>
-    <string name="clothing" tools:ignore="DuplicateDefinition"> ملابس</string>
-    <string name="shoes" tools:ignore="DuplicateDefinition"> أحذية</string>
-    <string name="sport" tools:ignore="DuplicateDefinition"> رياضات</string>
-    <string name="games" tools:ignore="DuplicateDefinition"> ألعاب</string>
-    <string name="others" tools:ignore="DuplicateDefinition"> آخرون</string>
+
     <string name="ChooseCategory"> اختر الفئة</string>
     <string name="updat"> سيتم تحديث الرسوم الإجمالية عند قبول الطلب</string>
     <string name="erreemal"> .عنوان البريد الإلكتروني منسق بشكل سيئ</string>
@@ -272,12 +268,13 @@
     <string name="all_orders">جميع الطلبات</string>
     <string name="filters">مرشحات</string>
     <string name="chat_rooms">غرف الدردشة</string>
-    <string name="view_as_orderer">عرض حسب الطلب</string>
-    <string name="view_as_deliverer">عرض كما هو الحال</string>
+    <string name="view_as_orderer">عرض كحريف</string>
+    <string name="view_as_deliverer">عرض كعامل تسليم</string>
     <string name="chat">دردشة</string>
     <string name="cancelled">ألغيت</string>
     <string name="expired">منتهي الصلاحية</string>
     <string name="inbox">صندوق الوارد</string>
     <string name="settings">الاعدادات</string>
     <string name="payments">الدفوعات</string>
+    <string name="view_profile">حسابي</string>
 </resources>

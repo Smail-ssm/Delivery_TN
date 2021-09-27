@@ -90,6 +90,7 @@ public class RecyclerViewOrderAdapter extends RecyclerView.Adapter<OrderViewHold
             status = String.valueOf(order.status.charAt(0));
             price = Integer.toString(order.max_range);
             charge = Float.toString(order.deliveryCharge);
+
             holder.category.setText(order.category);
             setExpiry(order.expiryDate, order.expiryTime);
             String date = DateFormat.getDateInstance(DateFormat.MEDIUM).format(calendar.getTime());

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <string name="app_name">Bin Idik</string>
+    <string name="app_name" translatable="false">Bin Idik</string>
     <string name="facebook_app_id">1147627782414601</string>
     <string name="fb_login_protocol_scheme">fb1147627782414601</string>
     <string name="action_sign_in_short">Register</string>
@@ -188,12 +188,6 @@
     <string name="Doneprofile">"Done ☺ profile "</string>
     <string name="erroruploading">error while uploading</string>
     <string name="NewOrder">New Order</string>
-    <string name="fooda" tools:ignore="DuplicateDefinition" translatable="false">Food</string>
-    <string name="medecine" translatable="false">Medicine</string>
-    <string name="Electronics" translatable="false">Electronics</string>
-    <string name="Toiletries" translatable="false">Toiletries</string>
-    <string name="Books" translatable="false">Books</string>
-    <string name="Clothing" translatable="false">Clothing</string>
     <string name="Shoes">Shoes</string>
     <string name="Sports">Sports</string>
     <string name="Games">Games</string>
@@ -283,5 +277,4 @@
     <string name="expired">Expired</string>
     <string name="inbox">Inbox</string>
     <string name="view_profile">View profile</string>
-
 </resources>

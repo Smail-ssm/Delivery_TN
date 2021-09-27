@@ -1,11 +1,20 @@
 package com.xdev.deliverytn.login;
 
+import static com.xdev.deliverytn.R.string.addcinpic;
+import static com.xdev.deliverytn.R.string.camerapermesiongranted;
+import static com.xdev.deliverytn.R.string.deletedoldpic;
+import static com.xdev.deliverytn.R.string.locationpermessiongranted;
+import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
+import static com.xdev.deliverytn.models.usertype.usertype;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
@@ -18,6 +27,8 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridLayout;
@@ -34,6 +45,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.FileProvider;
+import androidx.preference.PreferenceManager;
 
 import com.facebook.AccessToken;
 import com.facebook.login.LoginManager;
@@ -77,13 +89,6 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
-
-import static com.xdev.deliverytn.R.string.addcinpic;
-import static com.xdev.deliverytn.R.string.camerapermesiongranted;
-import static com.xdev.deliverytn.R.string.deletedoldpic;
-import static com.xdev.deliverytn.R.string.locationpermessiongranted;
-import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.models.usertype.usertype;
 
 public class MainActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
@@ -145,6 +150,42 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         setContentView(R.layout.activity_main);
         TextView username = findViewById(R.id.username);
         TextView earningss = findViewById(R.id.earnings);
+
+        final SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean agreed = sharedPreferences.getBoolean("agreed", false);
+        if (!agreed) {
+
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setTitle("License agreement");
+
+
+            View view = LayoutInflater.from(this).inflate(R.layout.terms, null);
+
+            WebView wv = view.findViewById(R.id.web);
+
+            wv.loadUrl("file:///android_asset/terms.html");
+            wv.setWebViewClient(new WebViewClient() {
+                @Override
+                public boolean shouldOverrideUrlLoading(WebView v, String url) {
+                    v.loadUrl(url);
+                    return true;
+                }
+            });
+
+            alert.setView(view);
+            alert.setCancelable(false);
+            alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putBoolean("agreed", true);
+                    editor.commit();
+                }
+            });
+            alert.create().show();
+        }
+
+
         animation();
         checkConnection();
         requestLocationPermissions();
@@ -180,7 +221,7 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
         String dayofweek = sdf_.format(myCalendar.getTime());
 
         if (dayofweek.equalsIgnoreCase("Saturday") || dayofweek.equalsIgnoreCase("Sunday") || dayofweek.equalsIgnoreCase("monday")) {
-        earningss.setVisibility(View.VISIBLE);
+            earningss.setVisibility(View.VISIBLE);
         }
         storage = FirebaseStorage.getInstance();
         storageReference = storage.getReference();

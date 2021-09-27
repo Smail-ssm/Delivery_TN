@@ -42,7 +42,7 @@
             <item
                 android:id="@+id/pending_user"
                 android:icon="@drawable/ic_pending"
-                android:title="Pending" />
+                android:title="@string/pending" />
 
             <item
                 android:id="@+id/completed_user"

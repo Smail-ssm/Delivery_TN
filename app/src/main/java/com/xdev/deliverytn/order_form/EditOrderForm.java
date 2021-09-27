@@ -28,6 +28,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
+//import com.github.stephenbaidu.placepicker.PlaceDetail;
+//import com.github.stephenbaidu.placepicker.PlacePicker;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -37,8 +39,8 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.location.LocationSettingsResponse;
 import com.google.android.gms.location.SettingsClient;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlacePicker;
+//import com.google.android.gms.location.places.Place;
+//import com.google.android.gms.location.places.ui.PlacePicker;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -71,6 +73,7 @@ import java.util.Locale;
 
 import static com.xdev.deliverytn.R.string.canteditacceptedorder;
 import static com.xdev.deliverytn.R.string.coodConnectedTOinternet;
+import static com.xdev.deliverytn.R.string.google_api_key;
 import static com.xdev.deliverytn.R.string.locationValidation;
 import static com.xdev.deliverytn.R.string.locationpermessiondenied;
 import static com.xdev.deliverytn.R.string.locationpermessiongranted;
@@ -255,12 +258,22 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
                 if (!ConnectivityReceiver.isConnected()) {
                     showSnack(false);
                 } else {
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(EditOrderForm.this), PLACE_PICKER_REQUEST);
-                    } catch (Exception e) {
-                        //  Log.e(TAG, e.getStackTrace().toString());
-                    }
+////                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+////                    try {
+////                        startActivityForResult(builder.build(EditOrderForm.this), PLACE_PICKER_REQUEST);
+////                    } catch (Exception e) {
+////                        //  Log.e(TAG, e.getStackTrace().toString());
+////                    }
+//                    Intent intent = new Intent(EditOrderForm.this, PlacePicker.class);
+//
+//// Set your server api key (required)
+//                    intent.putExtra(PlacePicker.PARAM_API_KEY, google_api_key);
+//
+//// Set extra query in a one line like below
+//                    intent.putExtra(PlacePicker.PARAM_EXTRA_QUERY, "&components=country:gh&types=(cities)");
+//
+//// Then start the intent for result
+//                    startActivityForResult(intent, PLACE_PICKER_REQUEST);
                 }
             }
         });
@@ -330,22 +343,34 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         });
 
 */
-        deliverylocationbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!ConnectivityReceiver.isConnected()) {
-                    showSnack(false);
-                } else {
-                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-                    try {
-                        startActivityForResult(builder.build(EditOrderForm.this), DELIVERY_PICKER_REQUEST);
+//        deliverylocationbtn.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if (!ConnectivityReceiver.isConnected()) {
+//                    showSnack(false);
+//                } else {
+////                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
+////                    try {
+////                        startActivityForResult(builder.build(OrderForm.this), DELIVERY_PICKER_REQUEST);
+////
+////                    } catch (Exception e) {
+////                        Log.e("location error", e.getMessage());
+////                    }
+//                    // Create an intent with `PlacePicker.class`
+//                    Intent intent = new Intent(EditOrderForm.this, PlacePicker.class);
+//
+//// Set your server api key (required)
+//                    intent.putExtra(PlacePicker.PARAM_API_KEY, google_api_key);
+//
+//// Set extra query in a one line like below
+//                    intent.putExtra(PlacePicker.PARAM_EXTRA_QUERY, "&components=country:gh&types=(cities)");
+//
+//// Then start the intent for result
+//                    startActivityForResult(intent, DELIVERY_PICKER_REQUEST);
+//                }
+//            }
+//        });
 
-                    } catch (Exception e) {
-                        Log.e("location error", e.getMessage());
-                    }
-                }
-            }
-        });
         btn_proceed.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -533,81 +558,81 @@ public class EditOrderForm extends AppCompatActivity implements ConnectivityRece
         });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == PLACE_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(EditOrderForm.this, data);
-                place.getLatLng();
-                Geocoder geocoder;
-                List<Address> addresses = null;
-                geocoder = new Geocoder(this, Locale.getDefault());
-                LatLng latLng = place.getLatLng();
-
-                try {
-                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                String addr = addresses.get(0).getAddressLine(0);
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String postalCode = addresses.get(0).getPostalCode();
-                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-                userLocation = new UserLocation(knownName, addr, addresses.get(0).getPhone(), latLng.latitude, latLng.longitude, addr, city, state, country, postalCode);
-                user_location.setText(addr);
-                //String toastMsg = String.format("Place: %s", place.getName());
-                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
-            }
-        }
-        if (requestCode == DELIVERY_PICKER_REQUEST) {
-            if (resultCode == RESULT_OK) {
-                Place place = PlacePicker.getPlace(EditOrderForm.this, data);
-                place.getLatLng();
-                Geocoder geocoder;
-                List<Address> addresses = null;
-                geocoder = new Geocoder(this, Locale.getDefault());
-                LatLng latLng = place.getLatLng();
-                clientLocation = latLng;
-                try {
-                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
-                String addr = addresses.get(0).getAddressLine(0);
-                String city = addresses.get(0).getLocality();
-                String state = addresses.get(0).getAdminArea();
-                String country = addresses.get(0).getCountryName();
-                String postalCode = addresses.get(0).getPostalCode();
-                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
-                if (addr.isEmpty()) {
-                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
-                } else {
-                    LatLng latit = place.getLatLng();
-                    deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
-                    deliverylocationbtn.setText(addr);
-                }
-
-                //String toastMsg = String.format("Place: %s", place.getName());
-                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
-            }
-
-
-        }
-        if (requestCode == REQUEST_CHECK_SETTINGS) {
-
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                return;
-            }
-            mFusedLocationClient.requestLocationUpdates
-                    (getLocationRequest(), mLocationCallback,
-                            null /* Looper */);
-        }
-    }
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//        if (requestCode == PLACE_PICKER_REQUEST) {
+//            if (resultCode == RESULT_OK) {
+//                PlaceDetail placeDetail = PlacePicker.fromIntent(data);
+//                LatLng latLng = new LatLng(placeDetail.latitude,placeDetail.longitude);
+//                Geocoder geocoder;
+//                List<Address> addresses = null;
+//                geocoder = new Geocoder(this, Locale.getDefault());
+////                LatLng latLng = place.getLatLng();
+//
+//                try {
+//                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                String addr = addresses.get(0).getAddressLine(0);
+//                String city = addresses.get(0).getLocality();
+//                String state = addresses.get(0).getAdminArea();
+//                String country = addresses.get(0).getCountryName();
+//                String postalCode = addresses.get(0).getPostalCode();
+//                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+//                userLocation = new UserLocation(knownName, addr, addresses.get(0).getPhone(), latLng.latitude, latLng.longitude, addr, city, state, country, postalCode);
+//                user_location.setText(addr);
+//                //String toastMsg = String.format("Place: %s", place.getName());
+//                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
+//            }
+//        }
+//        if (requestCode == DELIVERY_PICKER_REQUEST) {
+//            if (resultCode == RESULT_OK) {
+//                PlaceDetail placeDetail = PlacePicker.fromIntent(data);
+//                LatLng latLng = new LatLng(placeDetail.latitude,placeDetail.longitude);
+//                Geocoder geocoder;
+//                List<Address> addresses = null;
+//                geocoder = new Geocoder(this, Locale.getDefault());
+////                LatLng latLng = place.getLatLng();
+//                clientLocation = latLng;
+//                try {
+//                    addresses = geocoder.getFromLocation(latLng.latitude, latLng.longitude, 1);
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                String addr = addresses.get(0).getAddressLine(0);
+//                String city = addresses.get(0).getLocality();
+//                String state = addresses.get(0).getAdminArea();
+//                String country = addresses.get(0).getCountryName();
+//                String postalCode = addresses.get(0).getPostalCode();
+//                String knownName = addresses.get(0).getFeatureName(); // Only if available else return NULL
+//                if (addr.isEmpty()) {
+//                    Toast.makeText(this, locationValidation, Toast.LENGTH_SHORT).show();
+//                } else {
+//                    LatLng latit = latLng;
+//                    deliverylocation = new deliverylocation(knownName, addr, addresses.get(0).getPhone(), latit.latitude, latit.longitude, addr, city, state, country, postalCode);
+//                    deliverylocationbtn.setText(addr);
+//                }
+//
+//                //String toastMsg = String.format("Place: %s", place.getName());
+//                //Toast.makeText(EditOrderForm.this, toastMsg, Toast.LENGTH_LONG).show();
+//            }
+//
+//
+//        }
+//        if (requestCode == REQUEST_CHECK_SETTINGS) {
+//
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//
+//                return;
+//            }
+//            mFusedLocationClient.requestLocationUpdates
+//                    (getLocationRequest(), mLocationCallback,
+//                            null /* Looper */);
+//        }
+//    }
 
 
     /*

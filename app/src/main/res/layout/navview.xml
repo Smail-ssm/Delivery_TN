@@ -10,51 +10,45 @@
         <item
             android:id="@+id/use_as_deliverer"
             android:icon="@drawable/ic_deliverer_foreground"
-            android:title="View as Orderer"
-            tools:ignore="HardcodedText" />
+            android:title="@string/view_as_deliverer" />
 
         <item
             android:id="@+id/use_as_user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:icon="@drawable/ic_orderer_new"
-            android:title="View as Orderer"
-            tools:ignore="HardcodedText" />
+            android:title="@string/view_as_orderer" />
 
         <item
             android:id="@+id/profile"
             android:icon="@drawable/ic_baseline_mood_24"
-            android:title="View Profile"
-            tools:ignore="HardcodedText" />
+            android:title="@string/view_profile" />
 
         <item
             android:id="@+id/chatroom"
             android:icon="@drawable/ic_baseline_message_24"
-            android:title="Chat rooms"
-            tools:ignore="HardcodedText" />
+            android:title="@string/chat_rooms" />
     </group>
 
-    <item
-        android:title="Account Settings"
-        tools:ignore="HardcodedText">
+    <item android:title="@string/account_settings">
 
         <menu>
 
             <item
                 android:id="@+id/info"
                 android:icon="@drawable/ic_baseline_info_24"
-                android:title="Inbox" />
+                android:title="@string/inbox" />
 
             <item
                 android:id="@+id/setting"
                 android:icon="@drawable/ic_baseline_settings_24"
-                android:title="Settings"
+                android:title="@string/settings"
                 android:visibility="visible" />
 
             <item
                 android:id="@+id/sign_out_deliverer"
                 android:icon="@drawable/ic_menu_signout"
-                android:title="Sign Out" />
+                android:title="@string/sign_out"  />
         </menu>
     </item>
 

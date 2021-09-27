@@ -102,7 +102,9 @@ dependencies {
     implementation 'com.firebaseui:firebase-ui-storage:4.3.2'
     implementation 'com.squareup.picasso:picasso:2.71828'
 
-    implementation 'com.google.android.libraries.places:places-compat:1.0.0'
+//    implementation 'com.google.android.libraries.places:places-compat:1.0.0'
+    implementation 'com.github.AkashG58:AKPlacePicker:1.0.0'
+
 
 
 }

@@ -269,7 +269,7 @@
     <string name="all_orders">Tous les ordres</string>
     <string name="filters">Filtres</string>
     <string name="chat_rooms">Salles de discussions</string>
-    <string name="view_as_orderer">Voir comme ordonnateur</string>
+    <string name="view_as_orderer">Voir comme client</string>
     <string name="view_as_deliverer">Voir en tant que livrer</string>
     <string name="chat">Discuter</string>
     <string name="cancelled">Annulé</string>
