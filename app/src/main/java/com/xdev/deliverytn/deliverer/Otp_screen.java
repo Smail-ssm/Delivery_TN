@@ -178,55 +178,48 @@ public class Otp_screen extends AppCompatActivity {
                         View dialogLayout = inflater.inflate(R.layout.imgdialog, null);
                         dialog1.setView(dialogLayout);
                         dialog1.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                        dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
+                        dialog1.setOnShowListener(dialog23 -> {
 
-                            @Override
-                            public void onShow(DialogInterface dialog) {
+                            androidx.appcompat.app.AlertDialog.Builder builder2 = new androidx.appcompat.app.AlertDialog.Builder(Otp_screen.this);
+                            final androidx.appcompat.app.AlertDialog dialog11 = builder2.create();
+                            LayoutInflater inflater1 = getLayoutInflater();
+                            View dialogLayout1 = inflater1.inflate(R.layout.imgdialog, null);
+                            dialog11.setView(dialogLayout1);
+                            dialog11.setOnShowListener(d -> {
+                                ProgressBar p = dialog11.findViewById(R.id.progressimage);
 
-                                androidx.appcompat.app.AlertDialog.Builder builder = new androidx.appcompat.app.AlertDialog.Builder(Otp_screen.this);
-                                final androidx.appcompat.app.AlertDialog dialog1 = builder.create();
-                                LayoutInflater inflater = getLayoutInflater();
-                                View dialogLayout = inflater.inflate(R.layout.imgdialog, null);
-                                dialog1.setView(dialogLayout);
-                                dialog1.setOnShowListener(new DialogInterface.OnShowListener() {
-                                    @Override
-                                    public void onShow(DialogInterface d) {
-                                        ProgressBar p = dialog1.findViewById(R.id.progressimage);
-
-                                        int SDK_INT = Build.VERSION.SDK_INT;
-                                        if (SDK_INT > 8) {
-                                            URL u = null;
-                                            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
-                                                    .permitAll().build();
-                                            StrictMode.setThreadPolicy(policy);
-                                            ImageView image = dialog1.findViewById(R.id.goProDialogImage);
-                                            try {
-                                                u = new URL("https://scx1.b-cdn.net/csz/news/800a/2014/jhbkb.jpg");
-                                            } catch (MalformedURLException e) {
-                                                e.printStackTrace();
-                                            }
-                                            InputStream content = null;
-                                            try {
-                                                content = (InputStream) u.getContent();
-                                            } catch (IOException e) {
-                                                e.printStackTrace();
-                                            }
-
-                                            Drawable d1 = Drawable.createFromStream(content, "src");
-                                            image.setImageDrawable(d1);
-                                            if (content != null) {
-                                                p.setVisibility(View.GONE);
-                                            }
-
-                                        }
+                                int SDK_INT = Build.VERSION.SDK_INT;
+                                if (SDK_INT > 8) {
+                                    URL u = null;
+                                    StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder()
+                                            .permitAll().build();
+                                    StrictMode.setThreadPolicy(policy);
+                                    ImageView image = dialog11.findViewById(R.id.goProDialogImage);
+                                    try {
+                                        u = new URL("https://firebasestorage.googleapis.com/v0/b/deliverytn-423ca.appspot.com/o/paimentQRcode%2Fqr.png?alt=media&token=64463ca4-b46b-4c71-a8b3-ac34cd29a026");
+                                    } catch (MalformedURLException e) {
+                                        e.printStackTrace();
                                     }
-                                });
-                                dialog1.setCancelable(true);
+                                    InputStream content = null;
+                                    try {
+                                        content = (InputStream) u.getContent();
+                                    } catch (IOException e) {
+                                        e.printStackTrace();
+                                    }
 
-                                dialog1.show();
+                                    Drawable d1 = Drawable.createFromStream(content, "src");
+                                    image.setImageDrawable(d1);
+                                    if (content != null) {
+                                        p.setVisibility(View.GONE);
+                                    }
+
+                                }
+                            });
+                            dialog11.setCancelable(true);
+
+                            dialog11.show();
 
 
-                            }
                         });
                         builder.setPositiveButton(R.string.ok, (dialog22, which) -> dialog22.cancel()).
 

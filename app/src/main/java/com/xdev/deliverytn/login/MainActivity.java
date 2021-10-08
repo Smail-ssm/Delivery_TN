@@ -281,26 +281,32 @@ public class MainActivity extends AppCompatActivity implements ConnectivityRecei
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 name = dataSnapshot.child("first").getValue(String.class) + " , " + dataSnapshot.child("last").getValue(String.class);
-                if (dataSnapshot.child("accountstatue").getValue(String.class).equalsIgnoreCase("enabled")) {
+//                if (!(dataSnapshot.child("accountStatue").exists())){
+                    if (dataSnapshot.child("accountstatue").getValue(String.class).equalsIgnoreCase("enabled")) {
 
-                    findViewById(R.id.alert1).setVisibility(View.INVISIBLE);
-                    findViewById(R.id.alert2).setVisibility(View.INVISIBLE);
-                    accountStatue.setText(R.string.enabled);
-                } else {
-                    mainGrid.setClickable(false);
-                    mainGrid.setBackgroundColor(Color.RED);
-                    mainGrid.setVisibility(View.INVISIBLE);
-                    findViewById(R.id.alert1).setVisibility(View.VISIBLE);
-                    findViewById(R.id.alert2).setVisibility(View.VISIBLE);
-                    accountStatue.setText(R.string.unlock);
-                    accountStatue.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            startActivity(new Intent(MainActivity.this, payments.class));
-                        }
-                    });
+                        findViewById(R.id.alert1).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.alert2).setVisibility(View.INVISIBLE);
+                        accountStatue.setText(R.string.enabled);
+                    } else {
+                        mainGrid.setClickable(false);
+                        mainGrid.setBackgroundColor(Color.RED);
+                        mainGrid.setVisibility(View.INVISIBLE);
+                        findViewById(R.id.alert1).setVisibility(View.VISIBLE);
+                        findViewById(R.id.alert2).setVisibility(View.VISIBLE);
+                        accountStatue.setText(R.string.unlock);
+                        accountStatue.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                startActivity(new Intent(MainActivity.this, payments.class));
+                            }
+                        });
 
-                }
+                    }
+//                }
+//                else{
+//                    Toast.makeText(MainActivity.this, "please check account statue", Toast.LENGTH_SHORT).show();
+//                }
+               
                 showSnacks(getString(R.string.welcom) + " " + name);
                 username.setText(getString(R.string.welcom) + " " + name);
                 String usertypo = dataSnapshot.child("usertype").getValue(String.class);

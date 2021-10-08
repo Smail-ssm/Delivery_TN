@@ -77,6 +77,7 @@ import com.xdev.deliverytn.models.UserLocation;
 import com.xdev.deliverytn.models.deliverylocation;
 import com.xdev.deliverytn.user.UserViewActivity;
 
+import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -271,16 +272,8 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                 if (!ConnectivityReceiver.isConnected()) {
                     showSnack(false);
                 } else {
-//                    PlacePicker.IntentBuilder builder = new PlacePicker.IntentBuilder();
-//                    try {
-//                        startActivityForResult(builder.build(OrderForm.this), DELIVERY_PICKER_REQUEST);
-//
-//                    } catch (Exception e) {
-//                        Log.e("location error", e.getMessage());
-//                    }
                     Intent intent = new PlacePicker.IntentBuilder()
                             .setGoogleMapApiKey(String.valueOf(google_maps_key))
-//                            .setLatLong(18.520430, 73.856743)
                             .setMapZoom(19.0f)
                             .setAddressRequired(true)
                             .setPrimaryTextColor(R.color.black)
@@ -321,15 +314,20 @@ public class OrderForm extends AppCompatActivity implements ConnectivityReceiver
                     l1 = new LatLng(deliverylocation.Latl, deliverylocation.Lonl);
                     l2 = new LatLng(userLocation.Lat, userLocation.Lon);
                     float deliveryCH = (Deliverychargemethod(l1, l2));
-                    String doubleAsString = String.valueOf(deliveryCH);
-                    int indexOfDecimal = doubleAsString.indexOf(".");
-                    System.out.println("Double Number: " + deliveryCH);
-                    System.out.println("Integer Part: " + doubleAsString.substring(0, indexOfDecimal));
-                    System.out.println("Decimal Part: " + (doubleAsString.substring(indexOfDecimal)));
-                    if ((Integer.parseInt(String.valueOf(doubleAsString.substring(indexOfDecimal).charAt(1)))) != 0) {
-                        finaldeliverycharge = (Float.parseFloat(doubleAsString.substring(0, indexOfDecimal))) + (float) 1.2;
+
+                    BigDecimal bigDecimal = new BigDecimal(String.valueOf(deliveryCH));
+                    int intValue = bigDecimal.intValue();
+                    System.out.println("Double Number: " + bigDecimal.toPlainString());
+                    System.out.println("Integer Part: " + intValue);
+                    System.out.println("Decimal Part: " + bigDecimal.subtract(new BigDecimal(intValue)).toPlainString());
+                    int integerpart= intValue;
+                   float DecimalPart =Float.parseFloat(bigDecimal.subtract(new BigDecimal(intValue)).toPlainString());
+
+                    if (integerpart == 0) {
+                        finaldeliverycharge = (DecimalPart) + (float) 1.2;
                     } else {
-                        finaldeliverycharge = (Integer.parseInt(doubleAsString.substring(0, indexOfDecimal)));
+
+                        finaldeliverycharge = (float) ((integerpart+0.2)+(DecimalPart*0.2));
                     }
                     String priceo = max_int_range.getText().toString();
                     delivery_charge.setText("TND " + finaldeliverycharge);
