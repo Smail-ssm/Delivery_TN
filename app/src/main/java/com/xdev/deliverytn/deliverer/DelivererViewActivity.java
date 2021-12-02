@@ -1,5 +1,10 @@
 package com.xdev.deliverytn.deliverer;
 
+import static com.xdev.deliverytn.R.string.logoutsuccsess;
+import static com.xdev.deliverytn.R.string.pasdinternet;
+import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
+import static com.xdev.deliverytn.models.usertype.usertype;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
@@ -83,17 +88,13 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import static com.xdev.deliverytn.R.string.logoutsuccsess;
-import static com.xdev.deliverytn.R.string.pasdinternet;
-import static com.xdev.deliverytn.login.LoginActivity.mGoogleApiClient;
-import static com.xdev.deliverytn.models.usertype.usertype;
-
 
 public class DelivererViewActivity extends AppCompatActivity implements ConnectivityReceiver.ConnectivityReceiverListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     public static final int REQUEST_LOCATION_PERMISSION = 10;
     public static final int REQUEST_CHECK_SETTINGS = 20;
     public static RecyclerViewOrderAdapter adapter;
     private final DatabaseReference root = FirebaseDatabase.getInstance().getReference();
+    private final UserDetails userDetails = new UserDetails();
     public List<OrderData> orderList;
     FloatingActionButton fab;
     MenuItem mPreviousMenuItem = null;
@@ -106,7 +107,6 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
     TextView textViewEmail;
     boolean pending;
     ArrayList orderedList = new ArrayList();
-
     boolean active;
     boolean finished;
     boolean havelocation;
@@ -117,7 +117,6 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
     private DatabaseReference forUserData;
     private DatabaseReference childOrders;
     private String userId;
-    private UserDetails userDetails = new UserDetails();
     private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView recyclerView;
     private DrawerLayout mDrawerLayout;
@@ -194,9 +193,12 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
     Address getfromLatAndLong(double lat, double lng) throws IOException {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
 
-        return address = geocoder.getFromLocation(lat, lng, 1).get(0);
-
-
+        address = geocoder.getFromLocation(lat, lng, 1).get(0);
+        if (address == null) {
+            Toast.makeText(DelivererViewActivity.this, "address contain an error", Toast.LENGTH_SHORT).show();
+            return null;
+        }
+        return address;
     }
 
     void getLatAndLong() {
@@ -428,7 +430,7 @@ public class DelivererViewActivity extends AppCompatActivity implements Connecti
 
 //                                userPhoneNumber.setText(dataSnapshot.child("mobile").getValue(String.class));
                                 textViewUserName.setText(dataSnapshot.child("last").getValue(String.class) + "" + dataSnapshot.child("first").getValue(String.class));
-                                textViewEmail.setText(dataSnapshot.child("email").getValue(String.class) );
+                                textViewEmail.setText(dataSnapshot.child("email").getValue(String.class));
 //                                String photoUrl = dataSnapshot.child("profile").getValue(String.class) ;
 //                                String photoUrl = userDetails.getCinPhoto();
                                 try {
